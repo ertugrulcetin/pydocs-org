@@ -18,7 +18,7 @@ import {
 } from '../lib/community-client';
 import type { Author, CookieUser, Example, Note, SeeAlso, SymbolDoc } from '../lib/community-client';
 import { REPO_URL } from '../lib/site';
-import { pythonLoaded, runPython } from '../lib/runner';
+import { pythonLoaded, runPython, runtimeStored } from '../lib/runner';
 import type { RunContext } from '../lib/runner';
 
 /** "report" opens a prefilled GitHub issue (PLAN.md §5, Phase 6): no backend needed. */
@@ -84,7 +84,8 @@ function ErrorMessage({ error }: { error: string | null }) {
 
 type RunState =
   | { status: 'idle' }
-  | { status: 'running'; first: boolean }
+  /** first: Python isn't loaded in this page yet; stored: its files are in browser storage (no download). */
+  | { status: 'running'; first: boolean; stored?: boolean }
   | { status: 'done'; output: string; error?: string; version?: string; prelude?: string[] };
 
 /** Module + top-level name of a symbol id, e.g. collections/Counter.most_common -> collections, Counter. */
@@ -97,7 +98,8 @@ const runContext = (sid: string): RunContext => {
 function useRunner(context?: RunContext) {
   const [state, setState] = useState<RunState>({ status: 'idle' });
   const run = async (code: string) => {
-    setState({ status: 'running', first: !pythonLoaded() });
+    const first = !pythonLoaded();
+    setState({ status: 'running', first, stored: first && (await runtimeStored()) });
     const r = await runPython(code, () => setState({ status: 'running', first: false }), context);
     setState({ status: 'done', output: r.output ?? '', error: r.error, version: r.version, prelude: r.prelude });
   };
@@ -111,7 +113,9 @@ function RunOutput({ state, onClose }: { state: RunState; onClose?: () => void }
   const head =
     state.status === 'running'
       ? state.first
-        ? 'Loading Python in your browser (about 13 MB, first time only)…'
+        ? state.stored
+          ? 'Starting Python in your browser…'
+          : 'Loading Python in your browser (about 13 MB, first time only)…'
         : 'Running…'
       : state.error
         ? 'Could not run this example'

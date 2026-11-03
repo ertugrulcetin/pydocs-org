@@ -64,6 +64,7 @@ async function resolveFile(path) {
 createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost');
   let path = decodeURIComponent(url.pathname);
+  if (process.env.LOG_REQUESTS) console.log(`${req.method} ${url.pathname}`);
   if (path.startsWith('/api/') || path.startsWith('/auth/')) return res.writeHead(404, { 'Content-Type': 'application/json' }).end('{"message":"Not found."}');
   const rewrite = rewrites.find((r) => r.re.test(path));
   const target = rewrite ? rewrite.to : path;

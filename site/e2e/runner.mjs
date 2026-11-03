@@ -41,6 +41,28 @@ let r = await run();
 check('doctest example runs (REPL-style output)', r.out === "2\nhi\n[0, 1, 4, 9]\n", JSON.stringify(r.out));
 check('output names the Python version', /^Output · Python 3\.\d+\.\d+ in your browser$/.test(r.head), `${r.head} (first run ${((Date.now() - t0) / 1000).toFixed(1)} s)`);
 check('builtins: nothing is imported first', !(await page.$('.example-output-note')));
+const stored = await page.evaluate(() => caches.keys());
+check('runtime files kept in Cache Storage', stored.some((k) => /^pydocs-pyodide:\/pyodide\/\d+\.\d+\.\d+\/$/.test(k)), JSON.stringify(stored));
+
+// Reload: Python starts from Cache Storage. Chrome doesn't reuse the sandboxed
+// frame's HTTP cache across page loads, so without this every reload downloaded ~13 MB.
+const pyodideRequests = [];
+const onRequest = (req) => req.url().includes('/pyodide/') && pyodideRequests.push(req.url().split('/').pop());
+ctx.on('request', onRequest);
+await page.reload();
+await page.waitForSelector('.var-example .run-example');
+await page.evaluate(() => {
+  window.heads = [];
+  new MutationObserver(() => {
+    const h = document.querySelector('.example-output-head span')?.textContent;
+    if (h && window.heads.at(-1) !== h) window.heads.push(h);
+  }).observe(document.body, { subtree: true, childList: true, characterData: true });
+});
+r = await run();
+ctx.off('request', onRequest);
+check('reload: runs with no Pyodide downloads', pyodideRequests.length === 0 && r.out === "2\nhi\n[0, 1, 4, 9]\n", pyodideRequests.join(', ') || JSON.stringify(r.out));
+const heads = await page.evaluate(() => window.heads);
+check('reload: says "Starting Python", not the 13 MB download', heads[0] === 'Starting Python in your browser…' && !heads.some((h) => h.startsWith('Loading')), JSON.stringify(heads));
 
 // Seeded doctests assume their module is imported: run with "import collections"
 // and "from collections import Counter" first, and say so.

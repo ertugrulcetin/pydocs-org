@@ -56,32 +56,75 @@
     '    return json.dumps({"output": out.getvalue(), "version": sys.version.split()[0], "prelude": prelude})',
   ].join('\n');
 
-  var WORKER_SRC =
-    'var PY_SETUP = ' + JSON.stringify(PY_SETUP) + ';\n' +
-    'var ready = null;\n' +
-    'self.onmessage = async function (e) {\n' +
-    '  var id = e.data.id, code = e.data.code, indexURL = e.data.indexURL, module = e.data.module || "", name = e.data.name || "";\n' +
-    '  try {\n' +
-    '    if (!ready) ready = (async function () {\n' +
-    '      importScripts(indexURL + "pyodide.js");\n' +
-    '      var py = await loadPyodide({ indexURL: indexURL });\n' +
-    '      py.setStdin({ error: true });\n' +
-    '      py.runPython(PY_SETUP);\n' +
-    '      return py;\n' +
-    '    })();\n' +
-    '    var py = await ready;\n' +
-    '    self.postMessage({ id: id, phase: "running" });\n' +
-    // Some stdlib modules (sqlite3, lzma, ...) are separate Pyodide packages:
-    // load what the example and its pre-imported module need.
-    '    var src = py.globals.get("_pydocs_source")(code);\n' +
-    '    try { await py.loadPackagesFromImports((/^[A-Za-z_][\\w.]*$/.test(module) ? "import " + module + "\\n" : "") + src); } catch (_) {}\n' +
-    '    var result = JSON.parse(py.globals.get("_pydocs_run")(code, module, name));\n' +
-    '    self.postMessage({ id: id, output: result.output, version: result.version, prelude: result.prelude });\n' +
-    '  } catch (err) {\n' +
-    '    ready = null;\n' +
-    '    self.postMessage({ id: id, error: String((err && err.message) || err) });\n' +
-    '  }\n' +
-    '};\n';
+  // Runs inside the Web Worker. It is serialized with toString(), so it can use
+  // nothing from this file except PY_SETUP, which is defined in front of it.
+  function workerMain() {
+    // Pyodide 314 refuses to start in a classic worker, which it detects by
+    // loading a data: URL with importScripts. The /runner CSP blocks data:
+    // scripts, so production passed that check by accident; block them here
+    // too, so the runner also works where the CSP isn't applied (astro preview).
+    // A classic worker is fine: pyodide.asm.mjs is loaded with import().
+    var importScriptsOrig = self.importScripts;
+    self.importScripts = function (url) {
+      if (/^\s*data:/i.test(String(url))) throw new TypeError('data: scripts are not allowed here');
+      return importScriptsOrig.apply(self, arguments);
+    };
+    var ready = null;
+    var files = null; // runtime files handed over by the page: name -> ArrayBuffer
+
+    async function start(indexURL) {
+      var options = { indexURL: indexURL, packageBaseUrl: indexURL };
+      var f = files;
+      var netFetch = self.fetch;
+      if (f) {
+        // Start from the bytes the page handed over (it keeps them in Cache
+        // Storage): nothing is downloaded. This frame's opaque origin has no
+        // storage, and Chrome doesn't reuse its HTTP cache across page loads.
+        var script = function (name) {
+          return URL.createObjectURL(new Blob([f[name]], { type: 'text/javascript' }));
+        };
+        importScripts(script('pyodide.js'));
+        options.createPyodideModule = (await import(script('pyodide.asm.mjs'))).default;
+        options.lockFileContents = JSON.parse(new TextDecoder().decode(f['pyodide-lock.json']));
+        // Pyodide fetches these two itself: answer from memory.
+        var types = { 'pyodide.asm.wasm': 'application/wasm', 'python_stdlib.zip': 'application/zip' };
+        self.fetch = function (input, init) {
+          var url = input instanceof Request ? input.url : String(input);
+          var name = url.indexOf(indexURL) === 0 ? url.slice(indexURL.length) : '';
+          if (types[name] && f[name]) return Promise.resolve(new Response(f[name], { headers: { 'Content-Type': types[name] } }));
+          return netFetch.call(self, input, init);
+        };
+      } else {
+        importScripts(indexURL + 'pyodide.js');
+      }
+      var py;
+      try {
+        py = await loadPyodide(options);
+      } finally {
+        self.fetch = netFetch;
+      }
+      files = null; // loaded: free the copies
+      py.setStdin({ error: true });
+      py.runPython(PY_SETUP);
+      return py;
+    }
+
+    self.onmessage = async function (e) {
+      var d = e.data;
+      if (d.files) files = d.files;
+      try {
+        if (!ready) ready = start(d.indexURL);
+        var py = await ready;
+        self.postMessage({ id: d.id, phase: 'running' });
+        var result = JSON.parse(py.globals.get('_pydocs_run')(d.code, d.module, d.name));
+        self.postMessage({ id: d.id, output: result.output, version: result.version, prelude: result.prelude });
+      } catch (err) {
+        ready = null;
+        self.postMessage({ id: d.id, error: String((err && err.message) || err) });
+      }
+    };
+  }
+  var WORKER_SRC = 'var PY_SETUP = ' + JSON.stringify(PY_SETUP) + ';\n(' + workerMain.toString() + ')();\n';
 
   var worker = null;
   function startWorker() {
@@ -104,7 +147,20 @@
     var m = e.data;
     if (!m || m.type !== 'run' || typeof m.code !== 'string' || typeof m.indexURL !== 'string') return;
     if (!worker) startWorker();
-    worker.postMessage({ id: m.id, code: m.code, indexURL: m.indexURL, module: String(m.module || ''), name: String(m.name || '') });
+    // Runtime files (first run only): pass them on to the worker without copying.
+    var files = null;
+    var transfer = [];
+    if (m.files && typeof m.files === 'object') {
+      files = {};
+      Object.keys(m.files).forEach(function (k) {
+        if (m.files[k] instanceof ArrayBuffer) {
+          files[k] = m.files[k];
+          transfer.push(m.files[k]);
+        }
+      });
+    }
+    var message = { id: m.id, code: m.code, indexURL: m.indexURL, module: String(m.module || ''), name: String(m.name || ''), files: files };
+    worker.postMessage(message, transfer);
   });
 
   window.parent.postMessage({ type: 'ready' }, '*');
