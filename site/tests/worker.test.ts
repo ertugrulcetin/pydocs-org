@@ -9,38 +9,8 @@ import { login, callback, logout } from '../worker/auth.ts';
 import worker from '../worker/index.ts';
 import type { AppEnv } from '../worker/env.ts';
 
-// ---- in-memory R2 with ETags and onlyIf, like the real one (PLAN.md §7.4 spike) ----
-class FakeR2 {
-  objects = new Map<string, { body: string; etag: string }>();
-  n = 0;
-  /** Simulate a concurrent writer: change the object right after the next get(). */
-  raceOnNextGet: ((key: string) => void) | null = null;
-  async get(key: string) {
-    const o = this.objects.get(key);
-    const race = this.raceOnNextGet;
-    this.raceOnNextGet = null;
-    race?.(key);
-    return o ? { etag: o.etag, json: async () => JSON.parse(o.body) } : null;
-  }
-  async put(key: string, body: string, opts: { onlyIf?: { etagMatches?: string; etagDoesNotMatch?: string } } = {}) {
-    const cur = this.objects.get(key);
-    const c = opts.onlyIf;
-    if (c?.etagMatches !== undefined && cur?.etag !== c.etagMatches) return null;
-    if (c?.etagDoesNotMatch === '*' && cur) return null;
-    const etag = `e${++this.n}`;
-    this.objects.set(key, { body, etag });
-    return { etag };
-  }
-  async delete(key: string) {
-    this.objects.delete(key);
-  }
-  read(key: string) {
-    const o = this.objects.get(key);
-    return o ? JSON.parse(o.body) : undefined;
-  }
-}
+import { FakeR2, SECRET } from './fakes.ts';
 
-const SECRET = 'test-secret-0123456789';
 const makeEnv = (content = new FakeR2()): AppEnv & { content: FakeR2 } =>
   ({
     GITHUB_CLIENT_ID: 'cid',
