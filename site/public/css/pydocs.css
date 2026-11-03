@@ -56,3 +56,20 @@ pre {
     padding: 0 15px;
   }
 }
+
+/* Home "More modules" cards: highlight links have no whitespace between them
+   (same markup as ClojureDocs), so long Python names like Path.read_text could
+   not wrap and ran out of the card. Let them wrap as a flex row. */
+.intro-page .namespace-card {
+  min-width: 0;
+}
+.intro-page .namespace-card .vars {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--space-xs);
+  row-gap: 2px;
+}
+.intro-page .namespace-card .vars a {
+  margin-right: 0;
+  overflow-wrap: anywhere;
+}
