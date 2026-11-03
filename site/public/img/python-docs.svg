@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="python-docs (examples from the Python docs)">
+  <rect width="64" height="64" rx="8" fill="#5b7fa6"/>
+  <path d="M19 12h19l9 9v31a2 2 0 0 1-2 2H19a2 2 0 0 1-2-2V14a2 2 0 0 1 2-2z" fill="#fff"/>
+  <path d="M38 12v9h9" fill="#dfe7f0"/>
+  <path d="M28 33l-5 5 5 5M36 33l5 5-5 5" fill="none" stroke="#5b7fa6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

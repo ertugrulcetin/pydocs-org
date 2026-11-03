@@ -515,7 +515,12 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
 - [ ] Load check: largest symbol doc stays under the 10 ms CPU limit
 
 ### Phase 7: Launch
-- [ ] Seed examples from the docs' `>>>` snippets (`scripts/seed-doctests.ts`). Author: system user "python-docs", `source: "python-docs"`, shown with a "from python-docs" label. Idempotent, so it can be re-run.
+- [~] Seed examples from the docs' `>>>` snippets (`scripts/seed-doctests.mjs`, dry run by default). Ready 2026-11-03, not yet written to R2:
+  - A dry run against the live bucket plans 979 examples (558 KiB, 1,960 R2 writes, about 9 min).
+  - A relevance rule keeps only snippets that use the symbol's own name: 980 of the 1,037 symbols with a doctest qualify; the other 57 snippets demo something else. `builtins/str.split` already has an example, so it is skipped.
+  - Author is the system user `python-docs` (id 0) with a neutral local avatar (`/img/python-docs.svg`, not the Python logo). Each example gets a history doc; `users/0.json` and `logins/python-docs.json` are created; the activity feed isn't flooded.
+  - `--write` saves every written key to `scripts/seed-manifest-*.json` (git-ignored) for rollback.
+  - Original item: Author: system user "python-docs", `source: "python-docs"`, shown with a "from python-docs" label. Idempotent, so it can be re-run.
 - [ ] **Every symbol that has a doctest gets at least one seeded example.** Attach each `>>>` snippet to its symbol: snippets inside the symbol's `<dl>` block first, then snippets in module prose when the symbol they call is unambiguous. Symbols with no doctest get no seeded example (Q12). They show the normal "Log in to add an example" prompt and appear in the Contribute page's "Still need an example:" list. Done when a check reports 0 symbols that have a doctest but no example.
 - [x] Cloudflare Web Analytics: already on for the zone (Cloudflare injects the beacon; found via the CSP report-only run, 2026-11-03)
 - [ ] Custom domain live; prod OAuth app verified

@@ -24,7 +24,8 @@ export function currentUser(): CookieUser | null {
 }
 
 export const loginUrl = () => `/auth/login?return=${encodeURIComponent(location.pathname + location.search + location.hash)}`;
-export const avatarUrl = (id: number, size = 64) => `https://avatars.githubusercontent.com/u/${id}?s=${size}`;
+/** GitHub avatar; id 0 is the "python-docs" system user (seeded examples, Phase 7). */
+export const avatarUrl = (id: number, size = 64) => (id <= 0 ? '/img/python-docs.svg' : `https://avatars.githubusercontent.com/u/${id}?s=${size}`);
 
 /** Public content: data.pydocs.org in production (path A), the Worker elsewhere (path B). */
 export const dataUrl = (key: string) => (location.hostname === 'pydocs.org' ? `https://data.pydocs.org/${key}` : `/api/r/${key}`);

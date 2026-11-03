@@ -25,7 +25,8 @@ async function main(root: HTMLElement): Promise<void> {
     .join('');
   root.innerHTML =
     `<div class="col-sm-10 col-sm-offset-1"><div class="row">` +
-    `<div class="col-sm-4"><span class="user-avatar"><a class="avatar-link" href="https://github.com/${esc(user.login)}">` +
+    // The python-docs system user (id 0) has no GitHub profile.
+    `<div class="col-sm-4"><span class="user-avatar"><a class="avatar-link" href="${user.id > 0 ? `https://github.com/${esc(user.login)}` : '/contribute'}">` +
     `<img class="avatar" src="${avatarUrl(user.id, 200)}" alt="${esc(user.login)}"></a></span></div>` +
     `<div class="col-sm-8"><h1>${esc(user.login)}</h1>` +
     `<p>User <b>${esc(user.login)}</b> has authored ${plural(n('example'), 'example', 'examples')}, ` +
