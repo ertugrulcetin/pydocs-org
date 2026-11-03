@@ -8,8 +8,8 @@ const check = (label, ok, extra = '') => {
   if (!ok) failed++;
   console.log(`${ok ? 'PASS' : 'FAIL'} ${label} ${extra}`);
 };
-const doc = (body) => ({
-  symbol: 'builtins/eval',
+const doc = (body, symbol = 'builtins/eval') => ({
+  symbol,
   seeAlsos: [],
   notes: [],
   updatedAt: Date.now(), // newer than the baked copy, so the page shows this doc
@@ -40,6 +40,23 @@ const t0 = Date.now();
 let r = await run();
 check('doctest example runs (REPL-style output)', r.out === "2\nhi\n[0, 1, 4, 9]\n", JSON.stringify(r.out));
 check('output names the Python version', /^Output · Python 3\.\d+\.\d+ in your browser$/.test(r.head), `${r.head} (first run ${((Date.now() - t0) / 1000).toFixed(1)} s)`);
+check('builtins: nothing is imported first', !(await page.$('.example-output-note')));
+
+// Seeded doctests assume their module is imported: run with "import collections"
+// and "from collections import Counter" first, and say so.
+const counter = ">>> Counter('abracadabra').most_common(2)\n[('a', 5), ('b', 2)]";
+await ctx.route(/(\/api\/s\/collections\/Counter\.most_common$)|(data\.pydocs\.org\/symbols\/collections\/Counter\.most_common\.json)/, (r) =>
+  r.fulfill({ status: 200, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify(doc(counter, 'collections/Counter.most_common')) }),
+);
+await page.goto(`${B}/collections/Counter.most_common`);
+await page.waitForSelector('.var-example .run-example');
+r = await run();
+check('example runs with its module and symbol imported', r.out === "[('a', 5), ('b', 2)]\n", JSON.stringify(r.out));
+check(
+  'the imports are shown',
+  (await page.textContent('.example-output-note'))?.replace(/\s+/g, ' ').trim() === 'Imported first: import collections, from collections import Counter',
+  JSON.stringify(await page.textContent('.example-output-note')),
+);
 
 // Plain script with an error: traceback without the runner's own frame.
 body = 'import math\nmath.sqrt(16)\n1 / 0';

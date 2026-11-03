@@ -18,9 +18,24 @@
     '    if not any(l.startswith(">>>") for l in lines):',
     '        return src',
     '    return "\\n".join(m.group(2) for l in lines if (m := _PROMPT.match(l)))',
-    'def _pydocs_run(src):',
+    'def _pydocs_prelude(ns, module, name):',
+    '    # Like ClojureDocs, where clojure.core is always in scope: run the example',
+    '    # with its own module and symbol imported (never import *).',
+    '    done = []',
+    '    if not re.fullmatch(r"[A-Za-z_][\\w.]*", module or "") or module == "builtins":',
+    '        return done',
+    '    for stmt in (f"import {module}", f"from {module} import {name}" if re.fullmatch(r"[A-Za-z_]\\w*", name or "") else None):',
+    '        if stmt:',
+    '            try:',
+    '                exec(stmt, ns)',
+    '                done.append(stmt)',
+    '            except BaseException:',
+    '                pass',
+    '    return done',
+    'def _pydocs_run(src, module="", name=""):',
     '    out = io.StringIO()',
     '    ns = {"__name__": "__main__"}',
+    '    prelude = _pydocs_prelude(ns, module, name)',
     '    with contextlib.redirect_stdout(out), contextlib.redirect_stderr(out):',
     '        try:',
     '            tree = ast.parse(_pydocs_source(src), "<example>")',
@@ -38,14 +53,14 @@
     '        except BaseException as e:',
     '            # Skip this helper\'s own frame in the traceback.',
     '            traceback.print_exception(type(e), e, e.__traceback__.tb_next)',
-    '    return json.dumps({"output": out.getvalue(), "version": sys.version.split()[0]})',
+    '    return json.dumps({"output": out.getvalue(), "version": sys.version.split()[0], "prelude": prelude})',
   ].join('\n');
 
   var WORKER_SRC =
     'var PY_SETUP = ' + JSON.stringify(PY_SETUP) + ';\n' +
     'var ready = null;\n' +
     'self.onmessage = async function (e) {\n' +
-    '  var id = e.data.id, code = e.data.code, indexURL = e.data.indexURL;\n' +
+    '  var id = e.data.id, code = e.data.code, indexURL = e.data.indexURL, module = e.data.module || "", name = e.data.name || "";\n' +
     '  try {\n' +
     '    if (!ready) ready = (async function () {\n' +
     '      importScripts(indexURL + "pyodide.js");\n' +
@@ -56,9 +71,12 @@
     '    })();\n' +
     '    var py = await ready;\n' +
     '    self.postMessage({ id: id, phase: "running" });\n' +
-    '    try { await py.loadPackagesFromImports(code); } catch (_) {}\n' +
-    '    var result = JSON.parse(py.globals.get("_pydocs_run")(code));\n' +
-    '    self.postMessage({ id: id, output: result.output, version: result.version });\n' +
+    // Some stdlib modules (sqlite3, lzma, ...) are separate Pyodide packages:
+    // load what the example and its pre-imported module need.
+    '    var src = py.globals.get("_pydocs_source")(code);\n' +
+    '    try { await py.loadPackagesFromImports((/^[A-Za-z_][\\w.]*$/.test(module) ? "import " + module + "\\n" : "") + src); } catch (_) {}\n' +
+    '    var result = JSON.parse(py.globals.get("_pydocs_run")(code, module, name));\n' +
+    '    self.postMessage({ id: id, output: result.output, version: result.version, prelude: result.prelude });\n' +
     '  } catch (err) {\n' +
     '    ready = null;\n' +
     '    self.postMessage({ id: id, error: String((err && err.message) || err) });\n' +
@@ -74,7 +92,7 @@
     worker.onmessage = function (e) {
       var d = e.data;
       if (d.phase) window.parent.postMessage({ type: 'phase', id: d.id, phase: d.phase }, '*');
-      else window.parent.postMessage({ type: 'result', id: d.id, output: d.output, error: d.error, version: d.version }, '*');
+      else window.parent.postMessage({ type: 'result', id: d.id, output: d.output, error: d.error, version: d.version, prelude: d.prelude }, '*');
     };
     worker.onerror = function (e) {
       window.parent.postMessage({ type: 'result', id: -1, error: 'The Python runner failed to start: ' + (e.message || 'unknown error') }, '*');
@@ -86,7 +104,7 @@
     var m = e.data;
     if (!m || m.type !== 'run' || typeof m.code !== 'string' || typeof m.indexURL !== 'string') return;
     if (!worker) startWorker();
-    worker.postMessage({ id: m.id, code: m.code, indexURL: m.indexURL });
+    worker.postMessage({ id: m.id, code: m.code, indexURL: m.indexURL, module: String(m.module || ''), name: String(m.name || '') });
   });
 
   window.parent.postMessage({ type: 'ready' }, '*');

@@ -6,6 +6,14 @@ export interface RunResult {
   error?: string;
   /** Python version Pyodide runs, e.g. "3.14.2". */
   version?: string;
+  /** Imports run before the example, e.g. ["import collections", "from collections import Counter"]. */
+  prelude?: string[];
+}
+
+/** The symbol an example belongs to: its module and top-level name are imported first. */
+export interface RunContext {
+  module: string;
+  name: string;
 }
 
 const LOAD_TIMEOUT_MS = 90_000; // first run downloads ~13 MB
@@ -69,7 +77,7 @@ function ensureFrame(): Promise<void> {
  * a page also loads Python; `onRunning` fires when the code itself starts, and
  * the 10-second run limit starts then, not while Python downloads.
  */
-export async function runPython(code: string, onRunning?: () => void): Promise<RunResult> {
+export async function runPython(code: string, onRunning?: () => void, context?: RunContext): Promise<RunResult> {
   await ensureFrame();
   const id = ++seq;
   const base = document.querySelector<HTMLMetaElement>('meta[name="pydocs:pyodide"]')?.content ?? '';
@@ -102,6 +110,6 @@ export async function runPython(code: string, onRunning?: () => void): Promise<R
       },
     });
     // The sandboxed frame's origin is opaque ("null"), so '*' is the only target that works.
-    frame!.contentWindow!.postMessage({ type: 'run', id, code, indexURL }, '*');
+    frame!.contentWindow!.postMessage({ type: 'run', id, code, indexURL, module: context?.module ?? '', name: context?.name ?? '' }, '*');
   });
 }

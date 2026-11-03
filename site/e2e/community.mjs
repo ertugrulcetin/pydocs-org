@@ -76,7 +76,8 @@ check('sidenav count updated', (await page.textContent('.desktop-side-nav [data-
 await page.waitForFunction(() => document.querySelector('.var-examples .login-required-message a')?.getAttribute('href')?.includes('return='));
 check('login prompt', (await page.getAttribute('.var-examples .login-required-message a', 'href'))?.startsWith('/auth/login?return=%2Fbuiltins%2Fstr.split'));
 const loggedOutLinks = (await page.$$eval('.var-example .links a', (as) => as.map((a) => a.textContent))).join(' / ');
-check('logged out: link / history / run / report, no edit or delete', loggedOutLinks === 'link / history / run / report', loggedOutLinks);
+check('logged out: link / history / report, no edit or delete', loggedOutLinks === 'link / history / report', loggedOutLinks);
+check('Run button above the code block', (await page.textContent('.var-example .example-meta button.run-example'))?.trim() === 'Run');
 check('report link prefills a GitHub issue', (await page.getAttribute('.var-example .links a[href*="issues/new"]', 'href'))?.includes('labels=report'));
 
 // 2. log in as bob (UI cookie only; the fake API does not check sessions)

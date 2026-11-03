@@ -19,6 +19,7 @@ import {
 import type { Author, CookieUser, Example, Note, SeeAlso, SymbolDoc } from '../lib/community-client';
 import { REPO_URL } from '../lib/site';
 import { pythonLoaded, runPython } from '../lib/runner';
+import type { RunContext } from '../lib/runner';
 
 /** "report" opens a prefilled GitHub issue (PLAN.md §5, Phase 6): no backend needed. */
 const reportUrl = (what: string, sid: string, id: string) => {
@@ -84,15 +85,21 @@ function ErrorMessage({ error }: { error: string | null }) {
 type RunState =
   | { status: 'idle' }
   | { status: 'running'; first: boolean }
-  | { status: 'done'; output: string; error?: string; version?: string };
+  | { status: 'done'; output: string; error?: string; version?: string; prelude?: string[] };
+
+/** Module + top-level name of a symbol id, e.g. collections/Counter.most_common -> collections, Counter. */
+const runContext = (sid: string): RunContext => {
+  const i = sid.indexOf('/');
+  return { module: sid.slice(0, i), name: sid.slice(i + 1).split('.')[0]! };
+};
 
 /** Runs code with Pyodide in the sandboxed runner (src/lib/runner.ts). */
-function useRunner() {
+function useRunner(context?: RunContext) {
   const [state, setState] = useState<RunState>({ status: 'idle' });
   const run = async (code: string) => {
     setState({ status: 'running', first: !pythonLoaded() });
-    const r = await runPython(code, () => setState({ status: 'running', first: false }));
-    setState({ status: 'done', output: r.output ?? '', error: r.error, version: r.version });
+    const r = await runPython(code, () => setState({ status: 'running', first: false }), context);
+    setState({ status: 'done', output: r.output ?? '', error: r.error, version: r.version, prelude: r.prelude });
   };
   return { state, run, close: () => setState({ status: 'idle' }) };
 }
@@ -121,12 +128,32 @@ function RunOutput({ state, onClose }: { state: RunState; onClose?: () => void }
           </a>
         )}
       </div>
+      {state.status === 'done' && !state.error && state.prelude && state.prelude.length > 0 && (
+        <div class="example-output-note">
+          Imported first: {state.prelude.map((s, i) => (
+            <span key={s}>
+              {i > 0 && ', '}
+              <code>{s}</code>
+            </span>
+          ))}
+        </div>
+      )}
       {state.status === 'done' && (
         <pre class={state.error ? 'example-output-error' : undefined}>
           {text.length > MAX_OUTPUT ? `${text.slice(0, MAX_OUTPUT)}\n… (output cut at ${MAX_OUTPUT.toLocaleString('en')} characters)` : text || '(no output)'}
         </pre>
       )}
     </div>
+  );
+}
+
+/** Play button above the top-right corner of an example's code block. */
+function RunButton({ running, onRun }: { running: boolean; onRun: () => void }) {
+  return (
+    <button type="button" class="run-example" title="Run this example in your browser" disabled={running} onClick={onRun}>
+      <i class={running ? 'fa fa-spinner fa-spin' : 'fa fa-play'} aria-hidden="true"></i>
+      {running ? ' Running' : ' Run'}
+    </button>
   );
 }
 
@@ -141,9 +168,10 @@ function TabbedEditor(props: {
   guide?: boolean;
   /** Adds a "Run" tab that runs the code with Pyodide (examples only). */
   runnable?: boolean;
+  runContext?: RunContext;
 }) {
   const [tab, setTab] = useState<'editor' | 'preview' | 'run'>('editor');
-  const runner = useRunner();
+  const runner = useRunner(props.runContext);
   const rows = Math.max(props.value.split('\n').length + 3, 10);
   const onKeyDown = (e: KeyboardEvent) => {
     const ta = e.currentTarget as HTMLTextAreaElement;
@@ -230,6 +258,7 @@ function EditorForm(props: {
   preview: (text: string) => JSX.Element;
   guide?: boolean;
   runnable?: boolean;
+  runContext?: RunContext;
   onCancel: () => void;
   onSubmit: (text: string) => Promise<void>;
 }) {
@@ -250,7 +279,7 @@ function EditorForm(props: {
   };
   return (
     <div>
-      <TabbedEditor value={text} onInput={setText} onSubmit={submit} disabled={loading} placeholder={props.placeholder} preview={props.preview} guide={props.guide} runnable={props.runnable} />
+      <TabbedEditor value={text} onInput={setText} onSubmit={submit} disabled={loading} placeholder={props.placeholder} preview={props.preview} guide={props.guide} runnable={props.runnable} runContext={props.runContext} />
       {props.instructions}
       <ErrorMessage error={error} />
       <div class="add-example-controls form-group clearfix">
@@ -303,12 +332,13 @@ function ExampleItem({ ex, user, save, highlighted, sid }: { ex: Example; user: 
   const authors = [ex.author, ...ex.editors].filter((a, i, all) => all.findIndex((b) => b.id === a.id) === i);
   const shown = authors.slice(0, 7);
   const canDelete = user !== null && user.id === ex.author.id;
-  const runner = useRunner();
+  const runner = useRunner(runContext(sid));
   return (
     <div class={`var-example${highlighted ? ' highlighted' : ''}`}>
       <a id={`example-${ex.id}`}></a>
       <div>
         <div class="example-meta">
+          {!editing && <RunButton running={runner.state.status === 'running'} onRun={() => void runner.run(ex.body)} />}
           <div class="contributors">
             {shown.map((a) => (
               <Avatar author={a} key={a.id} />
@@ -319,14 +349,6 @@ function ExampleItem({ ex, user, save, highlighted, sid }: { ex: Example; user: 
             <a href={`#example-${ex.id}`}>link</a>
             {' / '}
             <a href={`/ex/${ex.id}`}>history</a>
-            {!editing && (
-              <span>
-                {' / '}
-                <a href="#" class="run-example" title="Run this example in your browser" onClick={prevent(() => void runner.run(ex.body))}>
-                  run
-                </a>
-              </span>
-            )}
             {user && (
               <span>
                 {' / '}
@@ -357,6 +379,7 @@ function ExampleItem({ ex, user, save, highlighted, sid }: { ex: Example; user: 
             preview={CodePreview}
             guide
             runnable
+            runContext={runContext(sid)}
             onCancel={() => setEditing(false)}
             onSubmit={async (text) => {
               await save('PATCH', `/examples/${ex.id}`, { body: text });
@@ -410,6 +433,7 @@ function Examples({ doc, user, save, hash }: { doc: SymbolDoc; user: CookieUser 
                 preview={CodePreview}
                 guide
                 runnable
+                runContext={runContext(doc.symbol)}
                 onCancel={() => setAdding(false)}
                 onSubmit={async (text) => {
                   await save('POST', '/examples', { body: text });

@@ -21,9 +21,12 @@
 # Example runner (PLAN.md Phase 8): embedded as <iframe sandbox="allow-scripts">
 # by our own pages, so it may be framed by them; it runs Pyodide (WebAssembly)
 # in a blob: (classic) worker. Replaces the site-wide CSP and X-Frame-Options.
+# no-transform: Cloudflare must not inject the Web Analytics beacon into this
+# hidden frame (it would count every Run as a page view, and the CSP blocks it).
 /runner
   ! Content-Security-Policy
   ! X-Frame-Options
+  Cache-Control: public, max-age=0, must-revalidate, no-transform
   Content-Security-Policy: default-src 'none'; script-src 'self' blob: 'wasm-unsafe-eval'; worker-src blob:; connect-src 'self'; frame-ancestors 'self'; base-uri 'none'; form-action 'none'
 
 # Pyodide runtime: fetched from the sandboxed (opaque-origin) runner, so it

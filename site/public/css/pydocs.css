@@ -129,6 +129,40 @@ pre {
   font-size: var(--font-size-sm);
 }
 
+/* Run button (Phase 8): right end of the example's meta row, just above the
+   code block's top-right corner. Not drawn over the code: on phones it would
+   cover the first line. */
+.example-meta .run-example {
+  float: right;
+  margin-right: calc(-1 * var(--space-2xs));
+  padding: 2px 10px;
+  font-size: var(--font-size-xs);
+  line-height: 1.5;
+  color: var(--color-brand);
+  background: var(--bg);
+  border: 1px solid var(--color-brand);
+  border-radius: 3px;
+}
+.example-meta .run-example:hover:not(:disabled) {
+  color: var(--color-on-solid);
+  background: var(--color-brand);
+}
+.example-meta .run-example:focus {
+  outline: none;
+}
+.example-meta .run-example:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+.example-meta .run-example:disabled {
+  cursor: default;
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+.example-meta .run-example .fa {
+  font-size: 10px;
+}
+
 /* Example runner output (Phase 8), below the example code. */
 .example-output {
   margin-top: var(--space-2xs);
@@ -138,6 +172,16 @@ pre {
 .example-output-head {
   font-size: var(--font-size-xs);
   color: var(--text-muted);
+}
+.example-output-note {
+  margin-top: var(--space-2xs);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+.example-output-note code {
+  display: inline-block; /* wraps to the next line as a whole */
+  max-width: 100%;
+  font-size: inherit;
 }
 .example-output-head .loading {
   margin-left: var(--space-2xs);
