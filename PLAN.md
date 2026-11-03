@@ -395,15 +395,15 @@ pydocs-org/
 ### Phase 0: Decisions, accounts, spikes
 - [x] Answer architecture questions Q1–Q4 (2026-11-01)
 - [ ] Answer the remaining questions Q5–Q11 in §16 (defaults apply if unanswered)
-- [~] Create the GitHub repo (public recommended) and add a `LICENSE` (see §17). Repo `ertugrulcetin/pydocs-org` exists (2026-11-03; private, branch `master`). Still to do: `LICENSE`, make it public (Q7).
+- [~] Create the GitHub repo (public recommended) and add a `LICENSE` (see §17). Repo `ertugrulcetin/pydocs-org` is public (2026-11-03, branch `master`). Still to do: `LICENSE` (§17).
 - [x] Cloudflare: add a payment method, enable R2, create buckets `pydocs-content` and `pydocs-private`. Payment method and R2 were already active; buckets created 2026-11-03 by `scripts/setup-cloudflare.sh` (safe to re-run).
-- [ ] Worker `pydocs`: the first `wrangler deploy` creates it, so there is no separate project step. Its custom domain is set in `wrangler.toml` (`routes` with `custom_domain = true`).
+- [x] Worker `pydocs`: the first `wrangler deploy` creates it, so there is no separate project step. Its custom domain is set in `wrangler.toml` (`routes` with `custom_domain = true`). First deployed 2026-11-03 with a placeholder page: https://pydocs.org and https://pydocs.ertu-ctn.workers.dev.
 - [ ] GitHub OAuth Apps: **prod** (callback `https://<domain>/auth/callback`) and **dev** (`http://localhost:8787/auth/callback`). One callback host per app. Login won't work on preview deploys.
 - [x] Buy `pydocs.org` through Cloudflare Registrar (2026-11-03). The zone is on Cloudflare DNS.
 - [x] R2 custom domain `data.pydocs.org` → `pydocs-content`, with CORS for `pydocs.org` and local dev (2026-11-03, `scripts/setup-cloudflare.sh`)
-- [ ] Worker custom domain `pydocs.org`: set in `wrangler.toml`, applied by the first deploy
+- [x] Worker custom domain `pydocs.org`: set in `wrangler.toml`, applied by the first deploy (live 2026-11-03)
 - [ ] Cache Rule: hostname `data.pydocs.org` → eligible for cache, respect origin headers. Created in the dashboard because Wrangler's login can't write zone settings. The Worker writes objects with `Cache-Control: public, max-age=60`, so live refresh is at most a minute behind.
-- [ ] Add Worker secrets and GitHub Actions secrets
+- [~] Add Worker secrets and GitHub Actions secrets. Set on 2026-11-03: `SESSION_SECRET` (random) and `ADMIN_GITHUB_IDS`. Still to do: `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` (once the OAuth apps exist), and the GitHub Actions secrets.
 - [x] Spike (2026-11-03, throwaway Worker on workers.dev, since deleted): dotted paths, trailing slashes, `_idx` rewrite for `index` pages (see §4). `run_worker_first = ["/api/*", "/auth/*"]` sends only those to the Worker. `_redirects` 200 rewrites for `/u/*` and `/ex/*` work, `not_found_handling = "404-page"` works, and `env.ASSETS.fetch('/_data/symbols.txt')` works from the Worker. `_headers` doesn't apply to Worker responses, so the Worker sets its own headers.
 - [x] Spike: R2 conditional put from a deployed Worker against real R2 (2026-11-03). `etagMatches` with the current ETag stores the write and a stale ETag returns `null`. Create-if-absent works with `etagDoesNotMatch: "*"` or `If-None-Match: *`. See §7.4.
 - [x] Spike: Astro build time and output size for 12k pages (2026-11-03, local Apple Silicon, synthetic pages with dotted names): 11,842 pages in 2.6 s (4.2 s total), 47 MB, 11,860 files. `build.format: 'file'` writes `os.path.html` / `os.path/join.html` as planned. Timing on a GitHub runner will come from the first CI deploy.
@@ -529,7 +529,7 @@ Each question has my default in **bold**. Q1–Q4 changed the architecture and a
 4. ✅ Seed examples from the docs' `>>>` snippets. → **Yes, labeled "from python-docs".**
 5. Main doc block: the **docstring** (like ClojureDocs) plus an "Official docs ↗" link, or the richer docs.python.org text? → **Docstring + link.**
 6. Branding: keep ClojureDocs' palette exactly and swap only the name, as a text wordmark with no Python logo? → **Yes.**
-7. Public repo? → **Yes.** Needed for EPL compliance, free Actions, and open data.
+7. ✅ Public repo → **Yes.** Needed for EPL compliance, free Actions, and open data. Made public 2026-11-03.
 8. ✅ Admins: → **`ertugrulcetin` (GitHub id 8271291)**, so `ADMIN_GITHUB_IDS=8271291`. (decided 2026-11-03)
 9. Contribution license: → **CC0.**
 10. Analytics: → **Cloudflare Web Analytics.**
