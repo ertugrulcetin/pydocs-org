@@ -1,0 +1,35 @@
+---
+// All symbols = ClojureDocs' /core-library/vars: every module's top-level
+// symbols grouped by first letter. Methods are on their class pages.
+import Main from '../../layouts/Main.astro';
+import { byFirstLetter, modules, moduleUrl, symbolUrl, topLevelByModule } from '../../lib/data';
+
+const groups = modules
+  .map((m) => ({ module: m.name, letters: byFirstLetter(topLevelByModule.get(m.name) ?? [], (s) => s.qualname) }))
+  .filter((g) => g.letters.length > 0);
+---
+
+<Main title="All Symbols in Python's Standard Library" bodyClass="core-library-page">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <h1>All Symbols in Python's Standard Library</h1>
+        {
+          groups.map((g) => (
+            <div class="var-namespace-group">
+              <h2><a href={moduleUrl(g.module)}>{g.module}</a></h2>
+              {g.letters.map(([letter, syms]) => (
+                <div class="var-group">
+                  <h3>{letter}</h3>
+                  <ul class="var-list">
+                    {syms.map((s) => <li><a href={symbolUrl(s)}>{s.qualname}</a></li>)}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</Main>

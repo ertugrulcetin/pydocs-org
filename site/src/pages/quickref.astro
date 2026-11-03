@@ -1,0 +1,94 @@
+---
+// Quick reference = ClojureDocs' /quickref (pages/quickref.clj): sticky TOC on
+// the left, spheres > categories > groups of symbols with short docs.
+import Main from '../layouts/Main.astro';
+import { spheres } from '../lib/quickref';
+import { summary, symbolUrl } from '../lib/data';
+---
+
+<Main title="Quick Reference" description="A quick reference to the Python standard library, grouped by purpose." bodyClass="quickref-page">
+  <section slot="mobile-nav">
+    <h4>Quick Reference</h4>
+    <ul class="navbar-nav mobile-navbar-nav nav">
+      {
+        spheres.map((s) => (
+          <li>
+            <a href={`#${s.slug}`}>
+              <div class="quickref-mobile-toc">
+                <h5>{s.title}</h5>
+                <div class="categories">{s.categories.map((c) => c.title).join(', ')}</div>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <div>
+          <div class="row">
+            <div class="col-sm-3 sidenav toc-sidenav">
+              <div class="page-toc">
+                <div class="toc clearfix">
+                  <h5>Table of Contents</h5>
+                  <h6><a href="#">Top</a></h6>
+                  <div>
+                    {
+                      spheres.map((s) => (
+                        <div class="toc-sphere">
+                          <h5><a href={`#${s.slug}`}>{s.title}</a></h5>
+                          <ul>
+                            {s.categories.map((c) => (
+                              <li><a href={`#${c.slug}`}>{c.title}</a></li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-9">
+              <h1>Quickref for the Python Standard Library</h1>
+              <p>The most used parts of Python, grouped by purpose. Click any name for its docs and examples.</p>
+              {
+                spheres.map((s) => (
+                  <div class="sphere">
+                    <div class="sphere-header"><h2 id={s.slug}>{s.title}</h2></div>
+                    {s.categories.map((c) => (
+                      <div class="category">
+                        <div class="category-header clearfix">
+                          <h3 id={c.slug}>{c.title}</h3>
+                          <h3 class="header-reference">{s.title}</h3>
+                        </div>
+                        {c.groups.map((g) => (
+                          <div class="group">
+                            <div class="quickref-header clearfix">
+                              <h4>{g.title}</h4>
+                              <h4 class="header-reference">{c.title} &gt; {g.title}</h4>
+                            </div>
+                            <dl class="dl-horizontal">
+                              {g.symbols.map((sym) => (
+                                <div class="dl-row">
+                                  <dt><a href={symbolUrl(sym)}>{sym.module === 'builtins' ? sym.qualname : `${sym.module}.${sym.qualname}`}</a></dt>
+                                  <dd>{summary(sym.doc, 120)}</dd>
+                                </div>
+                              ))}
+                            </dl>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Main>

@@ -21,11 +21,13 @@ interface Props {
   bodyClass?: string;
   /** schema.org JSON-LD object for this page. */
   jsonLd?: Record<string, unknown>;
+  /** Home page: navbar shows version + GitHub stars instead of the search box. */
+  home?: boolean;
   /** GitHub stars for the home navbar. */
-  stars?: number;
+  stars?: number | undefined;
 }
 
-const { title, description = DEFAULT_DESCRIPTION, bodyClass, jsonLd, stars } = Astro.props;
+const { title, description = DEFAULT_DESCRIPTION, bodyClass, jsonLd, home = false, stars } = Astro.props;
 const fullTitle = title ? `${title} | ${TITLE_SUFFIX}` : TITLE_SUFFIX;
 const path = pagePath(Astro.url.pathname);
 const canonical = new URL(path, Astro.site).href;
@@ -69,10 +71,10 @@ const metaDescription = description.length > 200 ? `${description.slice(0, 197)}
       </section>
       <slot name="mobile-nav" />
     </div>
-    <div class="mobile-nav-bar"><Navbar path={path} stars={stars} /></div>
+    <div class="mobile-nav-bar"><Navbar path={path} home={home} stars={stars} /></div>
     <div class="sticky-wrapper mobile-push-wrapper">
       <div class="staging-banner" hidden>Staging: this is not the live site, pydocs.org.</div>
-      <div class="desktop-nav-bar"><Navbar path={path} stars={stars} /></div>
+      <div class="desktop-nav-bar"><Navbar path={path} home={home} stars={stars} /></div>
       <slot />
       <div class="sticky-push"></div>
     </div>

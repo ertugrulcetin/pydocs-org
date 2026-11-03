@@ -1,10 +1,120 @@
 ---
+// Home = ClojureDocs' intro page (pages/intro.clj). Example of the Day and
+// Recently Updated arrive with community content (Phase 4).
 import Main from '../layouts/Main.astro';
+import { homeCategories, homeModules } from '../lib/quickref';
+import { summary, symbolUrl, moduleUrl } from '../lib/data';
+import { githubStars } from '../lib/github';
+
+const stars = await githubStars();
+
+const short = (doc: string | null) => {
+  const s = summary(doc, 400);
+  return s.length > 40 ? `${s.slice(0, 40).trimEnd()}…` : s;
+};
 ---
 
-<Main bodyClass="intro-page">
+<Main bodyClass="intro-page" home stars={stars}>
   <div class="container">
-    <h1>PyDocs</h1>
-    <p>Community-powered documentation and examples for Python. Coming soon.</p>
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <div>
+          <div class="row">
+            <div class="col-md-12">
+              <section>
+                <h1>Community-powered documentation and examples for <a href="https://www.python.org">Python</a></h1>
+              </section>
+              <section>
+                <div class="search-widget">
+                  <div class="quick-lookup-wrapper">
+                    <form action="/search" autocomplete="off" class="search" method="get" role="search">
+                      <input autocomplete="off" autofocus class="form-control query" name="q" placeholder="Looking for?" type="text" aria-label="Search" />
+                    </form>
+                    <ul class="ac-results"></ul>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <section>
+                <div class="sec-head clearfix"><h5>Recently Updated</h5></div>
+                <p class="null-state">No contributions yet. Be the first!</p>
+              </section>
+            </div>
+            <div class="col-md-6">
+              <section class="contribute-teaser">
+                <div class="sec-head clearfix"><h5>Contribute to PyDocs</h5></div>
+                <p>Give feedback, add examples, or link related functions.</p>
+                <span class="sec-head-link"><a href="/contribute">Learn how to pitch in →</a></span>
+              </section>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <section class="core-index-section">
+                <div class="sec-head clearfix">
+                  <h5>Python, by purpose</h5>
+                  <span class="sec-head-link"><a href="/quickref">Full quick reference →</a></span>
+                </div>
+                <div class="sphere">
+                  {
+                    homeCategories.map((c) => {
+                      const syms = c.groups.flatMap((g) => g.symbols);
+                      return (
+                        <div class="category">
+                          <div class="category-header clearfix">
+                            <h3>
+                              {c.title}
+                              <span class="n">{c.count}</span>
+                            </h3>
+                          </div>
+                          <dl class="dl-horizontal">
+                            {syms.slice(0, 10).map((s) => (
+                              <div class="dl-row">
+                                <dt><a href={symbolUrl(s)} title={s.qualname}>{s.qualname}</a></dt>
+                                <dd>{short(s.doc)}</dd>
+                              </div>
+                            ))}
+                            {syms.length > 10 && (
+                              <div class="dl-row">
+                                <dt />
+                                <dd><a href={`/quickref#${c.slug}`}>+{syms.length - 10} more</a></dd>
+                              </div>
+                            )}
+                          </dl>
+                        </div>
+                      );
+                    })
+                  }
+                </div>
+              </section>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <section class="namespaces-section">
+                <div class="sec-head clearfix">
+                  <h5>More modules</h5>
+                  <span class="sec-head-link"><a href="/library">Browse all modules →</a></span>
+                </div>
+                <div class="namespace-cards">
+                  {
+                    homeModules.map(({ module: mod, highlights }) => (
+                      <div class="namespace-card">
+                        <h4><a href={moduleUrl(mod.name)}>{mod.name}</a></h4>
+                        <p class="doc">{mod.synopsis}</p>
+                        <p class="vars">{highlights.map((s) => <a href={symbolUrl(s)}>{s.qualname}</a>)}</p>
+                      </div>
+                    ))
+                  }
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </Main>

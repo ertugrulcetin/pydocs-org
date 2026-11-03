@@ -18,3 +18,30 @@ pre {
 .ns-page .copyright a {
   color: var(--text-faint);
 }
+
+/* ClojureDocs' home layout is ~10px wider than a 375px phone: the search
+   wrapper's negative margins exceed the container padding, and the grid columns
+   grow to fit unbreakable text. PLAN.md §1 requires no sideways scroll. */
+.intro-page .core-index-section .sphere {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+@media (max-width: 992px) {
+  .intro-page .core-index-section .sphere {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 767px) {
+  .intro-page .quick-lookup-wrapper {
+    margin-left: -15px;
+    margin-right: -15px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+
+/* Some Python names are long unbroken identifiers
+   (XML_ERROR_ATTRIBUTE_EXTERNAL_ENTITY_REF); let them wrap on phones. */
+.var-list li {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}

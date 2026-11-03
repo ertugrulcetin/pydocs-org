@@ -1,0 +1,69 @@
+---
+// Standard library overview = ClojureDocs' /core-library: modules grouped by
+// the docs.python.org library chapters, each with its synopsis.
+import Main from '../layouts/Main.astro';
+import { chapters, meta, moduleByName, moduleUrl } from '../lib/data';
+
+const slug = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const sections = chapters.map((c) => ({
+  ...c,
+  slug: slug(c.title),
+  modules: [...c.modules].sort().map((n) => moduleByName.get(n)!).filter(Boolean),
+}));
+---
+
+<Main title="Python Standard Library" description={`All ${meta.python} standard library modules, grouped by purpose.`} bodyClass="core-library-page">
+  <section slot="mobile-nav">
+    <h4>Chapters</h4>
+    <ul class="navbar-nav mobile-navbar-nav nav">
+      {sections.map((s) => <li><a href={`#${s.slug}`}>{s.title}</a></li>)}
+    </ul>
+  </section>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <div>
+          <div class="row">
+            <div class="col-sm-2 sidenav">
+              <div class="desktop-side-nav">
+                <div class="library-nav">
+                  <div class="library-section">
+                    <h5>Chapters</h5>
+                    <ul class="ns-tree">
+                      {sections.map((s) => <li><span><a href={`#${s.slug}`}>{s.title}</a></span></li>)}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-10">
+              <section class="markdown">
+                <h1>Python's Standard Library</h1>
+                <p>
+                  Python {meta.python} ships with {sections.reduce((n, s) => n + s.modules.length, 0)} documented modules, from string
+                  handling to networking. They are grouped below the same way as in the official library reference.
+                </p>
+                <p>We also have a <a href="/library/all">page listing every function, class, and constant</a>, and a <a href="/quickref">quick reference by purpose</a>.</p>
+              </section>
+              {
+                sections.map((s) => (
+                  <section class="markdown">
+                    <h2 id={s.slug}>{s.title}</h2>
+                    <dl class="dl-horizontal">
+                      {s.modules.map((mod) => (
+                        <div class="dl-row">
+                          <dt class="name"><a href={moduleUrl(mod.name)}>{mod.name}</a></dt>
+                          <dd class="doc">{mod.synopsis}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </section>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Main>

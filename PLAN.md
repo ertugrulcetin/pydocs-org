@@ -432,14 +432,14 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
   - `implDetail` means the docs include a CPython implementation-detail note, not that the symbol is CPython-only (e.g. `len`). So it shows as a small note under the docstring, not as a badge.
   - Docs links follow the 3.15 layout: built-ins moved to `docs.python.org/3.15/builtins/`.
 - [x] Module page with sidebar tree (by chapter) and symbols grouped by letter with one-line doc (2026-11-03). The page lists top-level symbols only; methods are on their class page. The sidebar and mobile menu show only the current chapter's ns-tree plus "All modules": listing all 320 modules on every one of 11.5k pages would bloat the HTML. Checked against ClojureDocs with screenshots at 1280 and 375 px.
-- [ ] `/library` and `/library/all`
-- [ ] Home: static parts (headline, search, builtins by purpose, More modules, contribute teaser)
-- [ ] Quickref: write `quickref.yaml` (original Python categories) + page with sticky TOC
+- [x] `/library` and `/library/all` (2026-11-03). `/library` groups modules by docs chapter, each with its synopsis. `/library/all` lists every module's top-level symbols (about 480 KB of HTML).
+- [x] Home: static parts (headline, search, builtins by purpose, More modules, contribute teaser) (2026-11-03). The navbar shows the Python version and GitHub stars (fetched at build time), as ClojureDocs does. "Python, by purpose" shows 4 quickref categories (Strings, Lists, Dictionaries, Iteration).
+- [x] Quickref (2026-11-03): `site/src/content/quickref.ts` is typed TS rather than YAML, so a wrong id fails the build. 7 spheres, 22 categories, 500 symbols, original Python grouping. Page with TOC. The TOC isn't sticky yet (goes with the sticky sidenav work).
 - [ ] Search: index generator; autocomplete with every ClojureDocs shortcut; `/search` results page with pagination
 - [ ] Prism with token colors mapped to ClojureDocs' `--syntax-*` variables
 - [ ] `/examples-styleguide`, `/contribute`, 404, 500
 - [ ] SEO: titles ("{name} - {module} | PyDocs - Community-Powered Python Documentation and Examples"), meta, OG/Twitter, canonical, JSON-LD, `sitemap.xml`, `robots.txt`, `opensearch.xml`
-- [ ] Playwright screenshot diff of home, symbol, module, quickref, and search against the matching ClojureDocs pages at **three widths: 375 px (phone), 768 px (tablet), 1280 px (desktop)** (acceptance check for "exact same UI"). Also open the mobile menu at 375 px. Fail if any page scrolls sideways at 375 px.
+- [ ] Playwright screenshot diff of home, symbol, module, quickref, and search against the matching ClojureDocs pages at **three widths: 375 px (phone), 768 px (tablet), 1280 px (desktop)** (acceptance check for "exact same UI"). Also open the mobile menu at 375 px. Fail if any page scrolls sideways at 375 px. Checked by hand 2026-11-03 for every page type. ClojureDocs' own home page is 10 px too wide on phones (negative margins on the search wrapper), so `pydocs.css` fixes that, plus wrapping for long names like `XML_ERROR_ATTRIBUTE_EXTERNAL_ENTITY_REF`.
 
 ### Phase 3: GitHub auth
 - [ ] `worker/auth.ts`: `/auth/login`, `/auth/callback`, `/auth/logout`: state cookie, code exchange, `/user`, account-age check, upsert `users/` and `logins/`

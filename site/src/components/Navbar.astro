@@ -1,15 +1,17 @@
 ---
 // Port of ClojureDocs' $navbar (pages/common.clj). It is rendered twice per page,
 // inside .mobile-nav-bar and .desktop-nav-bar; the CSS shows one per screen width.
-import { SITE_NAME, REPO_URL, loginHref } from '../lib/site';
+import { SITE_NAME, REPO_URL, PYTHON_VERSION, loginHref } from '../lib/site';
 
 interface Props {
   /** Current path, for the "Log In" return link. */
   path: string;
-  /** GitHub stars count; shown on the home page only (PLAN.md §5 #2). */
+  /** Home page variant (ClojureDocs): version + GitHub stars, no navbar search (the page has its own). */
+  home?: boolean;
+  /** GitHub stars count, home page only (PLAN.md §5 #2). */
   stars?: number | undefined;
 }
-const { path, stars } = Astro.props;
+const { path, home = false, stars } = Astro.props;
 ---
 
 <header class="navbar">
@@ -22,12 +24,11 @@ const { path, stars } = Astro.props;
         </button>
         <ul class="navbar-nav nav navbar-right desktop-navbar-nav">
           {
-            stars !== undefined && (
+            home && (
               <li>
-                <a class="gh-stars" href={REPO_URL} rel="noopener" target="_blank">
-                  <i class="fa fa-star" />
-                  {stars}
-                </a>
+                <div class="navbar-brand clojure-version">
+                  <a href={`https://github.com/python/cpython/tree/v${PYTHON_VERSION}`}>{PYTHON_VERSION}</a>
+                </div>
               </li>
             )
           }
@@ -36,19 +37,29 @@ const { path, stars } = Astro.props;
           <li data-user-area>
             <a href={loginHref(path)}><i class="fa fa-github-square"></i>Log In</a>
           </li>
+          {
+            home && stars !== undefined && (
+              <li>
+                <a class="gh-stars" href={REPO_URL} rel="noopener" target="_blank">
+                  <i class="fa fa-star" />
+                  {stars}
+                </a>
+              </li>
+            )
+          }
         </ul>
-        <div class="nav-search-widget navbar-right navbar-form">
+        {!home && (<div class="nav-search-widget navbar-right navbar-form">
           <form action="/search" autocomplete="off" class="search" method="get" role="search">
             <input
               autocomplete="off"
-              class="placeholder form-control"
+              class="form-control query"
               name="q"
               placeholder="Looking for? (ctrl-s)"
               type="text"
               aria-label="Search"
             />
           </form>
-        </div>
+        </div>)}
       </div>
     </div>
     <div class="row">

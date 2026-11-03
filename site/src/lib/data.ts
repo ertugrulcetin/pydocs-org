@@ -109,9 +109,14 @@ export const fullName = (s: Pick<PySymbol, 'module' | 'qualname'>): string =>
   s.module === 'builtins' ? s.qualname : `${s.module}.${s.qualname}`;
 
 /** First sentence (or line) of a docstring, for listings and meta descriptions. */
+const SIGNATURE_LINE = /^[\w.]+\(.*\)\s*(->.*)?$/;
+
 export const summary = (doc: string | null | undefined, max = 200): string => {
   if (!doc) return '';
-  const para = doc.trim().split(/\n\s*\n/)[0]!.replace(/\s+/g, ' ');
+  // Docstrings of C types often start with signature lines ("str(object='') -> str"); skip them.
+  const lines = doc.trim().split('\n');
+  while (lines.length > 1 && SIGNATURE_LINE.test(lines[0]!.trim())) lines.shift();
+  const para = lines.join('\n').trim().split(/\n\s*\n/)[0]!.replace(/\s+/g, ' ');
   const m = para.match(/^.*?[.!?](?=\s|$)/);
   const s = m ? m[0] : para;
   return s.length > max ? `${s.slice(0, max - 1)}…` : s;
