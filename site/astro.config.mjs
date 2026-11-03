@@ -13,4 +13,7 @@ export default defineConfig({
   build: { format: 'file' },
   trailingSlash: 'never',
   integrations: [preact(), indexPages(), caseCheck()],
+  // Never inline scripts: shared files are cached across 11.5k pages, and the
+  // CSP (PLAN.md §11) allows scripts from self only.
+  vite: { build: { assetsInlineLimit: 0 } },
 });

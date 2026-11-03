@@ -2,16 +2,9 @@
 // ClojureDocs' keys: ctrl-s focuses, ↑/↓ and ctrl-n/ctrl-p move, Esc cancels,
 // Enter opens the highlighted result (or /search when nothing matches).
 // Markup matches ClojureDocs' mods/search.cljs so the reused CSS applies.
-import { ellipsis, prepare, search } from './search-core';
-import type { AcRow, Entry, Prepared } from './search-core';
-
-const meta = (name: string) => document.querySelector<HTMLMetaElement>(`meta[name="${name}"]`)?.content;
-
-let index: Promise<Prepared> | undefined;
-export const loadIndex = (): Promise<Prepared> =>
-  (index ??= fetch(meta('pydocs:search-ac') ?? '/search-index/ac.json')
-    .then((r) => r.json() as Promise<AcRow[]>)
-    .then(prepare));
+import { ellipsis, search } from './search-core';
+import type { Entry } from './search-core';
+import { loadIndex } from './search-index-client';
 
 const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);

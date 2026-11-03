@@ -1,7 +1,7 @@
 // /search?q=…&page=… results, rendered in the browser from the static index
 // (ClojureDocs' search-page-handler: 10 per page, prev/next, arglists, doc cut
 // at 300 chars, example count).
-import { loadIndex } from './search-ui';
+import { loadIndex } from './search-index-client';
 import { search } from './search-core';
 
 const PER_PAGE = 10;

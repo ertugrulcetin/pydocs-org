@@ -2,7 +2,7 @@
 // Symbol page = ClojureDocs' var page (pages/vars.clj). URL: /{module}/{qualname}.
 import Main from '../../layouts/Main.astro';
 import SymbolHeader from '../../components/SymbolHeader.astro';
-import CommunityWidgets from '../../components/CommunityWidgets.astro';
+import Community from '../../islands/Community';
 import LibraryNav from '../../components/LibraryNav.astro';
 import ChapterMobileNav from '../../components/ChapterMobileNav.astro';
 import SymbolList from '../../components/SymbolList.astro';
@@ -42,9 +42,9 @@ const jsonLd = {
       <h4>Nav</h4>
       <ul class="navbar-nav mobile-navbar-nav nav">
         <li><a href="#">Top</a></li>
-        <li><a href="#examples">Examples <span class="examples-count"><span class="badge">{counts.examples}</span></span></a></li>
-        <li><a href="#see-also">See Also <span class="badge">{counts.seeAlsos}</span></a></li>
-        {counts.notes > 0 && <li><a href="#notes">Notes <span class="badge">{counts.notes}</span></a></li>}
+        <li><a href="#examples">Examples <span class="examples-count"><span class="badge" data-count="examples">{counts.examples}</span></span></a></li>
+        <li><a href="#see-also">See Also <span class="badge" data-count="see-also">{counts.seeAlsos}</span></a></li>
+        <li data-count-item="notes" hidden={counts.notes === 0}><a href="#notes">Notes <span class="badge" data-count="notes">{counts.notes}</span></a></li>
       </ul>
     </section>
     <ChapterMobileNav module={s.module} />
@@ -62,9 +62,9 @@ const jsonLd = {
                     <h5>Nav</h5>
                     <ul>
                       <li><a href="#">Top</a></li>
-                      <li><a href="#examples">Examples <span class="badge">{counts.examples}</span></a></li>
-                      <li><a href="#see-also">See Also <span class="badge">{counts.seeAlsos}</span></a></li>
-                      {counts.notes > 0 && <li><a href="#notes">Notes<span class="badge">{counts.notes}</span></a></li>}
+                      <li><a href="#examples">Examples <span class="badge" data-count="examples">{counts.examples}</span></a></li>
+                      <li><a href="#see-also">See Also <span class="badge" data-count="see-also">{counts.seeAlsos}</span></a></li>
+                      <li data-count-item="notes" hidden={counts.notes === 0}><a href="#notes">Notes<span class="badge" data-count="notes">{counts.notes}</span></a></li>
                     </ul>
                   </div>
                 </div>
@@ -106,11 +106,16 @@ const jsonLd = {
                 )
               }
               {members.length > 0 && <SymbolList heading={`Members of ${s.qualname}`} symbols={members} stripPrefix={`${s.qualname}.`} />}
-              <CommunityWidgets symbol={s} />
+              <div id="community" data-sid={s.id} data-initial="null" data-see-also-docs="{}">
+                <Community sid={s.id} initial={null} />
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <script>
+    import '../../scripts/community-mount.ts';
+  </script>
 </Main>

@@ -89,7 +89,7 @@ So we use **one Cloudflare Worker with static assets**: the static site and a sm
 | Site generator | **Astro** (static output) | Pre-renders 12k pages fast. Ships zero JS by default. "Islands" only where needed. |
 | Interactive widgets | **Preact** islands + TypeScript | Small (~4 KB). Same model as ClojureDocs' Reagent/React widgets. |
 | CSS | **Ported ClojureDocs CSS** + Bootstrap 3 + Font Awesome 4 (the same versions they use) | "Exact same UI" with the least effort. Light/dark via CSS variables, as they do. |
-| Python syntax highlight | **Prism** (build time and client) | Tiny. One highlighter for baked and live content. Token colors mapped to ClojureDocs' `--syntax-*` variables. |
+| Python syntax highlight | **Small custom tokenizer** (`site/src/lib/highlight.ts`, build time and client); replaced Prism on 2026-11-03 | No dependency, about 60 lines. One highlighter for baked and live content. Emits ClojureDocs' `tok-*` classes, including bracket depth, so the reused CSS colors it. |
 | Markdown (notes) | **marked** + **DOMPurify** (strict allowlist) | ClojureDocs uses marked. Sanitizing is required for user HTML. |
 | Search | Prebuilt JSON index + small custom ranker (or MiniSearch) | Fully static. Lazy-loaded when the search box gets focus. |
 | Backend | **One Cloudflare Worker** (TypeScript, small router), with the site as its static assets | Free. One deploy for site and API. Native R2 binding. |
@@ -468,15 +468,22 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
 - [x] Real login checked on pydocs.org with `wrangler tail` (2026-11-03): login → GitHub → callback → "login ok", and the user records appear on data.pydocs.org. GitHub now also sends an `iss` parameter on the callback (RFC 9207); it is ignored.
 
 ### Phase 4: Community content
-- [ ] `shared/` zod schemas + ClojureDocs error messages
-- [ ] R2 data layer: get/put with ETag retry, ULIDs, side writes, audit records
-- [ ] API endpoints (§8) with the permission matrix (§7.3), limits, and the ban check
-- [ ] Examples island: list, avatars (max 7 + "N more"), link/edit/delete + confirm, hash highlight, tabbed editor with Live Preview, CC0 notice, errors, spinner
-- [ ] See-alsos island: list with doc excerpt, add with autocomplete, validation states ("This Var", "Already Exists", "Can't Add"), delete
-- [ ] Notes island: markdown editor with live preview, edit/delete, sanitize
-- [ ] Live refresh: fetch the symbol JSON after load and re-render if `updatedAt` changed
+- [x] Validation and ClojureDocs error messages, in the Worker (`site/worker/community.ts`) rather than `shared/` zod schemas: only the Worker validates, and the UI shows its messages as they come back.
+- [x] R2 data layer: get/put with ETag retry (`r2json.ts`), ULIDs (`ulid.ts`), side writes and audit records (`community.ts`).
+  - A deleted example is removed from the public symbol doc and its public history is emptied; the private audit record keeps the full text, so an admin can restore it. The `deletedAt` field from §7.2 is therefore not used.
+- [x] API endpoints (§8) with the permission matrix (§7.3), limits, account age, rate limit and ban check. 10 tests (`tests/community.test.ts`).
+- [x] Examples, See Also and Notes widgets (2026-11-03): one Preact component (`src/islands/Community.tsx`) ported from examples.cljs, see_alsos.cljs and notes.cljs, with the same markup, classes and copy.
+  - Examples: contributor avatars (up to 7, then "+ N more"), link / history / edit / delete with "confirm delete?", and hash highlight.
+  - Editor: Editor/Preview tabs, an 80-column guide, the CC0 notice, errors and a spinner. Tab inserts 4 spaces; Ctrl/Cmd+Enter submits.
+  - See Also: autocomplete from the search index, with "This Symbol" / "Already Exists" states.
+  - Notes: markdown (marked) sanitized with DOMPurify. Both load only when a note is shown.
+  - The component is rendered at build time and hydrated by one shared script (`community-mount.ts`). Astro's island runtime would inline about 5 KB into every page and break the self-only CSP. All scripts are external (`assetsInlineLimit: 0`).
+- [x] Syntax highlighting: a small Python tokenizer (`src/lib/highlight.ts`) that emits ClojureDocs' `tok-*` classes (comment, string, keyword, builtin, def, bracket depth), used at build time and in the browser. It replaces Prism (§3), which had no bracket-depth tokens.
+- [x] Live refresh: fetch the symbol JSON after load and re-render if `updatedAt` changed. Production reads `data.pydocs.org` (path A), other hosts use `/api/s/` (path B). A doc you just wrote, kept in sessionStorage, wins over a CDN copy up to 60 s old. Nav counts update live.
+- [x] Browser test (22 steps, fake API with the Worker's rules): add/edit/delete, errors, keys, preview, see-alsos, notes, XSS, phone width.
 - [ ] `/ex/{id}` history page; `/u/{login}` user page
 - [ ] Home: Example of the Day (from the bake) + Recently Updated (baked, then live)
+- [ ] Check the real flow on pydocs.org with a logged-in user (add, edit and delete an example)
 
 ### Phase 5: Build pipeline, bake, export, backup
 - [~] `deploy.yml`: on push + nightly cron. First version added 2026-11-03: on push to `master`, it runs the extractor tests, builds on Linux, checks the file count and deploys with `wrangler deploy`. First CI deploy 2026-11-03: 11,545 pages live on pydocs.org. Secrets `CLOUDFLARE_API_TOKEN` ("Edit Cloudflare Workers" template, scoped to the account and the pydocs.org zone) and `CLOUDFLARE_ACCOUNT_ID` are set. Still to add: nightly cron → (reuse committed data) → R2 snapshot (rclone/S3, read-only key) → bake → Astro build → file-count check → `wrangler deploy`
