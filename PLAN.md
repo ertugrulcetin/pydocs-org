@@ -448,7 +448,7 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
 - [ ] Playwright screenshot diff of home, symbol, module, quickref, and search against the matching ClojureDocs pages at **three widths: 375 px (phone), 768 px (tablet), 1280 px (desktop)** (acceptance check for "exact same UI"). Also open the mobile menu at 375 px. Fail if any page scrolls sideways at 375 px. Checked by hand 2026-11-03 for every page type. ClojureDocs' own home page is 10 px too wide on phones (negative margins on the search wrapper), so `pydocs.css` fixes that, plus wrapping for long names like `XML_ERROR_ATTRIBUTE_EXTERNAL_ENTITY_REF`.
 
 ### Phase 3: GitHub auth
-Code done 2026-11-03 (`site/worker/`). Live once the prod OAuth app's `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` are Worker secrets.
+Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first real login wrote `users/8271291.json` and `logins/ertugrulcetin.json`.
 - [x] `worker/auth.ts`: `/auth/login`, `/auth/callback`, `/auth/logout`.
   - State is a random token in a 10-minute `pd_oauth` cookie (Path=/auth), compared in constant time.
   - The code exchange uses no scopes (public profile only), then one `GET /user`; the GitHub token is dropped after that call.
@@ -465,7 +465,7 @@ Code done 2026-11-03 (`site/worker/`). Live once the prod OAuth app's `GITHUB_CL
   - concurrent writes
   - renames
 - [ ] Local dev: `wrangler dev` with local R2 + the dev OAuth app. `site/.dev.vars` (git-ignored) is created with a random `SESSION_SECRET`; fill in the dev app's id and secret. `wrangler dev` doesn't start from Claude's shell (EBADF), so this needs a check in your own terminal.
-- [ ] Verify the real login on pydocs.org once the prod secrets are set.
+- [x] Real login checked on pydocs.org with `wrangler tail` (2026-11-03): login → GitHub → callback → "login ok", and the user records appear on data.pydocs.org. GitHub now also sends an `iss` parameter on the callback (RFC 9207); it is ignored.
 
 ### Phase 4: Community content
 - [ ] `shared/` zod schemas + ClojureDocs error messages
