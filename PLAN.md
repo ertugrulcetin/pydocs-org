@@ -427,8 +427,11 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
 - [ ] `Main` layout: head/meta, desktop and mobile navbars, mobile slide-out menu, footer, staging banner, light/dark
 - [ ] Mobile: port ClojureDocs' markup (`mobile-nav-bar`, `btn mobile-menu`, `mobile-nav-menu`, `mobile-push-wrapper`) and its menu-toggle script as a tiny vanilla script, so it works before any island loads. The per-page "Nav" section links to Examples / See Also / Notes with count badges. Check tap targets and that code blocks scroll sideways inside their box, never the whole page.
 - [ ] Port the CSS. Keep ClojureDocs' class names: `var-header`, `arglists`, `docstring`, `var-example`, `example-meta`, `sidenav`, `library-nav`, `ns-tree`, `dl-horizontal`, `quickref-*`, …
-- [ ] Symbol page: header, badges, signatures, docstring + PSF line, sticky sidenav with counts, widget placeholders, recent pages (localStorage)
-- [ ] Module page with sidebar tree (by chapter) and symbols grouped by letter with one-line doc
+- [~] Symbol page: header, badges, signatures, docstring + PSF line, sticky sidenav with counts, widget placeholders, recent pages (localStorage). Done 2026-11-03 except recent pages and sticky behavior. Python adaptations:
+  - Class and exception pages list their members (methods and attributes) in the same letter-grouped layout as module pages.
+  - `implDetail` means the docs include a CPython implementation-detail note, not that the symbol is CPython-only (e.g. `len`). So it shows as a small note under the docstring, not as a badge.
+  - Docs links follow the 3.15 layout: built-ins moved to `docs.python.org/3.15/builtins/`.
+- [x] Module page with sidebar tree (by chapter) and symbols grouped by letter with one-line doc (2026-11-03). The page lists top-level symbols only; methods are on their class page. The sidebar and mobile menu show only the current chapter's ns-tree plus "All modules": listing all 320 modules on every one of 11.5k pages would bloat the HTML. Checked against ClojureDocs with screenshots at 1280 and 375 px.
 - [ ] `/library` and `/library/all`
 - [ ] Home: static parts (headline, search, builtins by purpose, More modules, contribute teaser)
 - [ ] Quickref: write `quickref.yaml` (original Python categories) + page with sticky TOC
@@ -456,7 +459,7 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
 - [ ] Home: Example of the Day (from the bake) + Recently Updated (baked, then live)
 
 ### Phase 5: Build pipeline, bake, export, backup
-- [ ] `deploy.yml`: on push + nightly cron → (reuse committed data) → R2 snapshot (rclone/S3, read-only key) → bake → Astro build → file-count check → `wrangler deploy`
+- [~] `deploy.yml`: on push + nightly cron. First version added 2026-11-03: on push to `master`, it runs the extractor tests, builds on Linux, checks the file count and deploys with `wrangler deploy` (skipped until the `CLOUDFLARE_API_TOKEN` secret exists). Still to add: nightly cron → (reuse committed data) → R2 snapshot (rclone/S3, read-only key) → bake → Astro build → file-count check → `wrangler deploy`
 - [ ] Bake: community content into HTML, example counts + see-alsos into the search index, "Still need an example" list, Example of the Day
 - [ ] `rebuild-indexes.ts` nightly
 - [ ] `export.json` (CC0) published on the site + committed to the `pydocs-data` repo (versioned backup)
@@ -499,6 +502,7 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
 | Platform-only modules can't be imported on the Linux runner | Missing docstrings | Fall back to docs text |
 | Empty site at launch | Low value at first | Seeding (Q4) |
 | Dotted URLs on static assets | Broken routing | Spike passed (§4). Pages named `index` use the `_idx` rewrite. |
+| 29 symbol ids differ only in case (`logging/DEBUG` vs `logging/debug`) | On a case-insensitive disk (macOS) one page overwrites the other | URLs stay case-sensitive. The build warns on such disks, `npm run deploy` refuses to run there, and production deploys come from CI on Linux. ⚠️ Check that Cloudflare serves both pages after the first CI deploy. |
 | EPL obligations for the ported UI | License compliance | Public repo + EPL notice (§17) |
 
 ---
