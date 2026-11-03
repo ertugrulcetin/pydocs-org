@@ -1,0 +1,40 @@
+---
+// Examples / See Also / Notes sections with ClojureDocs' markup and copy
+// (examples.cljs, see_alsos.cljs, notes.cljs). Phase 2 renders the empty state;
+// Phase 4 bakes real content here and the islands take over in the browser.
+import type { PySymbol } from '../lib/data';
+
+interface Props {
+  symbol: PySymbol;
+}
+const { symbol: s } = Astro.props;
+const pluralize = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+---
+
+<section>
+  <div class="examples-widget" id="examples">
+    <div class="var-examples">
+      <h5>{pluralize(0, 'Example', 'Examples')}</h5>
+      <div class="null-state">No examples for {s.module}/{s.qualname}.</div>
+      <div class="login-required-message">Log in to add an example</div>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="see-alsos-widget" id="see-also">
+    <div>
+      <h5>See Also</h5>
+      <div class="null-state">No see-alsos for <code>{s.module}/{s.qualname}</code></div>
+      <div class="login-required-message">Log in to add a see-also</div>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="notes-widget" id="notes">
+    <div class="var-notes">
+      <h5>{pluralize(0, 'Note', 'Notes')}</h5>
+      <div><div class="null-state">No notes for <code>{s.qualname}</code></div></div>
+      <div class="login-required-message">Log in to add a note</div>
+    </div>
+  </div>
+</section>

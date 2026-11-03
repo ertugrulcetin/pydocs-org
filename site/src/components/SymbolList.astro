@@ -1,0 +1,36 @@
+---
+// ClojureDocs' var-group listing (ns page): symbols grouped by first letter,
+// each with its one-line doc.
+import type { PySymbol } from '../lib/data';
+import { byFirstLetter, summary, symbolUrl } from '../lib/data';
+
+interface Props {
+  heading: string;
+  symbols: PySymbol[];
+  /** Strip this prefix from displayed names (e.g. "Counter." on the Counter page). */
+  stripPrefix?: string;
+}
+const { heading, symbols, stripPrefix = '' } = Astro.props;
+const label = (s: PySymbol) => (stripPrefix && s.qualname.startsWith(stripPrefix) ? s.qualname.slice(stripPrefix.length) : s.qualname);
+---
+
+<section>
+  <h5>{heading}</h5>
+  {
+    byFirstLetter(symbols, label).map(([letter, group]) => (
+      <div class="var-group">
+        <h4 class="heading">{letter}</h4>
+        <dl class="dl-horizontal">
+          {group.map((s) => (
+            <div class="dl-row">
+              <dt class="name">
+                <a href={symbolUrl(s)}>{label(s)}</a>
+              </dt>
+              <dd class="doc">{summary(s.doc)}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    ))
+  }
+</section>

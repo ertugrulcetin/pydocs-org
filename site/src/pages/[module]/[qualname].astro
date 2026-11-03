@@ -1,0 +1,116 @@
+---
+// Symbol page = ClojureDocs' var page (pages/vars.clj). URL: /{module}/{qualname}.
+import Main from '../../layouts/Main.astro';
+import SymbolHeader from '../../components/SymbolHeader.astro';
+import CommunityWidgets from '../../components/CommunityWidgets.astro';
+import LibraryNav from '../../components/LibraryNav.astro';
+import ChapterMobileNav from '../../components/ChapterMobileNav.astro';
+import SymbolList from '../../components/SymbolList.astro';
+import type { PySymbol } from '../../lib/data';
+import { fullName, membersByParent, summary, symbols, symbolUrl } from '../../lib/data';
+import { SITE_URL } from '../../lib/site';
+
+export function getStaticPaths() {
+  return symbols.map((symbol) => ({
+    params: { module: symbol.module, qualname: symbol.qualname },
+    props: { symbol },
+  }));
+}
+
+interface Props {
+  symbol: PySymbol;
+}
+const { symbol: s } = Astro.props;
+const members = membersByParent.get(s.id) ?? [];
+const doc = s.doc ?? '';
+// Phase 4 fills these from the baked community content.
+const counts = { examples: 0, seeAlsos: 0, notes: 0 };
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareSourceCode',
+  name: fullName(s),
+  description: summary(doc, 300),
+  url: `${SITE_URL}${symbolUrl(s)}`,
+  programmingLanguage: 'Python',
+  codeRepository: 'https://github.com/python/cpython',
+};
+---
+
+<Main title={`${s.qualname} - ${s.module}`} description={summary(doc) || fullName(s)} bodyClass="var-page" jsonLd={jsonLd}>
+  <Fragment slot="mobile-nav">
+    <section>
+      <h4>Nav</h4>
+      <ul class="navbar-nav mobile-navbar-nav nav">
+        <li><a href="#">Top</a></li>
+        <li><a href="#examples">Examples <span class="examples-count"><span class="badge">{counts.examples}</span></span></a></li>
+        <li><a href="#see-also">See Also <span class="badge">{counts.seeAlsos}</span></a></li>
+        {counts.notes > 0 && <li><a href="#notes">Notes <span class="badge">{counts.notes}</span></a></li>}
+      </ul>
+    </section>
+    <ChapterMobileNav module={s.module} />
+  </Fragment>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <div>
+          <div class="row">
+            <div class="col-sm-2 sidenav">
+              <div class="desktop-side-nav">
+                <div class="var-page-nav">
+                  <div>
+                    <h5>Nav</h5>
+                    <ul>
+                      <li><a href="#">Top</a></li>
+                      <li><a href="#examples">Examples <span class="badge">{counts.examples}</span></a></li>
+                      <li><a href="#see-also">See Also <span class="badge">{counts.seeAlsos}</span></a></li>
+                      {counts.notes > 0 && <li><a href="#notes">Notes<span class="badge">{counts.notes}</span></a></li>}
+                    </ul>
+                  </div>
+                </div>
+                <LibraryNav module={s.module} />
+              </div>
+            </div>
+            <div class="col-sm-10">
+              <SymbolHeader symbol={s} />
+              {
+                s.deprecated && (
+                  <div class="alert alert-warning deprecation-notice">
+                    <strong>Deprecated{s.deprecated.version ? ` since ${s.deprecated.version}` : ''}{s.deprecated.removedIn ? `, removed in ${s.deprecated.removedIn}` : ''}.</strong> {s.deprecated.text}
+                  </div>
+                )
+              }
+              <section>
+                <div class="docstring">
+                  {doc ? <pre>{doc}</pre> : <pre class="null-state">No docstring. See the official docs.</pre>}
+                  <div class="copyright">
+                    © Python Software Foundation. <a href="https://docs.python.org/3/license.html">PSF License Version 2</a> · <a href={s.docsUrl}>Official docs ↗</a>
+                  </div>
+                  {s.implDetail && <p class="impl-detail-note">The official docs include a CPython implementation detail for this entry.</p>}
+                </div>
+              </section>
+              {
+                s.changed.length > 0 && (
+                  <section>
+                    <details class="changed-in">
+                      <summary>Changed in {s.changed.map((c) => c.version).join(', ')}</summary>
+                      <ul>
+                        {s.changed.map((c) => (
+                          <li>
+                            <strong>{c.version}:</strong> {c.text}
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  </section>
+                )
+              }
+              {members.length > 0 && <SymbolList heading={`Members of ${s.qualname}`} symbols={members} stripPrefix={`${s.qualname}.`} />}
+              <CommunityWidgets symbol={s} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Main>

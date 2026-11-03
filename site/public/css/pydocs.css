@@ -6,3 +6,15 @@ pre {
   overflow-x: auto;
   max-width: 100%;
 }
+
+/* Same look as ClojureDocs' .var-page .docstring .copyright, reused on module
+   pages and for the CPython implementation-detail note. */
+.ns-page .copyright,
+.var-page .impl-detail-note {
+  text-align: right;
+  font-size: 10px;
+  color: var(--text-faint);
+}
+.ns-page .copyright a {
+  color: var(--text-faint);
+}

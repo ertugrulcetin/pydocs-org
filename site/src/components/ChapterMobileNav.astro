@@ -1,0 +1,28 @@
+---
+// Mobile slide-out menu section listing the modules of the current chapter
+// (ClojureDocs lists all namespaces there; see LibraryNav for why we don't).
+import { chapterOf, moduleUrl } from '../lib/data';
+
+interface Props {
+  module: string;
+}
+const chapter = chapterOf(Astro.props.module);
+---
+
+{
+  chapter && (
+    <section>
+      <h4>{chapter.title}</h4>
+      <ul class="navbar-nav mobile-navbar-nav nav">
+        {[...chapter.modules].sort().map((m) => (
+          <li>
+            <a href={moduleUrl(m)}>{m}</a>
+          </li>
+        ))}
+        <li>
+          <a href="/library">All modules</a>
+        </li>
+      </ul>
+    </section>
+  )
+}

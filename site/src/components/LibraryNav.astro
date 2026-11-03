@@ -1,0 +1,27 @@
+---
+// Port of ClojureDocs' $library-nav. ClojureDocs lists every namespace (about
+// 40); with 320 Python modules we show only the current module's library
+// chapter, plus a link to the full list (PLAN.md §5 #7).
+import NsTree from './NsTree.astro';
+import { chapterOf, moduleTree } from '../lib/data';
+
+interface Props {
+  module: string;
+}
+const { module } = Astro.props;
+const chapter = chapterOf(module);
+---
+
+<div class="library-nav">
+  {
+    chapter && (
+      <div class="library-section">
+        <h5>{chapter.title}</h5>
+        <NsTree nodes={moduleTree(chapter.modules)} current={module} />
+      </div>
+    )
+  }
+  <div class="library-section">
+    <h5><a href="/library">All modules</a></h5>
+  </div>
+</div>

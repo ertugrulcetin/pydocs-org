@@ -1,0 +1,47 @@
+---
+// Port of ClojureDocs' $var-header (pages/vars.clj), adapted to Python
+// (PLAN.md §5 #8–9): kind, "Added in", source link, and availability /
+// deprecated badges in place of dialect badges.
+import type { PySymbol } from '../lib/data';
+import { meta, moduleUrl, symbolById, symbolUrl } from '../lib/data';
+
+interface Props {
+  symbol: PySymbol;
+}
+const { symbol: s } = Astro.props;
+const parent = s.parent ? symbolById.get(s.parent) : undefined;
+const kindLabel = `${s.isAsync ? 'async ' : ''}${s.kind}`;
+const sourceUrl = s.source ? `${meta.sourceBaseUrl}${s.source.path}#L${s.source.line}` : null;
+---
+
+<div class="row var-header">
+  <div class="col-sm-8"><h1 class="var-name">{s.qualname}</h1></div>
+  <div class="col-sm-4">
+    <div class="var-meta">
+      <h4><a href={moduleUrl(s.module)}>{s.module}</a></h4>
+      <span class="symbol-kind">
+        {kindLabel}
+        {parent && <> of <a href={symbolUrl(parent)}>{parent.qualname}</a></>}
+      </span>
+      {s.added && <span> · Added in {s.added}</span>}
+      {sourceUrl && <span class="source-link"> (<a href={sourceUrl}>source</a>) </span>}
+      <span class="dialect-badges">
+        {s.deprecated && <span class="label label-danger" title={s.deprecated.text}>Deprecated{s.deprecated.version ? ` ${s.deprecated.version}` : ''}</span>}
+        {s.availability.map((a) => <span class="label label-info" title={`Availability: ${a}`}>{a}</span>)}
+      </span>
+    </div>
+  </div>
+  {
+    s.signatures.length > 0 && (
+      <div class="col-sm-12">
+        <section>
+          <ul class="arglists">
+            {s.signatures.map((sig) => (
+              <li class="arglist">{sig}</li>
+            ))}
+          </ul>
+        </section>
+      </div>
+    )
+  }
+</div>

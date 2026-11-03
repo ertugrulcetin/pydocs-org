@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import preact from '@astrojs/preact';
 import indexPages from './integrations/index-pages.mjs';
+import caseCheck from './integrations/case-check.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,5 +12,5 @@ export default defineConfig({
   // Workers static assets at clean URLs with no trailing slash. See PLAN.md §4.
   build: { format: 'file' },
   trailingSlash: 'never',
-  integrations: [preact(), indexPages()],
+  integrations: [preact(), indexPages(), caseCheck()],
 });

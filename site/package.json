@@ -9,7 +9,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro build && wrangler dev",
-    "deploy": "astro build && wrangler deploy",
+    "deploy": "node scripts/assert-case-sensitive.mjs && astro build && wrangler deploy",
     "cf-typegen": "wrangler types",
     "typecheck:worker": "wrangler types && tsc -p worker",
     "astro": "astro"
@@ -20,6 +20,7 @@
     "preact": "^11.1.1"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.1",
     "typescript": "7.0.2",
     "wrangler": "4.156.2"
   },

@@ -1,0 +1,26 @@
+---
+// ClojureDocs' ns-tree: nested <ul> of dotted module names. Nodes that are the
+// current module or one of its parents get span.current.
+import type { TreeNode } from '../lib/data';
+import { moduleUrl } from '../lib/data';
+
+interface Props {
+  nodes: TreeNode[];
+  current: string;
+}
+const { nodes, current } = Astro.props;
+const isCurrent = (n: TreeNode) => current === n.fullName || current.startsWith(`${n.fullName}.`);
+---
+
+<ul class="ns-tree">
+  {
+    nodes.map((n) => (
+      <li>
+        <span class={isCurrent(n) ? 'current' : undefined}>
+          {n.isModule ? <a href={moduleUrl(n.fullName)}>{n.segment}</a> : n.segment}
+        </span>
+        {n.children.length > 0 && <Astro.self nodes={n.children} current={current} />}
+      </li>
+    ))
+  }
+</ul>
