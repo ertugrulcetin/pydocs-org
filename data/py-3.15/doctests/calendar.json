@@ -1,0 +1,7 @@
+{"symbols":{
+"calendar/day_abbr":[{"code":">>> import calendar\n>>> list(calendar.day_abbr)\n['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']","from":"block","url":"https://docs.python.org/3.15/library/calendar.html#calendar.day_abbr"}],
+"calendar/day_name":[{"code":">>> import calendar\n>>> list(calendar.day_name)\n['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']","from":"block","url":"https://docs.python.org/3.15/library/calendar.html#calendar.day_name"}],
+"calendar/month_abbr":[{"code":">>> import calendar\n>>> list(calendar.month_abbr)\n['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']","from":"block","url":"https://docs.python.org/3.15/library/calendar.html#calendar.month_abbr"}],
+"calendar/month_name":[{"code":">>> import calendar\n>>> list(calendar.month_name)\n['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']","from":"block","url":"https://docs.python.org/3.15/library/calendar.html#calendar.month_name"}]
+},
+"unattached":[]}

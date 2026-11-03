@@ -1,0 +1,5 @@
+{"symbols":{
+"colorsys/hsv_to_rgb":[{"code":">>> import colorsys\n>>> colorsys.rgb_to_hsv(0.2, 0.4, 0.4)\n(0.5, 0.5, 0.4)\n>>> colorsys.hsv_to_rgb(0.5, 0.5, 0.4)\n(0.2, 0.4, 0.4)","from":"prose","url":"https://docs.python.org/3.15/library/colorsys.html#module-colorsys","targets":2}],
+"colorsys/rgb_to_hsv":[{"code":">>> import colorsys\n>>> colorsys.rgb_to_hsv(0.2, 0.4, 0.4)\n(0.5, 0.5, 0.4)\n>>> colorsys.hsv_to_rgb(0.5, 0.5, 0.4)\n(0.2, 0.4, 0.4)","from":"prose","url":"https://docs.python.org/3.15/library/colorsys.html#module-colorsys","targets":2}]
+},
+"unattached":[]}

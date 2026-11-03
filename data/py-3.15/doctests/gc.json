@@ -1,0 +1,5 @@
+{"symbols":{
+"gc/is_finalized":[{"code":">>> x = None\n>>> class Lazarus:\n...     def __del__(self):\n...         global x\n...         x = self\n...\n>>> lazarus = Lazarus()\n>>> gc.is_finalized(lazarus)\nFalse\n>>> del lazarus\n>>> gc.is_finalized(x)\nTrue","from":"block","url":"https://docs.python.org/3.15/library/gc.html#gc.is_finalized"}],
+"gc/is_tracked":[{"code":">>> gc.is_tracked(0)\nFalse\n>>> gc.is_tracked(\"a\")\nFalse\n>>> gc.is_tracked([])\nTrue\n>>> gc.is_tracked({})\nFalse\n>>> gc.is_tracked({\"a\": 1})\nTrue","from":"block","url":"https://docs.python.org/3.15/library/gc.html#gc.is_tracked"}]
+},
+"unattached":[]}

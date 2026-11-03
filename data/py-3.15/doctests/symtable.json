@@ -1,0 +1,5 @@
+{"symbols":{
+"symtable/Class.get_methods":[{"code":">>> import symtable\n>>> st = symtable.symtable('''\n... def outer(): pass\n...\n... class A:\n...    def f():\n...        def w(): pass\n...\n...    def g(self): pass\n...\n...    @classmethod\n...    async def h(cls): pass\n...\n...    global outer\n...    def outer(self): pass\n... ''', 'test', 'exec')\n>>> class_A = st.get_children()[2]\n>>> class_A.get_methods()\n('f', 'g', 'h')","from":"block","url":"https://docs.python.org/3.15/library/symtable.html#symtable.Class.get_methods"}],
+"symtable/Symbol.is_namespace":[{"code":">>> table = symtable.symtable(\"def some_func(): pass\", \"string\", \"exec\")\n>>> table.lookup(\"some_func\").is_namespace()\nTrue","from":"block","url":"https://docs.python.org/3.15/library/symtable.html#symtable.Symbol.is_namespace"}]
+},
+"unattached":[]}

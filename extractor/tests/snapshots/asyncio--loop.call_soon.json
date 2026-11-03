@@ -1,0 +1,25 @@
+{
+  "symbol": {
+    "id": "asyncio/loop.call_soon",
+    "module": "asyncio",
+    "qualname": "loop.call_soon",
+    "name": "call_soon",
+    "kind": "method",
+    "parent": null,
+    "signatures": [
+      "loop.call_soon(callback, *args, context=None)"
+    ],
+    "doc": "Schedule the callback callback to be called with args arguments at the next iteration of the event loop.",
+    "docsUrl": "https://docs.python.org/3.15/library/asyncio-eventloop.html#asyncio.loop.call_soon",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [
+      "not WASI"
+    ],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

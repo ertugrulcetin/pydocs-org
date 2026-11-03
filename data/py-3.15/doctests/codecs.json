@@ -1,0 +1,6 @@
+{"symbols":{
+"codecs/readbuffer_encode":[{"code":">>> codecs.readbuffer_encode(b\"Zito\")\n(b'Zito', 4)","from":"block","url":"https://docs.python.org/3.15/library/codecs.html#codecs.readbuffer_encode"}]
+},
+"unattached":[
+{"code":">>> 'German ß, ♬'.encode(encoding='ascii', errors='backslashreplace')\nb'German \\\\xdf, \\\\u266c'\n>>> 'German ß, ♬'.encode(encoding='ascii', errors='xmlcharrefreplace')\nb'German &#223;, &#9836;'","url":"https://docs.python.org/3.15/library/codecs.html#error-handlers"}
+]}

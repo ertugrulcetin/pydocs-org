@@ -1,0 +1,3 @@
+[
+{"id":"email.mime.text/MIMEText","module":"email.mime.text","qualname":"MIMEText","name":"MIMEText","kind":"class","parent":null,"signatures":["MIMEText(_text, _subtype='plain', _charset=None, *, policy=compat32)"],"doc":"Class for generating text/* type MIME documents.","docsUrl":"https://docs.python.org/3.15/library/email.mime.html#email.mime.text.MIMEText","added":null,"changed":[{"version":"3.5","text":"_charset also accepts Charset instances."},{"version":"3.6","text":"Added policy keyword-only parameter."}],"deprecated":null,"availability":[],"source":{"path":"Lib/email/mime/text.py","line":12},"implDetail":false,"isAsync":false}
+]

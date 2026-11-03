@@ -1,0 +1,23 @@
+{
+  "symbol": {
+    "id": "builtins/len",
+    "module": "builtins",
+    "qualname": "len",
+    "name": "len",
+    "kind": "function",
+    "parent": null,
+    "signatures": [
+      "len(object, /)"
+    ],
+    "doc": "Return the number of items in a container.",
+    "docsUrl": "https://docs.python.org/3.15/builtins/functions.html#len",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": true,
+    "isAsync": false
+  },
+  "doctests": []
+}

@@ -1,0 +1,7 @@
+{"symbols":{
+"heapq/heappop":[{"code":">>> def heapsort(iterable):\n...     h = []\n...     for value in iterable:\n...         heappush(h, value)\n...     return [heappop(h) for i in range(len(h))]\n...\n>>> heapsort([1, 3, 5, 7, 9, 2, 4, 6, 8, 0])\n[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]","from":"prose","url":"https://docs.python.org/3.15/library/heapq.html#basic-examples","targets":2},{"code":">>> h = []\n>>> heappush(h, (5, 'write code'))\n>>> heappush(h, (7, 'release product'))\n>>> heappush(h, (1, 'write spec'))\n>>> heappush(h, (3, 'create tests'))\n>>> heappop(h)\n(1, 'write spec')","from":"prose","url":"https://docs.python.org/3.15/library/heapq.html#basic-examples","targets":2}],
+"heapq/heappush":[{"code":">>> def heapsort(iterable):\n...     h = []\n...     for value in iterable:\n...         heappush(h, value)\n...     return [heappop(h) for i in range(len(h))]\n...\n>>> heapsort([1, 3, 5, 7, 9, 2, 4, 6, 8, 0])\n[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]","from":"prose","url":"https://docs.python.org/3.15/library/heapq.html#basic-examples","targets":2},{"code":">>> h = []\n>>> heappush(h, (5, 'write code'))\n>>> heappush(h, (7, 'release product'))\n>>> heappush(h, (1, 'write spec'))\n>>> heappush(h, (3, 'create tests'))\n>>> heappop(h)\n(1, 'write spec')","from":"prose","url":"https://docs.python.org/3.15/library/heapq.html#basic-examples","targets":2}]
+},
+"unattached":[
+{"code":">>> list(running_median([5.0, 9.0, 4.0, 12.0, 8.0, 9.0]))\n[5.0, 7.0, 5.0, 7.0, 8.0, 8.5]","url":"https://docs.python.org/3.15/library/heapq.html#other-applications"}
+]}

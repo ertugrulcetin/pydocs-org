@@ -1,0 +1,31 @@
+{
+  "symbol": {
+    "id": "functools/cached_property",
+    "module": "functools",
+    "qualname": "cached_property",
+    "name": "cached_property",
+    "kind": "decorator",
+    "parent": null,
+    "signatures": [
+      "@cached_property(func)"
+    ],
+    "doc": "Transform a method of a class into a property whose value is computed once and then cached as a normal attribute for the life of the instance. Similar to @property, with the addition of caching. Useful for expensive computed properties of instances that are otherwise effectively immutable.",
+    "docsUrl": "https://docs.python.org/3.15/library/functools.html#functools.cached_property",
+    "added": "3.8",
+    "changed": [
+      {
+        "version": "3.12",
+        "text": "Prior to Python 3.12, @cached_property included an undocumented lock to ensure that in multi-threaded usage the getter function was guaranteed to run only once per instance. However, the lock was per-property, not per-instance, which could result in unacceptably high lock contention. In Python 3.12+ this locking is removed."
+      }
+    ],
+    "deprecated": null,
+    "availability": [],
+    "source": {
+      "path": "Lib/functools.py",
+      "line": 1137
+    },
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

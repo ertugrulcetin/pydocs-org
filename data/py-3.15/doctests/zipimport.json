@@ -1,0 +1,4 @@
+{"symbols":{},
+"unattached":[
+{"code":">>> import sys\n>>> # Add the archive to the front of the module search path\n>>> sys.path.insert(0, 'example_archive.zip')\n>>> import example\n>>> example.__file__\n'example_archive.zip/example.py'","url":"https://docs.python.org/3.15/library/zipimport.html#examples"}
+]}

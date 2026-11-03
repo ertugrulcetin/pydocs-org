@@ -1,0 +1,42 @@
+{
+  "symbol": {
+    "id": "builtins/range",
+    "module": "builtins",
+    "qualname": "range",
+    "name": "range",
+    "kind": "class",
+    "parent": null,
+    "signatures": [
+      "range(stop, /)",
+      "range(start, stop, step=1, /)"
+    ],
+    "doc": "range(stop) -> range object\nrange(start, stop[, step]) -> range object\n\nReturn an object that produces a sequence of integers from start (inclusive)\nto stop (exclusive) by step.  range(i, j) produces i, i+1, i+2, ..., j-1.\nstart defaults to 0, and stop is omitted!  range(4) produces 0, 1, 2, 3.\nThese are exactly the valid indices for a list of 4 elements.\nWhen step is given, it specifies the increment (or decrement).",
+    "docsUrl": "https://docs.python.org/3.15/builtins/stdtypes.html#range",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": [
+    {
+      "code": ">>> list(range(10))\n[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n>>> list(range(1, 11))\n[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\n>>> list(range(0, 30, 5))\n[0, 5, 10, 15, 20, 25]\n>>> list(range(0, 10, 3))\n[0, 3, 6, 9]\n>>> list(range(0, -10, -1))\n[0, -1, -2, -3, -4, -5, -6, -7, -8, -9]\n>>> list(range(0))\n[]\n>>> list(range(1, 0))\n[]",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/builtins/stdtypes.html#range"
+    },
+    {
+      "code": ">>> lists = [[] for i in range(3)]\n>>> lists[0].append(3)\n>>> lists[1].append(5)\n>>> lists[2].append(7)\n>>> lists\n[[3], [5], [7]]",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/builtins/stdtypes.html#common-sequence-operations",
+      "targets": 1
+    },
+    {
+      "code": ">>> r = range(0, 20, 2)\n>>> r\nrange(0, 20, 2)\n>>> 11 in r\nFalse\n>>> 10 in r\nTrue\n>>> r.index(10)\n5\n>>> r[5]\n10\n>>> r[:5]\nrange(0, 10, 2)\n>>> r[-1]\n18",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/builtins/stdtypes.html#ranges",
+      "targets": 2
+    }
+  ]
+}

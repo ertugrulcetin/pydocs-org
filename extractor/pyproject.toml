@@ -1,0 +1,26 @@
+[project]
+name = "pydocs-extract"
+version = "0.1.0"
+description = "Builds PyDocs reference data (data/py-3.15/) from the Python 3.15.2 docs and introspection."
+requires-python = "==3.15.2"
+dependencies = [
+    "lxml>=6.1",
+]
+
+[project.scripts]
+pydocs-extract = "pydocs_extract.main:main"
+
+[dependency-groups]
+dev = [
+    "pytest>=9",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = ""
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

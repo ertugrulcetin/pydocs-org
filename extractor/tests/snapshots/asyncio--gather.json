@@ -1,0 +1,41 @@
+{
+  "symbol": {
+    "id": "asyncio/gather",
+    "module": "asyncio",
+    "qualname": "gather",
+    "name": "gather",
+    "kind": "function",
+    "parent": null,
+    "signatures": [
+      "gather(*aws, return_exceptions=False)"
+    ],
+    "doc": "Return a future aggregating results from the given coroutines/futures.\n\nCoroutines will be wrapped in a future and scheduled in the event\nloop. They will not necessarily be scheduled in the same order as\npassed in.\n\nAll futures must share the same event loop.  If all the tasks are\ndone successfully, the returned future's result is the list of\nresults (in the order of the original sequence, not necessarily\nthe order of results arrival).  If *return_exceptions* is True,\nexceptions in the tasks are treated the same as successful\nresults, and gathered in the result list; otherwise, the first\nraised exception will be immediately propagated to the returned\nfuture.\n\nCancellation: if the outer Future is cancelled, all children (that\nhave not completed yet) are also cancelled.  If any child is\ncancelled, this is treated as if it raised CancelledError --\nthe outer Future is *not* cancelled in this case.  (This is to\nprevent the cancellation of one child to cause other children to\nbe cancelled.)\n\nIf *return_exceptions* is False, cancelling gather() after it\nhas been marked done won't cancel any submitted awaitables.\nFor instance, gather can be marked done after propagating an\nexception to the caller, therefore, calling ``gather.cancel()``\nafter catching an exception (raised by one of the awaitables) from\ngather won't cancel any other awaitables.",
+    "docsUrl": "https://docs.python.org/3.15/library/asyncio-task.html#asyncio.gather",
+    "added": null,
+    "changed": [
+      {
+        "version": "3.7",
+        "text": "If the gather itself is cancelled, the cancellation is propagated regardless of return_exceptions."
+      },
+      {
+        "version": "3.10",
+        "text": "Removed the loop parameter."
+      }
+    ],
+    "deprecated": {
+      "version": "3.10",
+      "removedIn": null,
+      "text": "Deprecation warning is emitted if no positional arguments are provided or not all positional arguments are Future-like objects and there is no running event loop."
+    },
+    "availability": [
+      "not WASI"
+    ],
+    "source": {
+      "path": "Lib/asyncio/tasks.py",
+      "line": 796
+    },
+    "implDetail": false,
+    "isAsync": true
+  },
+  "doctests": []
+}

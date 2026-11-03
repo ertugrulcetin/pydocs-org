@@ -1,0 +1,7 @@
+{"symbols":{},
+"unattached":[
+{"code":">>> for child in root:\n...     print(child.tag, child.attrib)\n...\ncountry {'name': 'Liechtenstein'}\ncountry {'name': 'Singapore'}\ncountry {'name': 'Panama'}","url":"https://docs.python.org/3.15/library/xml.etree.elementtree.html#parsing-xml"},
+{"code":">>> for neighbor in root.iter('neighbor'):\n...     print(neighbor.attrib)\n...\n{'name': 'Austria', 'direction': 'E'}\n{'name': 'Switzerland', 'direction': 'W'}\n{'name': 'Malaysia', 'direction': 'N'}\n{'name': 'Costa Rica', 'direction': 'W'}\n{'name': 'Colombia', 'direction': 'E'}","url":"https://docs.python.org/3.15/library/xml.etree.elementtree.html#finding-interesting-elements"},
+{"code":">>> for country in root.findall('country'):\n...     rank = country.find('rank').text\n...     name = country.get('name')\n...     print(name, rank)\n...\nLiechtenstein 1\nSingapore 4\nPanama 68","url":"https://docs.python.org/3.15/library/xml.etree.elementtree.html#finding-interesting-elements"},
+{"code":">>> a = ET.Element('a')\n>>> b = ET.SubElement(a, 'b')\n>>> c = ET.SubElement(a, 'c')\n>>> d = ET.SubElement(c, 'd')\n>>> ET.dump(a)\n<a><b /><c><d /></c></a>","url":"https://docs.python.org/3.15/library/xml.etree.elementtree.html#building-xml-documents"}
+]}

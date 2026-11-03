@@ -1,0 +1,23 @@
+{
+  "symbol": {
+    "id": "tkinter/Canvas.lower",
+    "module": "tkinter",
+    "qualname": "Canvas.lower",
+    "name": "lower",
+    "kind": "method",
+    "parent": "tkinter/Canvas",
+    "signatures": [
+      "Canvas.lower(tagOrId, belowThis=None, /)"
+    ],
+    "doc": "Move all items given by tagOrId to a new position in the display list just below the item given by belowThis, or to the bottom of the display list if belowThis is omitted. When several items are moved their relative order is preserved. This has no effect on embedded window items. lower() is an alias of tag_lower().",
+    "docsUrl": "https://docs.python.org/3.15/library/tkinter.html#tkinter.Canvas.lower",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

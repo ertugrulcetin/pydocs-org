@@ -1,0 +1,23 @@
+{
+  "symbol": {
+    "id": "itertools/groupby",
+    "module": "itertools",
+    "qualname": "groupby",
+    "name": "groupby",
+    "kind": "function",
+    "parent": null,
+    "signatures": [
+      "groupby(iterable, key=None)"
+    ],
+    "doc": "make an iterator that returns consecutive keys and groups from the iterable\n\niterable\n  Elements to divide into groups according to the key function.\nkey\n  A function for computing the group category for each element.\n  If the key function is not specified or is None, the element itself\n  is used for grouping.",
+    "docsUrl": "https://docs.python.org/3.15/library/itertools.html#itertools.groupby",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

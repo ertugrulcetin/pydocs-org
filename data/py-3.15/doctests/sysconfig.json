@@ -1,0 +1,5 @@
+{"symbols":{
+"sysconfig/get_config_var":[{"code":">>> import sysconfig\n>>> sysconfig.get_config_var('Py_ENABLE_SHARED')\n0\n>>> sysconfig.get_config_var('LIBDIR')\n'/usr/local/lib'\n>>> sysconfig.get_config_vars('AR', 'CXX')\n['ar', 'g++']","from":"prose","url":"https://docs.python.org/3.15/library/sysconfig.html#configuration-variables","targets":2}],
+"sysconfig/get_config_vars":[{"code":">>> import sysconfig\n>>> sysconfig.get_config_var('Py_ENABLE_SHARED')\n0\n>>> sysconfig.get_config_var('LIBDIR')\n'/usr/local/lib'\n>>> sysconfig.get_config_vars('AR', 'CXX')\n['ar', 'g++']","from":"prose","url":"https://docs.python.org/3.15/library/sysconfig.html#configuration-variables","targets":2}]
+},
+"unattached":[]}

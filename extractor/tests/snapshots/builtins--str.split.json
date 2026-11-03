@@ -1,0 +1,39 @@
+{
+  "symbol": {
+    "id": "builtins/str.split",
+    "module": "builtins",
+    "qualname": "str.split",
+    "name": "split",
+    "kind": "method",
+    "parent": "builtins/str",
+    "signatures": [
+      "str.split(sep=None, maxsplit=-1)"
+    ],
+    "doc": "Return a list of the substrings in the string, using sep as the separator string.\n\n  sep\n    The separator used to split the string.\n\n    When set to None (the default value), will split on any\n    whitespace character (including \\n \\r \\t \\f and spaces) and\n    will discard empty strings from the result.\n  maxsplit\n    Maximum number of splits.\n    -1 (the default value) means no limit.\n\nSplitting starts at the front of the string and works to the end.\n\nNote, str.split() is mainly useful for data that has been\nintentionally delimited.  With natural text that includes\npunctuation, consider using the regular expression module.",
+    "docsUrl": "https://docs.python.org/3.15/builtins/stdtypes.html#str.split",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": [
+    {
+      "code": ">>> '1,2,3'.split(',')\n['1', '2', '3']\n>>> '1,2,3'.split(',', maxsplit=1)\n['1', '2,3']\n>>> '1,2,,3,'.split(',')\n['1', '2', '', '3', '']\n>>> '1<>2<>3<4'.split('<>')\n['1', '2', '3<4']",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/builtins/stdtypes.html#str.split"
+    },
+    {
+      "code": ">>> '1 2 3'.split()\n['1', '2', '3']\n>>> '1 2 3'.split(maxsplit=1)\n['1', '2 3']\n>>> '   1   2   3   '.split()\n['1', '2', '3']",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/builtins/stdtypes.html#str.split"
+    },
+    {
+      "code": ">>> \"\".split(None, 0)\n[]\n>>> \"   \".split(None, 0)\n[]\n>>> \"   foo   \".split(maxsplit=0)\n['foo   ']",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/builtins/stdtypes.html#str.split"
+    }
+  ]
+}

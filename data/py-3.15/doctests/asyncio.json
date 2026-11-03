@@ -1,0 +1,7 @@
+{"symbols":{
+"asyncio/run":[{"code":">>> import asyncio\n\n>>> async def main():\n...     print('hello')\n...     await asyncio.sleep(1)\n...     print('world')\n\n>>> asyncio.run(main())\nhello\nworld","from":"prose","url":"https://docs.python.org/3.15/library/asyncio-task.html#coroutines","targets":2}],
+"asyncio/sleep":[{"code":">>> import asyncio\n\n>>> async def main():\n...     print('hello')\n...     await asyncio.sleep(1)\n...     print('world')\n\n>>> asyncio.run(main())\nhello\nworld","from":"prose","url":"https://docs.python.org/3.15/library/asyncio-task.html#coroutines","targets":2},{"code":"$ python -m asyncio\nasyncio REPL ...\nUse \"await\" directly instead of \"asyncio.run()\".\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\n>>> import asyncio\n>>> await asyncio.sleep(10, result='hello')\n'hello'","from":"prose","url":"https://docs.python.org/3.15/library/asyncio.html#module-asyncio","targets":1}]
+},
+"unattached":[
+{"code":">>> main()\n<coroutine object main at 0x1053bb7c8>","url":"https://docs.python.org/3.15/library/asyncio-task.html#coroutines"}
+]}

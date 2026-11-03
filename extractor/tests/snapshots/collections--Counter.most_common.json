@@ -1,0 +1,38 @@
+{
+  "symbol": {
+    "id": "collections/Counter.most_common",
+    "module": "collections",
+    "qualname": "Counter.most_common",
+    "name": "most_common",
+    "kind": "method",
+    "parent": "collections/Counter",
+    "signatures": [
+      "Counter.most_common(n=None)"
+    ],
+    "doc": "List the n most common elements and their counts from the most\ncommon to the least.  If n is None, then list all element counts.\n\n>>> Counter('abracadabra').most_common(3)\n[('a', 5), ('b', 2), ('r', 2)]",
+    "docsUrl": "https://docs.python.org/3.15/library/collections.html#collections.Counter.most_common",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": {
+      "path": "Lib/collections/__init__.py",
+      "line": 628
+    },
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": [
+    {
+      "code": ">>> Counter('abracadabra').most_common(3)\n[('a', 5), ('b', 2), ('r', 2)]",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/library/collections.html#collections.Counter.most_common"
+    },
+    {
+      "code": ">>> # Tally occurrences of words in a list\n>>> cnt = Counter()\n>>> for word in ['red', 'blue', 'red', 'green', 'blue', 'blue']:\n...     cnt[word] += 1\n...\n>>> cnt\nCounter({'blue': 3, 'red': 2, 'green': 1})\n\n>>> # Find the ten most common words in Hamlet\n>>> import re\n>>> words = re.findall(r'\\w+', open('hamlet.txt').read().lower())\n>>> Counter(words).most_common(10)\n[('the', 1143), ('and', 966), ('to', 762), ('of', 669), ('i', 631),\n ('you', 554),  ('a', 546), ('my', 514), ('hamlet', 471), ('in', 451)]",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/library/collections.html#counter-objects",
+      "targets": 2
+    }
+  ]
+}

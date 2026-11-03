@@ -1,0 +1,6 @@
+{"symbols":{
+"time/strftime":[{"code":">>> from time import gmtime, strftime\n>>> strftime(\"%a, %d %b %Y %H:%M:%S +0000\", gmtime())\n'Thu, 28 Jun 2001 14:17:15 +0000'","from":"block","url":"https://docs.python.org/3.15/library/time.html#time.strftime"}],
+"time/strptime":[{"code":">>> import time\n>>> time.strptime(\"30 Nov 00\", \"%d %b %y\")\ntime.struct_time(tm_year=2000, tm_mon=11, tm_mday=30, tm_hour=0, tm_min=0,\n                 tm_sec=0, tm_wday=3, tm_yday=335, tm_isdst=-1)","from":"block","url":"https://docs.python.org/3.15/library/time.html#time.strptime"}],
+"time/tzset":[{"code":">>> os.environ['TZ'] = 'EST+05EDT,M4.1.0,M10.5.0'\n>>> time.tzset()\n>>> time.strftime('%X %x %Z')\n'02:07:36 05/08/03 EDT'\n>>> os.environ['TZ'] = 'AEST-10AEDT-11,M10.5.0,M3.5.0'\n>>> time.tzset()\n>>> time.strftime('%X %x %Z')\n'16:08:12 05/08/03 AEST'","from":"block","url":"https://docs.python.org/3.15/library/time.html#time.tzset"},{"code":">>> os.environ['TZ'] = 'US/Eastern'\n>>> time.tzset()\n>>> time.tzname\n('EST', 'EDT')\n>>> os.environ['TZ'] = 'Egypt'\n>>> time.tzset()\n>>> time.tzname\n('EET', 'EEST')","from":"block","url":"https://docs.python.org/3.15/library/time.html#time.tzset"}]
+},
+"unattached":[]}

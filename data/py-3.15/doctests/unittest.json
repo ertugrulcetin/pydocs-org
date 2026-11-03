@@ -1,0 +1,8 @@
+{"symbols":{
+"unittest/main":[{"code":">>> from unittest import main\n>>> main(module='test_module', exit=False)","from":"block","url":"https://docs.python.org/3.15/library/unittest.html#unittest.main"}],
+"unittest/TestCase.assertGreater":[{"code":">>> self.assertGreaterEqual(3, 4)\nAssertionError: \"3\" unexpectedly not greater than or equal to \"4\"","from":"block","url":"https://docs.python.org/3.15/library/unittest.html#unittest.TestCase.assertGreater"}],
+"unittest/TestCase.assertGreaterEqual":[{"code":">>> self.assertGreaterEqual(3, 4)\nAssertionError: \"3\" unexpectedly not greater than or equal to \"4\"","from":"block","url":"https://docs.python.org/3.15/library/unittest.html#unittest.TestCase.assertGreater"}],
+"unittest/TestCase.assertLess":[{"code":">>> self.assertGreaterEqual(3, 4)\nAssertionError: \"3\" unexpectedly not greater than or equal to \"4\"","from":"block","url":"https://docs.python.org/3.15/library/unittest.html#unittest.TestCase.assertGreater"}],
+"unittest/TestCase.assertLessEqual":[{"code":">>> self.assertGreaterEqual(3, 4)\nAssertionError: \"3\" unexpectedly not greater than or equal to \"4\"","from":"block","url":"https://docs.python.org/3.15/library/unittest.html#unittest.TestCase.assertGreater"}]
+},
+"unattached":[]}

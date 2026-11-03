@@ -1,0 +1,4 @@
+{"symbols":{
+"fnmatch/translate":[{"code":">>> import fnmatch, re\n>>>\n>>> regex = fnmatch.translate('*.txt')\n>>> regex\n'(?s:.*\\\\.txt)\\\\z'\n>>> reobj = re.compile(regex)\n>>> reobj.prefixmatch('foobar.txt')\n<re.Match object; span=(0, 10), match='foobar.txt'>","from":"block","url":"https://docs.python.org/3.15/library/fnmatch.html#fnmatch.translate"}]
+},
+"unattached":[]}

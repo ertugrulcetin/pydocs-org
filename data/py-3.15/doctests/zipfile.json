@@ -1,0 +1,5 @@
+{"symbols":{
+"zipfile/Path.joinpath":[{"code":">>> Path(...).joinpath('child').joinpath('grandchild')\n>>> Path(...).joinpath('child', 'grandchild')\n>>> Path(...) / 'child' / 'grandchild'","from":"block","url":"https://docs.python.org/3.15/library/zipfile.html#zipfile.Path.joinpath"}],
+"zipfile/PyZipFile.writepy":[{"code":">>> zf = PyZipFile('myprog.zip')\n>>> def notests(s):\n...     fn = os.path.basename(s)\n...     return (not (fn == 'test' or fn.startswith('test_')))\n...\n>>> zf.writepy('myprog', filterfunc=notests)","from":"block","url":"https://docs.python.org/3.15/library/zipfile.html#zipfile.PyZipFile.writepy"}]
+},
+"unattached":[]}

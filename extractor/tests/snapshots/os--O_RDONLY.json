@@ -1,0 +1,21 @@
+{
+  "symbol": {
+    "id": "os/O_RDONLY",
+    "module": "os",
+    "qualname": "O_RDONLY",
+    "name": "O_RDONLY",
+    "kind": "data",
+    "parent": null,
+    "signatures": [],
+    "doc": "The above constants are available on Unix and Windows.",
+    "docsUrl": "https://docs.python.org/3.15/library/os.html#os.O_RDONLY",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

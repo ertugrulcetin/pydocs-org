@@ -1,0 +1,29 @@
+{
+  "symbol": {
+    "id": "builtins/str.maketrans",
+    "module": "builtins",
+    "qualname": "str.maketrans",
+    "name": "maketrans",
+    "kind": "staticmethod",
+    "parent": "builtins/str",
+    "signatures": [
+      "str.maketrans(dict, /)",
+      "str.maketrans(from, to, remove='', /)"
+    ],
+    "doc": "Return a translation table usable for str.translate().\n\nIf there is only one argument, it must be a dictionary mapping\nUnicode ordinals (integers) or characters to Unicode ordinals,\nstrings or None.  Character keys will be then converted to ordinals.\nIf there are two arguments, they must be strings of equal length,\nand in the resulting dictionary, each character in x will be mapped\nto the character at the same position in y.  If there is a third\nargument, it must be a string, whose characters will be mapped to\nNone in the result.",
+    "docsUrl": "https://docs.python.org/3.15/builtins/stdtypes.html#str.maketrans",
+    "added": null,
+    "changed": [
+      {
+        "version": "3.15",
+        "text": "dict can now be a frozendict."
+      }
+    ],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

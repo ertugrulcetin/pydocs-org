@@ -1,0 +1,5 @@
+{"symbols":{
+"math/expm1":[{"code":">>> from math import exp, expm1\n>>> exp(1e-5) - 1  # gives result accurate to 11 places\n1.0000050000069649e-05\n>>> expm1(1e-5)    # result accurate to full precision\n1.0000050000166668e-05","from":"block","url":"https://docs.python.org/3.15/library/math.html#math.expm1"}],
+"math/nan":[{"code":">>> import math\n>>> math.nan == math.nan\nFalse\n>>> float('nan') == float('nan')\nFalse\n>>> math.isnan(math.nan)\nTrue\n>>> math.isnan(float('nan'))\nTrue","from":"block","url":"https://docs.python.org/3.15/library/math.html#math.nan"}]
+},
+"unattached":[]}

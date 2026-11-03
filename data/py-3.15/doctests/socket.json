@@ -1,0 +1,5 @@
+{"symbols":{
+"socket/getaddrinfo":[{"code":">>> socket.getaddrinfo(\"example.org\", 80, proto=socket.IPPROTO_TCP)\n[(socket.AF_INET6, socket.SOCK_STREAM,\n 6, '', ('2606:2800:220:1:248:1893:25c8:1946', 80, 0, 0)),\n (socket.AF_INET, socket.SOCK_STREAM,\n 6, '', ('93.184.216.34', 80))]","from":"block","url":"https://docs.python.org/3.15/library/socket.html#socket.getaddrinfo"}],
+"socket/socket.recvmsg_into":[{"code":">>> import socket\n>>> s1, s2 = socket.socketpair()\n>>> b1 = bytearray(b'----')\n>>> b2 = bytearray(b'0123456789')\n>>> b3 = bytearray(b'--------------')\n>>> s1.send(b'Mary had a little lamb')\n22\n>>> s2.recvmsg_into([b1, memoryview(b2)[2:9], b3])\n(22, [], 0, None)\n>>> [b1, b2, b3]\n[bytearray(b'Mary'), bytearray(b'01 had a 9'), bytearray(b'little lamb---')]","from":"block","url":"https://docs.python.org/3.15/library/socket.html#socket.socket.recvmsg_into"}]
+},
+"unattached":[]}

@@ -1,0 +1,26 @@
+{
+  "symbol": {
+    "id": "typing/Optional",
+    "module": "typing",
+    "qualname": "Optional",
+    "name": "Optional",
+    "kind": "data",
+    "parent": null,
+    "signatures": [],
+    "doc": "Optional[X] is equivalent to X | None.",
+    "docsUrl": "https://docs.python.org/3.15/library/typing.html#typing.Optional",
+    "added": null,
+    "changed": [
+      {
+        "version": "3.10",
+        "text": "Optional can now be written as X | None. See union type expressions."
+      }
+    ],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

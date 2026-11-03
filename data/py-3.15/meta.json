@@ -1,0 +1,36 @@
+{
+ "python": "3.15.2",
+ "docsTag": "v3.15.2",
+ "generatedAt": "2026-11-03T10:42:37Z",
+ "counts": {
+  "symbols": 11223,
+  "modules": 320,
+  "byKind": {
+   "attribute": 1536,
+   "class": 1206,
+   "classmethod": 70,
+   "data": 2028,
+   "decorator": 67,
+   "exception": 318,
+   "function": 2260,
+   "method": 3730,
+   "property": 1,
+   "staticmethod": 7
+  },
+  "symbolsWithDoctest": 1037
+ },
+ "docsBaseUrl": "https://docs.python.org/3.15/",
+ "sourceBaseUrl": "https://github.com/python/cpython/blob/v3.15.2/",
+ "sources": {
+  "docsArchive": {
+   "url": "https://www.python.org/ftp/python/doc/3.15.2/python-3.15.2-docs-html.tar.bz2",
+   "sha256": "cd2115b9599be86c2f61e58747d692e2376bd9bd434eb86e233aea6968dc3f3e"
+  },
+  "inventory": {
+   "from": "archive",
+   "url": "https://www.python.org/ftp/python/doc/3.15.2/python-3.15.2-docs-html.tar.bz2#objects.inv",
+   "sha256": "4ca707e693ec0bfcf92ecf119f4deadea7669b41cc0c535b23cdc798363cb5db"
+  }
+ },
+ "introspectedOn": "darwin"
+}

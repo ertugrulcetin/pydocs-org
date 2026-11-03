@@ -1,0 +1,4 @@
+{"symbols":{
+"types/GenericAlias":[{"code":">>> from types import GenericAlias\n\n>>> list[int] == GenericAlias(list, (int,))\nTrue\n>>> dict[str, int] == GenericAlias(dict, (str, int))\nTrue","from":"block","url":"https://docs.python.org/3.15/library/types.html#types.GenericAlias"}]
+},
+"unattached":[]}

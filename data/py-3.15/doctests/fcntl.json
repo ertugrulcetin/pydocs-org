@@ -1,0 +1,4 @@
+{"symbols":{
+"fcntl/ioctl":[{"code":">>> import array, fcntl, struct, termios, os\n>>> os.getpgrp()\n13341\n>>> struct.unpack('h', fcntl.ioctl(0, termios.TIOCGPGRP, \"  \"))[0]\n13341\n>>> buf = array.array('h', [0])\n>>> fcntl.ioctl(0, termios.TIOCGPGRP, buf, 1)\n0\n>>> buf\narray('h', [13341])","from":"block","url":"https://docs.python.org/3.15/library/fcntl.html#fcntl.ioctl"}]
+},
+"unattached":[]}

@@ -1,0 +1,50 @@
+{
+  "symbol": {
+    "id": "asyncio/sleep",
+    "module": "asyncio",
+    "qualname": "sleep",
+    "name": "sleep",
+    "kind": "function",
+    "parent": null,
+    "signatures": [
+      "sleep(delay, result=None)"
+    ],
+    "doc": "Coroutine that completes after a given time (in seconds).",
+    "docsUrl": "https://docs.python.org/3.15/library/asyncio-task.html#asyncio.sleep",
+    "added": null,
+    "changed": [
+      {
+        "version": "3.10",
+        "text": "Removed the loop parameter."
+      },
+      {
+        "version": "3.13",
+        "text": "Raises ValueError if delay is nan."
+      }
+    ],
+    "deprecated": null,
+    "availability": [
+      "not WASI"
+    ],
+    "source": {
+      "path": "Lib/asyncio/tasks.py",
+      "line": 710
+    },
+    "implDetail": false,
+    "isAsync": true
+  },
+  "doctests": [
+    {
+      "code": ">>> import asyncio\n\n>>> async def main():\n...     print('hello')\n...     await asyncio.sleep(1)\n...     print('world')\n\n>>> asyncio.run(main())\nhello\nworld",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/library/asyncio-task.html#coroutines",
+      "targets": 2
+    },
+    {
+      "code": "$ python -m asyncio\nasyncio REPL ...\nUse \"await\" directly instead of \"asyncio.run()\".\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\n>>> import asyncio\n>>> await asyncio.sleep(10, result='hello')\n'hello'",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/library/asyncio.html#module-asyncio",
+      "targets": 1
+    }
+  ]
+}

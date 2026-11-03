@@ -1,0 +1,21 @@
+{
+  "symbol": {
+    "id": "builtins/codeobject.co_argcount",
+    "module": "builtins",
+    "qualname": "codeobject.co_argcount",
+    "name": "co_argcount",
+    "kind": "attribute",
+    "parent": null,
+    "signatures": [],
+    "doc": "The total number of positional parameters (including positional-only parameters and parameters with default values) that the function has",
+    "docsUrl": "https://docs.python.org/3.15/reference/datamodel.html#codeobject.co_argcount",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

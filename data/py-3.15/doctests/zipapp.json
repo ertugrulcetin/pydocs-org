@@ -1,0 +1,4 @@
+{"symbols":{
+"zipapp/create_archive":[{"code":">>> import zipapp\n>>> zipapp.create_archive('myapp', 'myapp.pyz')","from":"prose","url":"https://docs.python.org/3.15/library/zipapp.html#examples","targets":1},{"code":">>> import zipapp\n>>> zipapp.create_archive('old_archive.pyz', 'new_archive.pyz', '/usr/bin/python3')","from":"prose","url":"https://docs.python.org/3.15/library/zipapp.html#examples","targets":1},{"code":">>> import zipapp\n>>> import io\n>>> temp = io.BytesIO()\n>>> zipapp.create_archive('myapp.pyz', temp, '/usr/bin/python2')\n>>> with open('myapp.pyz', 'wb') as f:\n>>>     f.write(temp.getvalue())","from":"prose","url":"https://docs.python.org/3.15/library/zipapp.html#examples","targets":1}]
+},
+"unattached":[]}

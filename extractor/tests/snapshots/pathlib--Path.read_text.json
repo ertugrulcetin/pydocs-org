@@ -1,0 +1,37 @@
+{
+  "symbol": {
+    "id": "pathlib/Path.read_text",
+    "module": "pathlib",
+    "qualname": "Path.read_text",
+    "name": "read_text",
+    "kind": "method",
+    "parent": "pathlib/Path",
+    "signatures": [
+      "Path.read_text(encoding=None, errors=None, newline=None)"
+    ],
+    "doc": "Open the file in text mode, read it, and close the file.",
+    "docsUrl": "https://docs.python.org/3.15/library/pathlib.html#pathlib.Path.read_text",
+    "added": "3.5",
+    "changed": [
+      {
+        "version": "3.13",
+        "text": "The newline parameter was added."
+      }
+    ],
+    "deprecated": null,
+    "availability": [],
+    "source": {
+      "path": "Lib/pathlib/__init__.py",
+      "line": 979
+    },
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": [
+    {
+      "code": ">>> p = Path('my_text_file')\n>>> p.write_text('Text file contents')\n18\n>>> p.read_text()\n'Text file contents'",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/library/pathlib.html#pathlib.Path.read_text"
+    }
+  ]
+}

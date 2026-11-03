@@ -1,0 +1,4 @@
+{"symbols":{
+"smtplib/SMTP":[{"code":">>> from smtplib import SMTP\n>>> with SMTP(\"domain.org\") as smtp:\n...     smtp.noop()\n...\n(250, b'Ok')\n>>>","from":"block","url":"https://docs.python.org/3.15/library/smtplib.html#smtplib.SMTP"}]
+},
+"unattached":[]}

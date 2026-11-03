@@ -1,0 +1,51 @@
+{
+  "symbol": {
+    "id": "functools/lru_cache",
+    "module": "functools",
+    "qualname": "lru_cache",
+    "name": "lru_cache",
+    "kind": "decorator",
+    "parent": null,
+    "signatures": [
+      "@lru_cache(user_function)",
+      "@lru_cache(maxsize=128, typed=False)"
+    ],
+    "doc": "Least-recently-used cache decorator.\n\nIf *maxsize* is set to None, the LRU features are disabled and the cache\ncan grow without bound.\n\nIf *typed* is True, arguments of different types will be cached\nseparately.  For example, f(decimal.Decimal(\"3.0\")) and f(3.0) will be\ntreated as distinct calls with distinct results.  Some types such as\nstr and int may be cached separately even when typed is false.\n\nArguments to the cached function must be hashable.\n\nView the cache statistics named tuple (hits, misses, maxsize, currsize)\nwith f.cache_info().  Clear the cache and statistics with\nf.cache_clear().  Access the underlying function with f.__wrapped__.\n\nSee:  https://en.wikipedia.org/wiki/Cache_replacement_policies#Least_recently_used_(LRU)",
+    "docsUrl": "https://docs.python.org/3.15/library/functools.html#functools.lru_cache",
+    "added": "3.2",
+    "changed": [
+      {
+        "version": "3.3",
+        "text": "Added the typed option."
+      },
+      {
+        "version": "3.8",
+        "text": "Added the user_function option."
+      },
+      {
+        "version": "3.9",
+        "text": "Added the function cache_parameters()"
+      }
+    ],
+    "deprecated": null,
+    "availability": [],
+    "source": {
+      "path": "Lib/functools.py",
+      "line": 555
+    },
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": [
+    {
+      "code": "@lru_cache(maxsize=32)\ndef get_pep(num):\n    'Retrieve text of a Python Enhancement Proposal'\n    resource = f'https://peps.python.org/pep-{num:04d}'\n    try:\n        with urllib.request.urlopen(resource) as s:\n            return s.read()\n    except urllib.error.HTTPError:\n        return 'Not Found'\n\n>>> for n in 8, 290, 308, 320, 8, 218, 320, 279, 289, 320, 9991:\n...     pep = get_pep(n)\n...     print(n, len(pep))\n\n>>> get_pep.cache_info()\nCacheInfo(hits=3, misses=8, maxsize=32, currsize=8)",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/library/functools.html#functools.lru_cache"
+    },
+    {
+      "code": "@lru_cache(maxsize=None)\ndef fib(n):\n    if n < 2:\n        return n\n    return fib(n-1) + fib(n-2)\n\n>>> [fib(n) for n in range(16)]\n[0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610]\n\n>>> fib.cache_info()\nCacheInfo(hits=28, misses=16, maxsize=None, currsize=16)",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/library/functools.html#functools.lru_cache"
+    }
+  ]
+}

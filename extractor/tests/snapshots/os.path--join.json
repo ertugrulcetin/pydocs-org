@@ -1,0 +1,42 @@
+{
+  "symbol": {
+    "id": "os.path/join",
+    "module": "os.path",
+    "qualname": "join",
+    "name": "join",
+    "kind": "function",
+    "parent": null,
+    "signatures": [
+      "join(path, /, *paths)"
+    ],
+    "doc": "Join two or more pathname components, inserting '/' as needed.\nIf any component is an absolute path, all previous path components\nwill be discarded.  An empty last part will result in a path that\nends with a separator.",
+    "docsUrl": "https://docs.python.org/3.15/library/os.path.html#os.path.join",
+    "added": null,
+    "changed": [
+      {
+        "version": "3.6",
+        "text": "Accepts a path-like object for path and paths."
+      }
+    ],
+    "deprecated": null,
+    "availability": [],
+    "source": {
+      "path": "Lib/posixpath.py",
+      "line": 73
+    },
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": [
+    {
+      "code": ">>> os.path.join('/home/foo', 'bar')\n'/home/foo/bar'\n>>> os.path.join('/home/foo', '/home/bar')\n'/home/bar'",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/library/os.path.html#os.path.join"
+    },
+    {
+      "code": ">>> os.path.join('c:\\\\', 'foo')\n'c:\\\\foo'\n>>> os.path.join('c:\\\\foo', 'd:\\\\bar')\n'd:\\\\bar'",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/library/os.path.html#os.path.join"
+    }
+  ]
+}

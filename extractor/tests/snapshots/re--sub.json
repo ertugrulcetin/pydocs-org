@@ -1,0 +1,68 @@
+{
+  "symbol": {
+    "id": "re/sub",
+    "module": "re",
+    "qualname": "sub",
+    "name": "sub",
+    "kind": "function",
+    "parent": null,
+    "signatures": [
+      "sub(pattern, repl, string, count=0, flags=0)"
+    ],
+    "doc": "Return the string obtained by replacing the leftmost\nnon-overlapping occurrences of the pattern in string by the\nreplacement repl.  repl can be either a string or a callable;\nif a string, backslash escapes in it are processed.  If it is\na callable, it's passed the Match object and must return\na replacement string to be used.",
+    "docsUrl": "https://docs.python.org/3.15/library/re.html#re.sub",
+    "added": null,
+    "changed": [
+      {
+        "version": "3.1",
+        "text": "Added the optional flags argument."
+      },
+      {
+        "version": "3.5",
+        "text": "Unmatched groups are replaced with an empty string."
+      },
+      {
+        "version": "3.6",
+        "text": "Unknown escapes in pattern consisting of '\\' and an ASCII letter now are errors."
+      },
+      {
+        "version": "3.7",
+        "text": "Unknown escapes in repl consisting of '\\' and an ASCII letter now are errors. An empty match can occur immediately after a non-empty match."
+      },
+      {
+        "version": "3.12",
+        "text": "Group id can only contain ASCII digits. In bytes replacement strings, group name can only contain bytes in the ASCII range (b'\\x00'-b'\\x7f')."
+      }
+    ],
+    "deprecated": {
+      "version": "3.13",
+      "removedIn": null,
+      "text": "Passing count and flags as positional arguments is deprecated. In future Python versions they will be keyword-only parameters."
+    },
+    "availability": [],
+    "source": {
+      "path": "Lib/re/__init__.py",
+      "line": 185
+    },
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": [
+    {
+      "code": ">>> re.sub(r'def\\s+([a-zA-Z_][a-zA-Z_0-9]*)\\s*\\(\\s*\\):',\n...        r'static PyObject*\\npy_\\1(void)\\n{',\n...        'def myfunc():')\n'static PyObject*\\npy_myfunc(void)\\n{'",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/library/re.html#re.sub"
+    },
+    {
+      "code": ">>> def dashrepl(matchobj):\n...     if matchobj.group(0) == '-': return ' '\n...     else: return '-'\n...\n>>> re.sub('-{1,2}', dashrepl, 'pro----gram-files')\n'pro--gram files'\n>>> re.sub(r'\\sAND\\s', ' & ', 'Baked Beans And Spam', flags=re.IGNORECASE)\n'Baked Beans & Spam'",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/library/re.html#re.sub"
+    },
+    {
+      "code": ">>> def repl(m):\n...     inner_word = list(m.group(2))\n...     random.shuffle(inner_word)\n...     return m.group(1) + \"\".join(inner_word) + m.group(3)\n...\n>>> text = \"Professor Abdolmalek, please report your absences promptly.\"\n>>> re.sub(r\"(\\w)(\\w+)(\\w)\", repl, text)\n'Poefsrosr Aealmlobdk, pslaee reorpt your abnseces plmrptoy.'\n>>> re.sub(r\"(\\w)(\\w+)(\\w)\", repl, text)\n'Pofsroser Aodlambelk, plasee reoprt yuor asnebces potlmrpy.'",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/library/re.html#text-munging",
+      "targets": 2
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{"symbols":{},
+"unattached":[
+{"code":">>> import configparser\n>>> configparser.__name__\n'configparser'","url":"https://docs.python.org/3.15/library/__main__.html#name-main"},
+{"code":">>> from concurrent.futures import process\n>>> process.__name__\n'concurrent.futures.process'","url":"https://docs.python.org/3.15/library/__main__.html#name-main"},
+{"code":">>> __name__\n'__main__'","url":"https://docs.python.org/3.15/library/__main__.html#what-is-the-top-level-code-environment"},
+{"code":">>> import asyncio.__main__\n>>> asyncio.__main__.__name__\n'asyncio.__main__'","url":"https://docs.python.org/3.15/library/__main__.html#id1"},
+{"code":">>> import namely\n>>> namely.did_user_define_their_name()\nFalse\n>>> namely.print_user_name()\nTraceback (most recent call last):\n...\nValueError: Define the variable `my_name`!\n>>> my_name = 'Jabberwocky'\n>>> namely.did_user_define_their_name()\nTrue\n>>> namely.print_user_name()\nJabberwocky","url":"https://docs.python.org/3.15/library/__main__.html#import-main"}
+]}

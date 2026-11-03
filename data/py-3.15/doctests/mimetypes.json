@@ -1,0 +1,5 @@
+{"symbols":{
+"mimetypes/init":[{"code":">>> import mimetypes\n>>> mimetypes.init()\n>>> mimetypes.knownfiles\n['/etc/mime.types', '/etc/httpd/mime.types', ... ]\n>>> mimetypes.suffix_map['.tgz']\n'.tar.gz'\n>>> mimetypes.encodings_map['.gz']\n'gzip'\n>>> mimetypes.types_map['.tgz']\n'application/x-tar-gz'","from":"prose","url":"https://docs.python.org/3.15/library/mimetypes.html#module-mimetypes","targets":2}],
+"mimetypes/knownfiles":[{"code":">>> import mimetypes\n>>> mimetypes.init()\n>>> mimetypes.knownfiles\n['/etc/mime.types', '/etc/httpd/mime.types', ... ]\n>>> mimetypes.suffix_map['.tgz']\n'.tar.gz'\n>>> mimetypes.encodings_map['.gz']\n'gzip'\n>>> mimetypes.types_map['.tgz']\n'application/x-tar-gz'","from":"prose","url":"https://docs.python.org/3.15/library/mimetypes.html#module-mimetypes","targets":2}]
+},
+"unattached":[]}

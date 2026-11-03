@@ -1,0 +1,8 @@
+{"symbols":{
+"email.policy/Policy.max_line_length":[{"code":">>> policy100 = policy.compat32.clone(max_line_length=100)\n>>> policy80 = policy.compat32.clone(max_line_length=80)\n>>> apolicy = policy100 + policy80\n>>> apolicy.max_line_length\n80\n>>> apolicy = policy80 + policy100\n>>> apolicy.max_line_length\n100","from":"prose","url":"https://docs.python.org/3.15/library/email.policy.html#module-email.policy","targets":1}]
+},
+"unattached":[
+{"code":">>> from email import message_from_binary_file\n>>> from email.generator import BytesGenerator\n>>> from email import policy\n>>> from subprocess import Popen, PIPE\n>>> with open('mymsg.txt', 'rb') as f:\n...     msg = message_from_binary_file(f, policy=policy.default)\n...\n>>> p = Popen(['sendmail', msg['To'].addresses[0]], stdin=PIPE)\n>>> g = BytesGenerator(p.stdin, policy=msg.policy.clone(linesep='\\r\\n'))\n>>> g.flatten(msg)\n>>> p.stdin.close()\n>>> rc = p.wait()","url":"https://docs.python.org/3.15/library/email.policy.html#module-email.policy"},
+{"code":">>> import os\n>>> with open('converted.txt', 'wb') as f:\n...     f.write(msg.as_bytes(policy=msg.policy.clone(linesep=os.linesep)))\n17","url":"https://docs.python.org/3.15/library/email.policy.html#module-email.policy"},
+{"code":">>> compat_SMTP = policy.compat32.clone(linesep='\\r\\n')\n>>> compat_strict = policy.compat32.clone(raise_on_defect=True)\n>>> compat_strict_SMTP = compat_SMTP + compat_strict","url":"https://docs.python.org/3.15/library/email.policy.html#module-email.policy"}
+]}

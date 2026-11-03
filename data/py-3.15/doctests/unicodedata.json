@@ -1,0 +1,15 @@
+{"symbols":{
+"unicodedata/bidirectional":[{"code":">>> unicodedata.bidirectional('\\N{ARABIC-INDIC DIGIT SEVEN}') # 'A'rabic, 'N'umber\n'AN'","from":"block","url":"https://docs.python.org/3.15/library/unicodedata.html#unicodedata.bidirectional"}],
+"unicodedata/block":[{"code":">>> unicodedata.block('S')\n'Basic Latin'","from":"block","url":"https://docs.python.org/3.15/library/unicodedata.html#unicodedata.block"}],
+"unicodedata/category":[{"code":">>> unicodedata.category('A')  # 'L'etter, 'u'ppercase\n'Lu'","from":"block","url":"https://docs.python.org/3.15/library/unicodedata.html#unicodedata.category"}],
+"unicodedata/decimal":[{"code":">>> unicodedata.decimal('\\N{ARABIC-INDIC DIGIT NINE}')\n9\n>>> unicodedata.decimal('\\N{SUPERSCRIPT NINE}', -1)\n-1","from":"block","url":"https://docs.python.org/3.15/library/unicodedata.html#unicodedata.decimal"}],
+"unicodedata/decomposition":[{"code":">>> unicodedata.decomposition('Ã')\n'0041 0303'","from":"block","url":"https://docs.python.org/3.15/library/unicodedata.html#unicodedata.decomposition"}],
+"unicodedata/digit":[{"code":">>> unicodedata.digit('\\N{SUPERSCRIPT NINE}')\n9","from":"block","url":"https://docs.python.org/3.15/library/unicodedata.html#unicodedata.digit"}],
+"unicodedata/isxidcontinue":[{"code":">>> unicodedata.isxidcontinue('S')\nTrue\n>>> unicodedata.isxidcontinue(' ')\nFalse","from":"block","url":"https://docs.python.org/3.15/library/unicodedata.html#unicodedata.isxidcontinue"}],
+"unicodedata/isxidstart":[{"code":">>> unicodedata.isxidstart('S')\nTrue\n>>> unicodedata.isxidstart('0')\nFalse","from":"block","url":"https://docs.python.org/3.15/library/unicodedata.html#unicodedata.isxidstart"}],
+"unicodedata/lookup":[{"code":">>> unicodedata.lookup('LEFT CURLY BRACKET')\n'{'","from":"block","url":"https://docs.python.org/3.15/library/unicodedata.html#unicodedata.lookup"},{"code":">>> unicodedata.lookup('MIDDLE DOT') == '\\N{MIDDLE DOT}'\nTrue","from":"block","url":"https://docs.python.org/3.15/library/unicodedata.html#unicodedata.lookup"}],
+"unicodedata/mirrored":[{"code":">>> unicodedata.mirrored('>')\n1","from":"block","url":"https://docs.python.org/3.15/library/unicodedata.html#unicodedata.mirrored"}],
+"unicodedata/name":[{"code":">>> unicodedata.name('½')\n'VULGAR FRACTION ONE HALF'\n>>> unicodedata.name('\\uFFFF', 'fallback')\n'fallback'","from":"block","url":"https://docs.python.org/3.15/library/unicodedata.html#unicodedata.name"}],
+"unicodedata/numeric":[{"code":">>> unicodedata.numeric('½')\n0.5","from":"block","url":"https://docs.python.org/3.15/library/unicodedata.html#unicodedata.numeric"}]
+},
+"unattached":[]}

@@ -1,0 +1,43 @@
+{
+  "symbol": {
+    "id": "contextlib/contextmanager",
+    "module": "contextlib",
+    "qualname": "contextmanager",
+    "name": "contextmanager",
+    "kind": "decorator",
+    "parent": null,
+    "signatures": [
+      "@contextmanager"
+    ],
+    "doc": "@contextmanager decorator.\n\nTypical usage:\n\n    @contextmanager\n    def some_generator(<arguments>):\n        <setup>\n        try:\n            yield <value>\n        finally:\n            <cleanup>\n\nThis makes this:\n\n    with some_generator(<arguments>) as <variable>:\n        <body>\n\nequivalent to this:\n\n    <setup>\n    try:\n        <variable> = <value>\n        <body>\n    finally:\n        <cleanup>",
+    "docsUrl": "https://docs.python.org/3.15/library/contextlib.html#contextlib.contextmanager",
+    "added": null,
+    "changed": [
+      {
+        "version": "3.2",
+        "text": "Use of ContextDecorator."
+      }
+    ],
+    "deprecated": null,
+    "availability": [],
+    "source": {
+      "path": "Lib/contextlib.py",
+      "line": 338
+    },
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": [
+    {
+      "code": ">>> with managed_resource(timeout=3600) as resource:\n...     # Resource is released at the end of this block,\n...     # even if code in the block raises an exception",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/library/contextlib.html#contextlib.contextmanager"
+    },
+    {
+      "code": ">>> from contextlib import contextmanager\n>>> @contextmanager\n... def singleuse():\n...     print(\"Before\")\n...     yield\n...     print(\"After\")\n...\n>>> cm = singleuse()\n>>> with cm:\n...     pass\n...\nBefore\nAfter\n>>> with cm:\n...     pass\n...\nTraceback (most recent call last):\n    ...\nRuntimeError: generator didn't yield",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/library/contextlib.html#single-use-reusable-and-reentrant-context-managers",
+      "targets": 1
+    }
+  ]
+}

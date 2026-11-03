@@ -1,0 +1,4 @@
+{"symbols":{
+"locale/setlocale":[{"code":">>> import locale\n>>> loc = locale.setlocale(locale.LC_ALL)  # get current locale\n# use German locale; name and availability varies with platform\n>>> locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')\n>>> locale.strcoll('f\\xe4n', 'foo')  # compare a string containing an umlaut\n>>> locale.setlocale(locale.LC_ALL, '')   # use user's preferred locale\n>>> locale.setlocale(locale.LC_ALL, 'C')  # use default (C) locale\n>>> locale.setlocale(locale.LC_ALL, loc)  # restore saved locale","from":"block","url":"https://docs.python.org/3.15/library/locale.html#locale.setlocale"}]
+},
+"unattached":[]}

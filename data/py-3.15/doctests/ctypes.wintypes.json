@@ -1,0 +1,7 @@
+{"symbols":{
+"ctypes.wintypes/POINT":[{"code":">>> r = RECT(POINT(1, 2), POINT(3, 4))\n>>> r = RECT((1, 2), (3, 4))","from":"prose","url":"https://docs.python.org/3.15/library/ctypes.html#structures-and-unions","targets":2}],
+"ctypes.wintypes/RECT":[{"code":">>> r = RECT(POINT(1, 2), POINT(3, 4))\n>>> r = RECT((1, 2), (3, 4))","from":"prose","url":"https://docs.python.org/3.15/library/ctypes.html#structures-and-unions","targets":2},{"code":">>> from ctypes import POINTER\n>>> from ctypes.wintypes import LPRECT, RECT, SHORT\n>>> SHORT(-1).value\n-1\n>>> rect = RECT(0, 0, 100, 50)\n>>> rect.right, rect.bottom\n(100, 50)\n>>> LPRECT is POINTER(RECT)\nTrue","from":"prose","url":"https://docs.python.org/3.15/library/ctypes.html#module-ctypes.wintypes","targets":3}],
+"ctypes.wintypes/RGB":[{"code":">>> from ctypes.wintypes import RGB\n>>> hex(RGB(255, 128, 0))\n'0x80ff'","from":"block","url":"https://docs.python.org/3.15/library/ctypes.html#ctypes.wintypes.RGB"}],
+"ctypes.wintypes/SHORT":[{"code":">>> from ctypes import POINTER\n>>> from ctypes.wintypes import LPRECT, RECT, SHORT\n>>> SHORT(-1).value\n-1\n>>> rect = RECT(0, 0, 100, 50)\n>>> rect.right, rect.bottom\n(100, 50)\n>>> LPRECT is POINTER(RECT)\nTrue","from":"prose","url":"https://docs.python.org/3.15/library/ctypes.html#module-ctypes.wintypes","targets":3}]
+},
+"unattached":[]}

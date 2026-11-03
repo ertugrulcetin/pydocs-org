@@ -1,0 +1,35 @@
+{
+  "symbol": {
+    "id": "pathlib/PurePath.name",
+    "module": "pathlib",
+    "qualname": "PurePath.name",
+    "name": "name",
+    "kind": "attribute",
+    "parent": "pathlib/PurePath",
+    "signatures": [],
+    "doc": "The final path component, if any.",
+    "docsUrl": "https://docs.python.org/3.15/library/pathlib.html#pathlib.PurePath.name",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": {
+      "path": "Lib/pathlib/__init__.py",
+      "line": 401
+    },
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": [
+    {
+      "code": ">>> PurePosixPath('my/library/setup.py').name\n'setup.py'",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/library/pathlib.html#pathlib.PurePath.name"
+    },
+    {
+      "code": ">>> PureWindowsPath('//some/share/setup.py').name\n'setup.py'\n>>> PureWindowsPath('//some/share').name\n''",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/library/pathlib.html#pathlib.PurePath.name"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "symbol": {
+    "id": "builtins/dict.fromkeys",
+    "module": "builtins",
+    "qualname": "dict.fromkeys",
+    "name": "fromkeys",
+    "kind": "classmethod",
+    "parent": "builtins/dict",
+    "signatures": [
+      "dict.fromkeys(iterable, value=None, /)"
+    ],
+    "doc": "Create a new dictionary with keys from iterable and values set to value.",
+    "docsUrl": "https://docs.python.org/3.15/builtins/stdtypes.html#dict.fromkeys",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

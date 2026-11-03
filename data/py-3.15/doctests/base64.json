@@ -1,0 +1,5 @@
+{"symbols":{
+"base64/b64decode":[{"code":">>> import base64\n>>> encoded = base64.b64encode(b'data to be encoded')\n>>> encoded\nb'ZGF0YSB0byBiZSBlbmNvZGVk'\n>>> data = base64.b64decode(encoded)\n>>> data\nb'data to be encoded'","from":"prose","url":"https://docs.python.org/3.15/library/base64.html#legacy-interface","targets":2}],
+"base64/b64encode":[{"code":">>> import base64\n>>> encoded = base64.b64encode(b'data to be encoded')\n>>> encoded\nb'ZGF0YSB0byBiZSBlbmNvZGVk'\n>>> data = base64.b64decode(encoded)\n>>> data\nb'data to be encoded'","from":"prose","url":"https://docs.python.org/3.15/library/base64.html#legacy-interface","targets":2}]
+},
+"unattached":[]}

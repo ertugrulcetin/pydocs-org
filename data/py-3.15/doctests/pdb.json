@@ -1,0 +1,5 @@
+{"symbols":{
+"pdb/pm":[{"code":">>> import pdb\n>>> def f(x):\n...     print(1 / x)\n...\n>>> f(0)\nTraceback (most recent call last):\n  File \"<stdin>\", line 1, in <module>\n  File \"<stdin>\", line 2, in f\nZeroDivisionError: division by zero\n>>> pdb.pm()\n> <stdin>(2)f()\n(Pdb) p x\n0\n(Pdb)","from":"prose","url":"https://docs.python.org/3.15/library/pdb.html#command-line-interface","targets":1}],
+"pdb/run":[{"code":">>> import pdb\n>>> def f(x):\n...     print(1 / x)\n>>> pdb.run(\"f(2)\")\n> <string>(1)<module>()\n(Pdb) continue\n0.5\n>>>","from":"prose","url":"https://docs.python.org/3.15/library/pdb.html#command-line-interface","targets":1}]
+},
+"unattached":[]}

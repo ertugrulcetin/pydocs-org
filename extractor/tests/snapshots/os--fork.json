@@ -1,0 +1,37 @@
+{
+  "symbol": {
+    "id": "os/fork",
+    "module": "os",
+    "qualname": "fork",
+    "name": "fork",
+    "kind": "function",
+    "parent": null,
+    "signatures": [
+      "fork()"
+    ],
+    "doc": "Fork a child process.\n\nReturn 0 to child process and PID of child to parent process.",
+    "docsUrl": "https://docs.python.org/3.15/library/os.html#os.fork",
+    "added": null,
+    "changed": [
+      {
+        "version": "3.8",
+        "text": "Calling fork() in a subinterpreter is no longer supported (RuntimeError is raised)."
+      },
+      {
+        "version": "3.12",
+        "text": "If Python is able to detect that your process has multiple threads, os.fork() now raises a DeprecationWarning. We chose to surface this as a warning, when detectable, to better inform developers of a design problem that the POSIX platform specifically notes as not supported. Even in code that appears to work, it has never been safe to mix threading with os.fork() on POSIX platforms. The CPython runtime itself has always made API calls that are not safe for use in the child process when threads existed in the parent (such as malloc and free). Users of macOS or users of libc or malloc implementations other than those typically found in glibc to date are among those already more likely to experience deadlocks running such code. See this discussion on fork being incompatible with threads for technical details of why we’re surfacing this longstanding platform compatibility problem to developers."
+      }
+    ],
+    "deprecated": null,
+    "availability": [
+      "POSIX",
+      "not WASI",
+      "not Android",
+      "not iOS"
+    ],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

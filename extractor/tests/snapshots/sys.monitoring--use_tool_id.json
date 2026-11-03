@@ -1,0 +1,23 @@
+{
+  "symbol": {
+    "id": "sys.monitoring/use_tool_id",
+    "module": "sys.monitoring",
+    "qualname": "use_tool_id",
+    "name": "use_tool_id",
+    "kind": "function",
+    "parent": null,
+    "signatures": [
+      "use_tool_id(tool_id: int, name: str, /) -> None"
+    ],
+    "doc": "Must be called before tool_id can be used. tool_id must be in the range 0 to 5 inclusive. Raises a ValueError if tool_id is in use.",
+    "docsUrl": "https://docs.python.org/3.15/library/sys.monitoring.html#sys.monitoring.use_tool_id",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

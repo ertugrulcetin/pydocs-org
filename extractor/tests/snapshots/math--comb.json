@@ -1,0 +1,23 @@
+{
+  "symbol": {
+    "id": "math/comb",
+    "module": "math",
+    "qualname": "comb",
+    "name": "comb",
+    "kind": "function",
+    "parent": null,
+    "signatures": [
+      "comb(n, k, /)"
+    ],
+    "doc": "Number of ways to choose k items from n items without repetition and without order.\n\nEvaluates to n! / (k! * (n - k)!) when k <= n and evaluates\nto zero when k > n.\n\nAlso called the binomial coefficient because it is equivalent\nto the coefficient of k-th term in polynomial expansion of the\nexpression (1 + x)**n.\n\nRaises ValueError if either of the arguments are negative.",
+    "docsUrl": "https://docs.python.org/3.15/library/math.html#math.comb",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

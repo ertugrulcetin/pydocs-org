@@ -1,0 +1,4 @@
+[
+{"id":"tkinter.commondialog/Dialog","module":"tkinter.commondialog","qualname":"Dialog","name":"Dialog","kind":"class","parent":null,"signatures":["Dialog(master=None, **options)"],"doc":null,"docsUrl":"https://docs.python.org/3.15/library/dialog.html#tkinter.commondialog.Dialog","added":null,"changed":[],"deprecated":null,"availability":[],"source":null,"implDetail":false,"isAsync":false},
+{"id":"tkinter.commondialog/Dialog.show","module":"tkinter.commondialog","qualname":"Dialog.show","name":"show","kind":"method","parent":"tkinter.commondialog/Dialog","signatures":["Dialog.show(**options)"],"doc":"Render the Dialog window.","docsUrl":"https://docs.python.org/3.15/library/dialog.html#tkinter.commondialog.Dialog.show","added":null,"changed":[],"deprecated":null,"availability":[],"source":null,"implDetail":false,"isAsync":false}
+]

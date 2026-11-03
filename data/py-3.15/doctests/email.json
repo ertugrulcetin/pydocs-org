@@ -1,0 +1,4 @@
+{"symbols":{
+"email/message_from_bytes":[{"code":">>> import email\n>>> msg = email.message_from_bytes(myBytes)","from":"prose","url":"https://docs.python.org/3.15/library/email.parser.html#parser-api","targets":1}]
+},
+"unattached":[]}

@@ -1,0 +1,23 @@
+{
+  "symbol": {
+    "id": "builtins/ExceptionGroup",
+    "module": "builtins",
+    "qualname": "ExceptionGroup",
+    "name": "ExceptionGroup",
+    "kind": "exception",
+    "parent": null,
+    "signatures": [
+      "ExceptionGroup(msg, excs)"
+    ],
+    "doc": "Both of these exception types wrap the exceptions in the sequence excs. The msg parameter must be a string. The difference between the two classes is that BaseExceptionGroup extends BaseException and it can wrap any exception, while ExceptionGroup extends Exception and it can only wrap subclasses of Exception. This design is so that except Exception catches an ExceptionGroup but not BaseExceptionGroup.",
+    "docsUrl": "https://docs.python.org/3.15/builtins/exceptions.html#ExceptionGroup",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

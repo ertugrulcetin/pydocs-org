@@ -1,0 +1,4 @@
+{"symbols":{
+"importlib.machinery/NamespaceLoader":[{"code":">>> from importlib.machinery import NamespaceLoader\n>>> import my_namespace\n>>> isinstance(my_namespace.__loader__, NamespaceLoader)\nTrue\n>>> import importlib.abc\n>>> isinstance(my_namespace.__loader__, importlib.abc.Loader)\nTrue","from":"block","url":"https://docs.python.org/3.15/library/importlib.html#importlib.machinery.NamespaceLoader"}]
+},
+"unattached":[]}

@@ -1,0 +1,5 @@
+{"symbols":{
+"glob/glob":[{"code":">>> import glob\n>>> glob.glob('./[0-9].*')\n['./1.gif', './2.txt']\n>>> glob.glob('*.gif')\n['1.gif', 'card.gif']\n>>> glob.glob('?.gif')\n['1.gif']\n>>> glob.glob('**/*.txt', recursive=True)\n['2.txt', 'sub/3.txt']\n>>> glob.glob('./**/', recursive=True)\n['./', './sub/']","from":"prose","url":"https://docs.python.org/3.15/library/glob.html#examples","targets":1},{"code":">>> import glob\n>>> glob.glob('*.gif')\n['card.gif']\n>>> glob.glob('.c*')\n['.card.gif']","from":"prose","url":"https://docs.python.org/3.15/library/glob.html#examples","targets":1}],
+"glob/translate":[{"code":">>> import glob, re\n>>>\n>>> regex = glob.translate('**/*.txt', recursive=True, include_hidden=True)\n>>> regex\n'(?s:(?:.+/)?[^/]*\\\\.txt)\\\\z'\n>>> reobj = re.compile(regex)\n>>> reobj.prefixmatch('foo/bar/baz.txt')\n<re.Match object; span=(0, 15), match='foo/bar/baz.txt'>","from":"block","url":"https://docs.python.org/3.15/library/glob.html#glob.translate"}]
+},
+"unattached":[]}

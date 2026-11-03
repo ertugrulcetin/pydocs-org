@@ -1,0 +1,5 @@
+{"symbols":{
+"email.header/decode_header":[{"code":">>> from email.header import decode_header\n>>> decode_header('=?iso-8859-1?q?p=F6stal?=')\n[(b'p\\xf6stal', 'iso-8859-1')]\n>>> decode_header('unencoded_string')\n[('unencoded_string', None)]\n>>> decode_header('bar =?utf-8?B?ZsOzbw==?=')\n[(b'bar ', None), (b'f\\xc3\\xb3o', 'utf-8')]","from":"block","url":"https://docs.python.org/3.15/library/email.header.html#email.header.decode_header"}],
+"email.header/Header":[{"code":">>> from email.message import Message\n>>> from email.header import Header\n>>> msg = Message()\n>>> h = Header('p\\xf6stal', 'iso-8859-1')\n>>> msg['Subject'] = h\n>>> msg.as_string()\n'Subject: =?iso-8859-1?q?p=F6stal?=\\n\\n'","from":"prose","url":"https://docs.python.org/3.15/library/email.header.html#module-email.header","targets":1}]
+},
+"unattached":[]}

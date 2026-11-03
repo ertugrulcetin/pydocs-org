@@ -1,0 +1,5 @@
+{"symbols":{
+"csv/DictReader":[{"code":">>> import csv\n>>> with open('names.csv', newline='') as csvfile:\n...     reader = csv.DictReader(csvfile)\n...     for row in reader:\n...         print(row['first_name'], row['last_name'])\n...\nEric Idle\nJohn Cleese\n\n>>> print(row)\n{'first_name': 'John', 'last_name': 'Cleese'}","from":"block","url":"https://docs.python.org/3.15/library/csv.html#csv.DictReader"}],
+"csv/reader":[{"code":">>> import csv\n>>> with open('eggs.csv', newline='') as csvfile:\n...     spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')\n...     for row in spamreader:\n...         print(', '.join(row))\nSpam, Spam, Spam, Spam, Spam, Baked Beans\nSpam, Lovely Spam, Wonderful Spam","from":"block","url":"https://docs.python.org/3.15/library/csv.html#csv.reader"}]
+},
+"unattached":[]}

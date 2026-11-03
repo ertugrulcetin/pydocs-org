@@ -1,0 +1,52 @@
+{
+  "symbol": {
+    "id": "datetime/datetime.strptime",
+    "module": "datetime",
+    "qualname": "datetime.strptime",
+    "name": "strptime",
+    "kind": "classmethod",
+    "parent": "datetime/datetime",
+    "signatures": [
+      "datetime.strptime(date_string, format)"
+    ],
+    "doc": "Parse string according to the given date and time format (like time.strptime()).\n\nFor a list of supported format codes, see the documentation:\n    https://docs.python.org/3/library/datetime.html#format-codes",
+    "docsUrl": "https://docs.python.org/3.15/library/datetime.html#datetime.datetime.strptime",
+    "added": null,
+    "changed": [
+      {
+        "version": "3.15",
+        "text": "If format specifies a day of month (%d) without a year, ValueError is raised. This is to avoid a quadrennial leap year bug in code seeking to parse only a month and day as the default year used in absence of one in the format is not a leap year. The workaround is to always include a year in your format. If parsing date_string values that do not have a year, explicitly add a year that is a leap year before parsing: >>> import datetime as dt >>> date_string = \"02/29\" >>> when = dt.datetime.strptime(f\"{date_string};1984\", \"%m/%d;%Y\") # Avoids leap year bug. >>> when.strftime(\"%B %d\") 'February 29'"
+      }
+    ],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": [
+    {
+      "code": ">>> import datetime as dt\n>>> date_string = \"02/29\"\n>>> when = dt.datetime.strptime(f\"{date_string};1984\", \"%m/%d;%Y\")  # Avoids leap year bug.\n>>> when.strftime(\"%B %d\")\n'February 29'",
+      "from": "block",
+      "url": "https://docs.python.org/3.15/library/datetime.html#datetime.datetime.strptime"
+    },
+    {
+      "code": ">>> import datetime as dt\n\n>>> # Using datetime.combine()\n>>> d = dt.date(2005, 7, 14)\n>>> t = dt.time(12, 30)\n>>> dt.datetime.combine(d, t)\ndatetime.datetime(2005, 7, 14, 12, 30)\n\n>>> # Using datetime.now()\n>>> dt.datetime.now()\ndatetime.datetime(2007, 12, 6, 16, 29, 43, 79043)   # GMT +1\n>>> dt.datetime.now(dt.timezone.utc)\ndatetime.datetime(2007, 12, 6, 15, 29, 43, 79060, tzinfo=datetime.timezone.utc)\n\n>>> # Using datetime.strptime()\n>>> my_datetime = dt.datetime.strptime(\"21/11/06 16:30\", \"%d/%m/%y %H:%M\")\n>>> my_datetime\ndatetime.datetime(2006, 11, 21, 16, 30)\n\n>>> # Using datetime.timetuple() to get tuple of all attributes\n>>> tt = my_datetime.timetuple()\n>>> for it in tt:\n...     print(it)\n...\n2006    # year\n11      # month\n21      # day\n16      # hour\n30      # minute\n0       # second\n1       # weekday (0 = Monday)\n325     # number of days since 1st January\n-1      # dst - method tzinfo.dst() returned None\n\n>>> # Date in ISO format\n>>> ic = my_datetime.isocalendar()\n>>> for it in ic:\n...     print(it)\n...\n2006    # ISO year\n47      # ISO week\n2       # ISO weekday\n\n>>> # Formatting a datetime\n>>> my_datetime.strftime(\"%A, %d. %B %Y %I:%M%p\")\n'Tuesday, 21. November 2006 04:30PM'\n>>> 'The {1} is {0:%d}, the {2} is {0:%B}, the {3} is {0:%I:%M%p}.'.format(my_datetime, \"day\", \"month\", \"time\")\n'The day is 21, the month is November, the time is 04:30PM.'",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/library/datetime.html#examples-of-usage-datetime",
+      "targets": 5
+    },
+    {
+      "code": ">>> import datetime as dt\n>>> dt.datetime.strptime('31/01/22 23:59:59.999999',\n...                      '%d/%m/%y %H:%M:%S.%f')\ndatetime.datetime(2022, 1, 31, 23, 59, 59, 999999)\n>>> _.strftime('%a %d %b %Y, %I:%M%p')\n'Mon 31 Jan 2022, 11:59PM'",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/library/datetime.html#strftime-and-strptime-format-codes",
+      "targets": 1
+    },
+    {
+      "code": ">>> import datetime as dt\n>>> value = \"2/29\"\n>>> dt.datetime.strptime(value, \"%m/%d\")\nTraceback (most recent call last):\n...\nValueError: day 29 must be in range 1..28 for month 2 in year 1900\n>>> dt.datetime.strptime(f\"1904 {value}\", \"%Y %m/%d\")\ndatetime.datetime(1904, 2, 29, 0, 0)",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/library/datetime.html#technical-detail",
+      "targets": 1
+    }
+  ]
+}

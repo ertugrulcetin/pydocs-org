@@ -1,0 +1,5 @@
+{"symbols":{
+"textwrap/indent":[{"code":">>> s = 'hello\\n\\n \\nworld'\n>>> indent(s, '  ')\n'  hello\\n\\n \\n  world'","from":"block","url":"https://docs.python.org/3.15/library/textwrap.html#textwrap.indent"},{"code":">>> print(indent(s, '+ ', lambda line: True))\n+ hello\n+\n+\n+ world","from":"block","url":"https://docs.python.org/3.15/library/textwrap.html#textwrap.indent"}],
+"textwrap/shorten":[{"code":">>> textwrap.shorten(\"Hello  world!\", width=12)\n'Hello world!'\n>>> textwrap.shorten(\"Hello  world!\", width=11)\n'Hello [...]'\n>>> textwrap.shorten(\"Hello world\", width=10, placeholder=\"...\")\n'Hello...'","from":"block","url":"https://docs.python.org/3.15/library/textwrap.html#textwrap.shorten"}]
+},
+"unattached":[]}

@@ -1,0 +1,63 @@
+{
+  "symbol": {
+    "id": "json/dumps",
+    "module": "json",
+    "qualname": "dumps",
+    "name": "dumps",
+    "kind": "function",
+    "parent": null,
+    "signatures": [
+      "dumps(obj, *, skipkeys=False, ensure_ascii=True, check_circular=True, allow_nan=True, cls=None, indent=None, separators=None, default=None, sort_keys=False, **kw)"
+    ],
+    "doc": "Serialize ``obj`` to a JSON formatted ``str``.\n\nIf ``skipkeys`` is true then ``dict`` keys that are not basic types\n(``str``, ``int``, ``float``, ``bool``, ``None``) will be skipped\ninstead of raising a ``TypeError``.\n\nIf ``ensure_ascii`` is false, then the return value can contain\nnon-ASCII and non-printable characters if they appear in strings\ncontained in ``obj``.  Otherwise, all such characters are escaped in\nJSON strings.\n\nIf ``check_circular`` is false, then the circular reference check\nfor container types will be skipped and a circular reference will\nresult in an ``RecursionError`` (or worse).\n\nIf ``allow_nan`` is false, then it will be a ``ValueError`` to\nserialize out of range ``float`` values (``nan``, ``inf``, ``-inf``) in\nstrict compliance of the JSON specification, instead of using the\nJavaScript equivalents (``NaN``, ``Infinity``, ``-Infinity``).\n\nIf ``indent`` is a non-negative integer, then JSON array elements and\nobject members will be pretty-printed with that indent level. An indent\nlevel of 0 will only insert newlines. ``None`` is the default and gives\na representation with no newlines inserted.\n\nIf specified, ``separators`` should be an ``(item_separator,\nkey_separator)`` tuple.  The default is ``(', ', ': ')`` if *indent* is\n``None`` and ``(',', ': ')`` otherwise.  To get the most compact JSON\nrepresentation, you should specify ``(',', ':')`` to eliminate\nwhitespace.\n\n``default(obj)`` is a function that should return a serializable version\nof obj or raise TypeError. The default simply raises TypeError.\n\nIf *sort_keys* is true (default: ``False``), then the output of\ndictionaries will be sorted by key.\n\nTo use a custom ``JSONEncoder`` subclass (e.g. one that overrides the\n``.default()`` method to serialize additional types), specify it with\nthe ``cls`` kwarg; otherwise ``JSONEncoder`` is used.",
+    "docsUrl": "https://docs.python.org/3.15/library/json.html#json.dumps",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": {
+      "path": "Lib/json/__init__.py",
+      "line": 184
+    },
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": [
+    {
+      "code": ">>> import json\n>>> json.dumps(['foo', {'bar': ('baz', None, 1.0, 2)}])\n'[\"foo\", {\"bar\": [\"baz\", null, 1.0, 2]}]'\n>>> print(json.dumps(\"\\\"foo\\bar\"))\n\"\\\"foo\\bar\"\n>>> print(json.dumps('\\u1234'))\n\"\\u1234\"\n>>> print(json.dumps('\\\\'))\n\"\\\\\"\n>>> print(json.dumps({\"c\": 0, \"b\": 0, \"a\": 0}, sort_keys=True))\n{\"a\": 0, \"b\": 0, \"c\": 0}\n>>> from io import StringIO\n>>> io = StringIO()\n>>> json.dump(['streaming API'], io)\n>>> io.getvalue()\n'[\"streaming API\"]'",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/library/json.html#module-json",
+      "targets": 2
+    },
+    {
+      "code": ">>> import json\n>>> json.dumps([1, 2, 3, {'4': 5, '6': 7}], separators=(',', ':'))\n'[1,2,3,{\"4\":5,\"6\":7}]'",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/library/json.html#module-json",
+      "targets": 1
+    },
+    {
+      "code": ">>> import json\n>>> print(json.dumps({'6': 7, '4': 5}, sort_keys=True, indent=4))\n{\n    \"4\": 5,\n    \"6\": 7\n}",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/library/json.html#module-json",
+      "targets": 1
+    },
+    {
+      "code": ">>> import json\n>>> def custom_json(obj):\n...     if isinstance(obj, complex):\n...         return {'__complex__': True, 'real': obj.real, 'imag': obj.imag}\n...     raise TypeError(f'Cannot serialize object of {type(obj)}')\n...\n>>> json.dumps(1 + 2j, default=custom_json)\n'{\"__complex__\": true, \"real\": 1.0, \"imag\": 2.0}'",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/library/json.html#module-json",
+      "targets": 1
+    },
+    {
+      "code": ">>> import json\n>>> class ComplexEncoder(json.JSONEncoder):\n...     def default(self, obj):\n...         if isinstance(obj, complex):\n...             return [obj.real, obj.imag]\n...         # Let the base class default method raise the TypeError\n...         return super().default(obj)\n...\n>>> json.dumps(2 + 1j, cls=ComplexEncoder)\n'[2.0, 1.0]'\n>>> ComplexEncoder().encode(2 + 1j)\n'[2.0, 1.0]'\n>>> list(ComplexEncoder().iterencode(2 + 1j))\n['[2.0', ', 1.0', ']']",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/library/json.html#module-json",
+      "targets": 4
+    },
+    {
+      "code": ">>> # Neither of these calls raises an exception, but the results are not valid JSON\n>>> json.dumps(float('-inf'))\n'-Infinity'\n>>> json.dumps(float('nan'))\n'NaN'\n>>> # Same when deserializing\n>>> json.loads('-Infinity')\n-inf\n>>> json.loads('NaN')\nnan",
+      "from": "prose",
+      "url": "https://docs.python.org/3.15/library/json.html#infinite-and-nan-number-values",
+      "targets": 2
+    }
+  ]
+}

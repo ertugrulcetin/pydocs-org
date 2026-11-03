@@ -1,0 +1,4 @@
+{"symbols":{
+"io/BytesIO.getbuffer":[{"code":">>> b = io.BytesIO(b\"abcdef\")\n>>> view = b.getbuffer()\n>>> view[2:4] = b\"56\"\n>>> b.getvalue()\nb'ab56ef'","from":"block","url":"https://docs.python.org/3.15/library/io.html#io.BytesIO.getbuffer"}]
+},
+"unattached":[]}

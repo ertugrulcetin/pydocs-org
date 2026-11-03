@@ -1,0 +1,4 @@
+{"symbols":{
+"os/stat":[{"code":">>> import os\n>>> statinfo = os.stat('somefile.txt')\n>>> statinfo\nos.stat_result(st_mode=33188, st_ino=7876932, st_dev=234881026,\nst_nlink=1, st_uid=501, st_gid=501, st_size=264, st_atime=1297230295,\nst_mtime=1297230027, st_ctime=1297230027)\n>>> statinfo.st_size\n264","from":"block","url":"https://docs.python.org/3.15/library/os.html#os.stat"}]
+},
+"unattached":[]}

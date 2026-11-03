@@ -1,0 +1,23 @@
+{
+  "symbol": {
+    "id": "builtins/list.append",
+    "module": "builtins",
+    "qualname": "list.append",
+    "name": "append",
+    "kind": "method",
+    "parent": "builtins/list",
+    "signatures": [
+      "list.append(value, /)"
+    ],
+    "doc": "Append object to the end of the list.",
+    "docsUrl": "https://docs.python.org/3.15/builtins/stdtypes.html#list.append",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

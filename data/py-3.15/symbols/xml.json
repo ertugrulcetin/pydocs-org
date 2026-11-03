@@ -1,0 +1,4 @@
+[
+{"id":"xml/is_valid_name","module":"xml","qualname":"is_valid_name","name":"is_valid_name","kind":"function","parent":null,"signatures":["is_valid_name(name)"],"doc":"Test whether a string is a valid element or attribute name.","docsUrl":"https://docs.python.org/3.15/library/xml.html#xml.is_valid_name","added":"3.15","changed":[],"deprecated":null,"availability":[],"source":{"path":"Lib/xml/utils.py","line":4},"implDetail":false,"isAsync":false},
+{"id":"xml/is_valid_text","module":"xml","qualname":"is_valid_text","name":"is_valid_text","kind":"function","parent":null,"signatures":["is_valid_text(data)"],"doc":"Test whether a string is a sequence of legal XML 1.0 characters.","docsUrl":"https://docs.python.org/3.15/library/xml.html#xml.is_valid_text","added":"3.15","changed":[],"deprecated":null,"availability":[],"source":{"path":"Lib/xml/utils.py","line":35},"implDetail":false,"isAsync":false}
+]

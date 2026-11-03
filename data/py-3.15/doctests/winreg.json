@@ -1,0 +1,4 @@
+{"symbols":{
+"winreg/ExpandEnvironmentStrings":[{"code":">>> ExpandEnvironmentStrings('%windir%')\n'C:\\\\Windows'","from":"block","url":"https://docs.python.org/3.15/library/winreg.html#winreg.ExpandEnvironmentStrings"}]
+},
+"unattached":[]}

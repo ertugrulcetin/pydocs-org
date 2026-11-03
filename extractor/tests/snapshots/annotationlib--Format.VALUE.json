@@ -1,0 +1,23 @@
+{
+  "symbol": {
+    "id": "annotationlib/Format.VALUE",
+    "module": "annotationlib",
+    "qualname": "Format.VALUE",
+    "name": "VALUE",
+    "kind": "attribute",
+    "parent": "annotationlib/Format",
+    "signatures": [
+      "Format.VALUE = 1"
+    ],
+    "doc": "Values are the result of evaluating the annotation expressions.",
+    "docsUrl": "https://docs.python.org/3.15/library/annotationlib.html#annotationlib.Format.VALUE",
+    "added": null,
+    "changed": [],
+    "deprecated": null,
+    "availability": [],
+    "source": null,
+    "implDetail": false,
+    "isAsync": false
+  },
+  "doctests": []
+}

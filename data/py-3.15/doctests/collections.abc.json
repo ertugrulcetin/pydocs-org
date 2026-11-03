@@ -1,0 +1,6 @@
+{"symbols":{},
+"unattached":[
+{"code":">>> issubclass(C, Sequence)\nTrue\n>>> isinstance(C(), Sequence)\nTrue","url":"https://docs.python.org/3.15/library/collections.abc.html#module-collections.abc"},
+{"code":">>> issubclass(D, Sequence)\nTrue\n>>> isinstance(D(), Sequence)\nTrue","url":"https://docs.python.org/3.15/library/collections.abc.html#module-collections.abc"},
+{"code":">>> issubclass(E, Iterable)\nTrue\n>>> isinstance(E(), Iterable)\nTrue","url":"https://docs.python.org/3.15/library/collections.abc.html#module-collections.abc"}
+]}

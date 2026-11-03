@@ -1,0 +1,5 @@
+{"symbols":{
+"dis/Bytecode":[{"code":">>> bytecode = dis.Bytecode(myfunc)\n>>> for instr in bytecode:\n...     print(instr.opname)\n...\nRESUME\nLOAD_GLOBAL\nLOAD_FAST_BORROW\nCALL\nRETURN_VALUE","from":"prose","url":"https://docs.python.org/3.15/library/dis.html#bytecode-analysis","targets":1}],
+"dis/dis":[{"code":">>> dis.dis(myfunc)\n  2           RESUME                   0\n\n  3           LOAD_GLOBAL              1 (len + NULL)\n              LOAD_FAST_BORROW         0 (alist)\n              CALL                     1\n              RETURN_VALUE","from":"prose","url":"https://docs.python.org/3.15/library/dis.html#module-dis","targets":1}]
+},
+"unattached":[]}

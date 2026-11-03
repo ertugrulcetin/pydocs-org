@@ -1,0 +1,4 @@
+{"symbols":{
+"copyreg/pickle":[{"code":">>> import copyreg, copy, pickle\n>>> class C:\n...     def __init__(self, a):\n...         self.a = a\n...\n>>> def pickle_c(c):\n...     print(\"pickling a C instance...\")\n...     return C, (c.a,)\n...\n>>> copyreg.pickle(C, pickle_c)\n>>> c = C(1)\n>>> d = copy.copy(c)\npickling a C instance...\n>>> p = pickle.dumps(c)\npickling a C instance...","from":"prose","url":"https://docs.python.org/3.15/library/copyreg.html#example","targets":1}]
+},
+"unattached":[]}
