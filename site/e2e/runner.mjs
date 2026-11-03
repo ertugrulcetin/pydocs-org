@@ -88,6 +88,21 @@ await page.waitForSelector('.var-example .run-example');
 r = await run();
 check('script: values then traceback', r.out.startsWith('4.0\nTraceback') && r.out.includes('ZeroDivisionError') && !r.out.includes('_pydocs_run'), JSON.stringify(r.out.slice(0, 120)));
 
+// asyncio.run() and top-level await block on a coroutine: they need stack
+// switching (JSPI), so the worker starts each run with callPromising().
+body = ">>> import asyncio\n>>> async def main():\n...     print('hello')\n...     await asyncio.sleep(0.2)\n...     print('world')\n>>> asyncio.run(main())\nhello\nworld";
+await page.goto('about:blank');
+await page.goto(`${B}/builtins/eval`);
+await page.waitForSelector('.var-example .run-example');
+r = await run();
+check('asyncio.run() works (the asyncio docs example)', r.out === 'hello\nworld\n', JSON.stringify(r.out.slice(-160)));
+body = ">>> import asyncio\n>>> await asyncio.sleep(0.1, 'slept')\n'slept'";
+await page.goto('about:blank');
+await page.goto(`${B}/builtins/eval`);
+await page.waitForSelector('.var-example .run-example');
+r = await run();
+check('top-level await shows the value (like python -m asyncio)', r.out === "'slept'\n", JSON.stringify(r.out.slice(-160)));
+
 // Sandbox: the runner cannot read the page's cookies or call our API with them.
 body = "import js\nprint(js.document.cookie if hasattr(js, 'document') else 'no document')\nprint(js.self.origin)";
 await ctx.addCookies([{ name: 'pd_user', value: 'secret', url: B }]);

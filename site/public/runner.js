@@ -11,7 +11,10 @@
   // interactive interpreter. Doctest-style snippets (>>> / ...) are run from
   // their prompt lines; the expected-output lines are ignored.
   var PY_SETUP = [
-    'import ast, contextlib, io, json, re, sys, traceback',
+    'import ast, contextlib, inspect, io, json, re, sys, traceback',
+    'from pyodide.ffi import run_sync',
+    '# Top-level await, as in the asyncio REPL (python -m asyncio).',
+    '_FLAGS = ast.PyCF_ALLOW_TOP_LEVEL_AWAIT',
     '_PROMPT = re.compile(r"^(>>>|\\.\\.\\.)(?: |$)(.*)$")',
     'def _pydocs_source(src):',
     '    lines = src.splitlines()',
@@ -40,12 +43,16 @@
     '        try:',
     '            tree = ast.parse(_pydocs_source(src), "<example>")',
     '            for node in tree.body:',
-    '                if isinstance(node, ast.Expr):',
-    '                    value = eval(compile(ast.Expression(node.value), "<example>", "eval"), ns)',
-    '                    if value is not None:',
-    '                        print(repr(value))',
-    '                else:',
-    '                    exec(compile(ast.Module([node], []), "<example>", "exec"), ns)',
+    '                expr = isinstance(node, ast.Expr)',
+    '                tree1 = ast.Expression(node.value) if expr else ast.Module([node], [])',
+    '                code = compile(tree1, "<example>", "eval" if expr else "exec", flags=_FLAGS)',
+    '                value = eval(code, ns)',
+    '                if code.co_flags & inspect.CO_COROUTINE:',
+    '                    # Needs stack switching (JSPI): the worker starts this',
+    '                    # function with callPromising().',
+    '                    value = run_sync(value)',
+    '                if expr and value is not None:',
+    '                    print(repr(value))',
     '        except SystemExit:',
     '            pass',
     '        except SyntaxError as e:',
@@ -109,20 +116,40 @@
       return py;
     }
 
-    self.onmessage = async function (e) {
+    // One run at a time: a run that waits (asyncio.sleep) must not let the
+    // next one start and mix their output.
+    var queue = Promise.resolve();
+    self.onmessage = function (e) {
       var d = e.data;
       if (d.files) files = d.files;
+      queue = queue.then(function () {
+        return handle(d);
+      });
+    };
+
+    async function handle(d) {
       try {
         if (!ready) ready = start(d.indexURL);
         var py = await ready;
         self.postMessage({ id: d.id, phase: 'running' });
-        var result = JSON.parse(py.globals.get('_pydocs_run')(d.code, d.module, d.name));
+        // callPromising enables stack switching (JSPI), so Python can block on
+        // a coroutine: asyncio.run() and top-level await need it.
+        var run = py.globals.get('_pydocs_run');
+        var out;
+        try {
+          out = typeof WebAssembly.Suspending === 'function' && typeof run.callPromising === 'function'
+            ? await run.callPromising(d.code, d.module, d.name)
+            : run(d.code, d.module, d.name);
+        } finally {
+          run.destroy();
+        }
+        var result = JSON.parse(out);
         self.postMessage({ id: d.id, output: result.output, version: result.version, prelude: result.prelude });
       } catch (err) {
         ready = null;
         self.postMessage({ id: d.id, error: String((err && err.message) || err) });
       }
-    };
+    }
   }
   var WORKER_SRC = 'var PY_SETUP = ' + JSON.stringify(PY_SETUP) + ';\n(' + workerMain.toString() + ')();\n';
 
