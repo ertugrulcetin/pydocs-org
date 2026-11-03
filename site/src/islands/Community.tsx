@@ -17,6 +17,22 @@ import {
   updateCounts,
 } from '../lib/community-client';
 import type { Author, CookieUser, Example, Note, SeeAlso, SymbolDoc } from '../lib/community-client';
+import { REPO_URL } from '../lib/site';
+
+/** "report" opens a prefilled GitHub issue (PLAN.md §5, Phase 6): no backend needed. */
+const reportUrl = (what: string, sid: string, id: string) => {
+  const title = `Report: ${what} ${id} on ${sid}`;
+  const body = `**Page:** https://pydocs.org/${sid}\n**${what[0]!.toUpperCase()}${what.slice(1)} id:** ${id}\n\n**What's wrong?**\n\n`;
+  return `${REPO_URL}/issues/new?labels=report&title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+};
+const Report = ({ what, sid, id }: { what: string; sid: string; id: string }) => (
+  <span>
+    {' / '}
+    <a href={reportUrl(what, sid, id)} rel="nofollow noopener" target="_blank">
+      report
+    </a>
+  </span>
+);
 
 interface Props {
   sid: string;
@@ -212,7 +228,7 @@ function DeleteControl({ onConfirm, confirmText }: { onConfirm: () => Promise<vo
   );
 }
 
-function ExampleItem({ ex, user, save, highlighted }: { ex: Example; user: CookieUser | null; save: Save; highlighted: boolean }) {
+function ExampleItem({ ex, user, save, highlighted, sid }: { ex: Example; user: CookieUser | null; save: Save; highlighted: boolean; sid: string }) {
   const [editing, setEditing] = useState(false);
   const authors = [ex.author, ...ex.editors].filter((a, i, all) => all.findIndex((b) => b.id === a.id) === i);
   const shown = authors.slice(0, 7);
@@ -246,6 +262,7 @@ function ExampleItem({ ex, user, save, highlighted }: { ex: Example; user: Cooki
                 <DeleteControl confirmText="confirm delete?" onConfirm={() => save('DELETE', `/examples/${ex.id}`)} />
               </span>
             )}
+            <Report what="example" sid={sid} id={ex.id} />
             <span class="edit-example-widget"></span>
           </div>
         </div>
@@ -296,7 +313,7 @@ function Examples({ doc, user, save, hash }: { doc: SymbolDoc; user: CookieUser 
       {doc.examples.length === 0 ? (
         <div class="null-state">No examples for {doc.symbol}.</div>
       ) : (
-        doc.examples.map((ex) => <ExampleItem key={ex.id} ex={ex} user={user} save={save} highlighted={hash === `#example-${ex.id}`} />)
+        doc.examples.map((ex) => <ExampleItem key={ex.id} ex={ex} user={user} save={save} highlighted={hash === `#example-${ex.id}`} sid={doc.symbol} />)
       )}
       {user ? (
         <div class="add-example">
@@ -333,7 +350,7 @@ const splitSid = (sid: string) => {
   return { module: sid.slice(0, i), qualname: sid.slice(i + 1) };
 };
 
-function SeeAlsoItem({ sa, doc, user, save }: { sa: SeeAlso; doc: string; user: CookieUser | null; save: Save }) {
+function SeeAlsoItem({ sa, doc, user, save, sid }: { sa: SeeAlso; doc: string; user: CookieUser | null; save: Save; sid: string }) {
   const { module, qualname } = splitSid(sa.to);
   return (
     <div class="col-sm-6 see-also">
@@ -349,6 +366,7 @@ function SeeAlsoItem({ sa, doc, user, save }: { sa: SeeAlso; doc: string; user: 
       </p>
       <div class="meta">
         Added by <a href={`/u/${sa.author.login}`}>{sa.author.login}</a>
+        <Report what="see also" sid={sid} id={sa.id} />
         {user?.id === sa.author.id && (
           <span class="delete-controls">
             {' / '}
@@ -447,7 +465,7 @@ function SeeAlsos({ doc, user, save, docs }: { doc: SymbolDoc; user: CookieUser 
         pairs.map((pair) => (
           <div class="row" key={pair[0]!.id}>
             {pair.map((sa) => (
-              <SeeAlsoItem key={sa.id} sa={sa} doc={docs[sa.to] ?? ''} user={user} save={save} />
+              <SeeAlsoItem key={sa.id} sa={sa} doc={docs[sa.to] ?? ''} user={user} save={save} sid={doc.symbol} />
             ))}
           </div>
         ))
@@ -475,7 +493,7 @@ function MarkdownPreview(text: string) {
   return <MarkdownBody body={text} />;
 }
 
-function NoteItem({ note, user, save }: { note: Note; user: CookieUser | null; save: Save }) {
+function NoteItem({ note, user, save, sid }: { note: Note; user: CookieUser | null; save: Save; sid: string }) {
   const [editing, setEditing] = useState(false);
   const mine = user?.id === note.author.id;
   return (
@@ -483,6 +501,7 @@ function NoteItem({ note, user, save }: { note: Note; user: CookieUser | null; s
       <div class="note-meta">
         By <Avatar author={note.author} />, created {timeago(note.createdAt)} ago
         {note.createdAt !== note.updatedAt && <span>, updated {timeago(note.updatedAt)} ago</span>}
+        <Report what="note" sid={sid} id={note.id} />
         {mine && (
           <span>
             {' / '}
@@ -533,7 +552,7 @@ function Notes({ doc, user, save }: { doc: SymbolDoc; user: CookieUser | null; s
           <ul>
             {doc.notes.map((n) => (
               <li key={n.id}>
-                <NoteItem note={n} user={user} save={save} />
+                <NoteItem note={n} user={user} save={save} sid={doc.symbol} />
               </li>
             ))}
           </ul>

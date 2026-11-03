@@ -14,7 +14,8 @@
     "typecheck:worker": "wrangler types && tsc -p worker",
     "astro": "astro",
     "test": "node --test tests/",
-    "check:layout": "node e2e/layout-check.mjs"
+    "check:layout": "node e2e/layout-check.mjs",
+    "typecheck:site": "tsc --noEmit -p ."
   },
   "dependencies": {
     "@astrojs/preact": "^6.1.1",
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",
+    "@types/node": "26.6.6",
     "typescript": "7.0.2",
     "wrangler": "4.156.2"
   },

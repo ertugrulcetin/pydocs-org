@@ -1,7 +1,7 @@
 // Home "Recently Updated" (ClojureDocs' intro page): the 3 latest events from
 // activity/recent.json. Phase 5 bakes them into the HTML; this keeps them live.
 import { avatarUrl, fetchData, timeago } from '../lib/community-client';
-import type { ActivityEvent } from '../../worker/community.ts';
+import type { ActivityEvent } from '../../shared/types.ts';
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 const WHAT = { example: 'an example', seeAlso: 'a see also', note: 'a note' } as const;

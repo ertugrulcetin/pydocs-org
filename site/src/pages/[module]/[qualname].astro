@@ -76,6 +76,7 @@ const jsonLd = {
               </div>
             </div>
             <div class="col-sm-10">
+              <div class="recent-pages" id="recent-pages" data-sid={s.id} hidden></div>
               <SymbolHeader symbol={s} />
               {
                 s.deprecated && (
@@ -121,5 +122,6 @@ const jsonLd = {
   </div>
   <script>
     import '../../scripts/community-mount.ts';
+    import '../../scripts/recent-pages.ts';
   </script>
 </Main>

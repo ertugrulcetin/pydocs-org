@@ -15,55 +15,9 @@ import type { Session } from './session.ts';
 import { isItemId, itemId, ulid } from './ulid.ts';
 import { userKey } from './users.ts';
 import type { UserDoc } from './users.ts';
+import type { ActivityEvent, Author, Example, HistoryDoc, Note, SeeAlso, SymbolDoc } from '../shared/types.ts';
 
-export interface Author {
-  id: number;
-  login: string;
-}
-export interface Example {
-  id: string;
-  body: string;
-  author: Author;
-  editors: Author[];
-  createdAt: number;
-  updatedAt: number;
-  /** "python-docs" for seeded doctest examples (Phase 7), else null. */
-  source: string | null;
-}
-export interface SeeAlso {
-  id: string;
-  to: string;
-  author: Author;
-  createdAt: number;
-}
-export interface Note {
-  id: string;
-  body: string;
-  author: Author;
-  createdAt: number;
-  updatedAt: number;
-}
-export interface SymbolDoc {
-  symbol: string;
-  examples: Example[];
-  seeAlsos: SeeAlso[];
-  notes: Note[];
-  updatedAt: number;
-}
-export interface HistoryDoc {
-  exampleId: string;
-  symbol: string;
-  versions: { body: string; editor: Author; at: number }[];
-  deletedAt?: number;
-}
-export interface ActivityEvent {
-  type: 'example' | 'seeAlso' | 'note';
-  action: 'create' | 'edit' | 'delete';
-  symbol: string;
-  id: string;
-  user: Author;
-  at: number;
-}
+export type { ActivityEvent, Author, Example, HistoryDoc, Note, SeeAlso, SymbolDoc };
 
 export const symbolKey = (sid: string) => `symbols/${sid}.json`;
 export const historyKey = (exampleId: string) => `history/${exampleId}.json`;

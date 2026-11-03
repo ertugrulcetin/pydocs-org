@@ -36,3 +36,6 @@ if (menu) {
 if (location.hostname !== 'pydocs.org') {
   document.querySelector<HTMLElement>('.staging-banner')?.removeAttribute('hidden');
 }
+
+// A module, not a global script (its names must not clash with window.close etc.).
+export {};

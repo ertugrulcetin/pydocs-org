@@ -1,8 +1,8 @@
 // Browser helpers for the community widgets (Phase 4).
-import type { SymbolDoc } from '../../worker/community.ts';
+import type { SymbolDoc } from '../../shared/types.ts';
 import { highlightPython } from './highlight';
 
-export type { Author, Example, Note, SeeAlso, SymbolDoc } from '../../worker/community.ts';
+export type { Author, Example, Note, SeeAlso, SymbolDoc } from '../../shared/types.ts';
 
 export const emptyDoc = (sid: string): SymbolDoc => ({ symbol: sid, examples: [], seeAlsos: [], notes: [], updatedAt: 0 });
 

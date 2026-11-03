@@ -6,10 +6,16 @@
   ],
   "exclude": [
     "dist",
-    "worker"
+    "worker",
+    "worker-configuration.d.ts",
+    "tests"
   ],
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "preact"
+    "jsxImportSource": "preact",
+    "types": [
+      "node"
+    ],
+    "allowImportingTsExtensions": true
   }
 }

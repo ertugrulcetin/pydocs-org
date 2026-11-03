@@ -1,7 +1,7 @@
 // /u/{login}: a contributor's profile (ClojureDocs' pages/user.clj), plus note
 // and see-also counts (PLAN.md §5 #21). Served from /shell/user via _redirects.
 import { avatarUrl, fetchData } from '../lib/community-client';
-import type { UserDoc } from '../../worker/users.ts';
+import type { UserDoc } from '../../shared/types.ts';
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;

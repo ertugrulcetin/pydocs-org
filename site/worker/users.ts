@@ -3,21 +3,9 @@
 //   logins/{login-lower}.json  {id} lookup for /u/{login}
 // No emails, tokens, or other private data are stored.
 import { getJson, putJson, updateJson } from './r2json.ts';
+import type { UserDoc } from '../shared/types.ts';
 
-export interface Contribution {
-  type: 'example' | 'seeAlso' | 'note';
-  symbol: string;
-  id: string;
-  at: number;
-}
-
-export interface UserDoc {
-  id: number;
-  login: string;
-  joinedAt: number;
-  lastSeenAt: number;
-  contributions: Contribution[];
-}
+export type { Contribution, UserDoc } from '../shared/types.ts';
 
 export const userKey = (id: number) => `users/${id}.json`;
 export const loginKey = (login: string) => `logins/${login.toLowerCase()}.json`;

@@ -1,7 +1,7 @@
 // /ex/{id}: every version of an example, newest first (ClojureDocs'
 // example-handler in pages/vars.clj). Served from /shell/example via _redirects.
 import { avatarUrl, fetchData, timeago } from '../lib/community-client';
-import type { Author, HistoryDoc } from '../../worker/community.ts';
+import type { Author, HistoryDoc } from '../../shared/types.ts';
 import { highlightPython } from '../lib/highlight';
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);

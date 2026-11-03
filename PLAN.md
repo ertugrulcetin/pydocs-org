@@ -427,7 +427,7 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
 - [ ] `Main` layout: head/meta, desktop and mobile navbars, mobile slide-out menu, footer, staging banner, light/dark
 - [ ] Mobile: port ClojureDocs' markup (`mobile-nav-bar`, `btn mobile-menu`, `mobile-nav-menu`, `mobile-push-wrapper`) and its menu-toggle script as a tiny vanilla script, so it works before any island loads. The per-page "Nav" section links to Examples / See Also / Notes with count badges. Check tap targets and that code blocks scroll sideways inside their box, never the whole page.
 - [ ] Port the CSS. Keep ClojureDocs' class names: `var-header`, `arglists`, `docstring`, `var-example`, `example-meta`, `sidenav`, `library-nav`, `ns-tree`, `dl-horizontal`, `quickref-*`, …
-- [~] Symbol page: header, badges, signatures, docstring + PSF line, sticky sidenav with counts, widget placeholders, recent pages (localStorage). Done 2026-11-03 except recent pages and sticky behavior. Python adaptations:
+- [x] Symbol page: header, badges, signatures, docstring + PSF line, sticky sidenav with counts, widget placeholders, recent pages (localStorage). All done 2026-11-03. The sidebar column itself is sticky: Bootstrap 3 columns are floats, so a box inside them can't stick. "Recent" shows up to 8 other symbols you viewed. Python adaptations:
   - Class and exception pages list their members (methods and attributes) in the same letter-grouped layout as module pages.
   - `implDetail` means the docs include a CPython implementation-detail note, not that the symbol is CPython-only (e.g. `len`). So it shows as a small note under the docstring, not as a badge.
   - Docs links follow the 3.15 layout: built-ins moved to `docs.python.org/3.15/builtins/`.
@@ -508,9 +508,9 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
 
 ### Phase 6: Moderation, hardening, tests
 - [ ] Admin page (`/admin`, shell + Worker auth): recent activity with delete, ban/unban, audit viewer
-- [ ] "report" link → prefilled GitHub issue
+- [x] "report" link on every example, see-also and note → prefilled GitHub issue with label `report` (2026-11-03)
 - [ ] Rate limiting (private bucket counters; use the Workers rate-limit binding instead if it's on the free plan ⚠️)
-- [ ] `_headers` with CSP etc.
+- [~] `_headers` with CSP etc. The CSP was added report-only on 2026-11-03: `default-src 'self'`, scripts and styles from self only, images also from avatars.githubusercontent.com, connections also to data.pydocs.org, `frame-ancestors 'none'`. It gets enforced once the live site shows no violations. Possible because every script is an external file (no inline scripts).
 - [ ] Tests: Worker unit tests (permissions, validation, conflicts, injection), e2e flows (login → add/edit/delete example, see-also, note) at desktop and 375 px phone width, XSS cases
 - [ ] Load check: largest symbol doc stays under the 10 ms CPU limit
 

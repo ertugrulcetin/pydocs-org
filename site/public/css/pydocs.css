@@ -80,3 +80,18 @@ pre {
 .examples-styleguide-content pre.syntaxify {
   padding: var(--space-sm);
 }
+
+/* Sticky sidebar (PLAN.md §5 #18). Bootstrap 3 columns are floats, so the
+   column itself sticks (inside the .row, which is as tall as the content);
+   long nav lists scroll within it. The desktop navbar is sticky at the top. */
+@media (min-width: 768px) {
+  .var-page .sidenav,
+  .ns-page .sidenav,
+  .core-library-page .sidenav,
+  .quickref-page .toc-sidenav {
+    position: sticky;
+    top: 70px;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+  }
+}

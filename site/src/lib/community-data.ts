@@ -2,7 +2,7 @@
 // scripts/snapshot.mjs before the build. Missing snapshot = no content.
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import type { ActivityEvent, Example, SymbolDoc } from '../../worker/community.ts';
+import type { ActivityEvent, Example, SymbolDoc } from '../../shared/types.ts';
 import { symbolById } from './data';
 
 interface Snapshot {

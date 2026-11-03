@@ -54,6 +54,7 @@ jobs:
           cache-dependency-path: site/package-lock.json
       - run: npm ci
       - run: npm run typecheck:worker
+      - run: npm run typecheck:site
       - name: Snapshot community content (R2)
         if: env.HAS_CF_TOKEN == 'true'
         run: node scripts/snapshot.mjs
