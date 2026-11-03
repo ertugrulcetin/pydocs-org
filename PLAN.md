@@ -616,7 +616,7 @@ Each question has my default in **bold**. Q1–Q4 changed the architecture and a
 - **Decided (2026-11-03): the whole repo is EPL-2.0** (`LICENSE`). The ported markup ends up spread across many components, so one license is simpler than a split. The copied `clojuredocs-app.css` keeps its EPL-1.0 notice (`licenses/EPL-1.0.txt`). Third-party files are listed in `THIRD_PARTY_NOTICES.md`.
 - **Bootstrap 3:** MIT. **Font Awesome 4.7:** font under SIL OFL 1.1, CSS under MIT.
 - **Community contributions:** CC0. The notice sits under every editor, as on ClojureDocs.
-- **Name/brand:** "PyDocs" text wordmark. No ClojureDocs or Python logos. "Python" is used only in descriptive text, per PSF trademark policy.
+- **Name/brand:** "PyDocs" text wordmark, no ClojureDocs logo. The favicon is python.org's Python logo, unchanged (your call, 2026-11-03). The PSF Trademark Usage Policy allows using the logo to refer to the language; the footer says PyDocs is not affiliated with the PSF, and THIRD_PARTY_NOTICES.md credits the trademark.
 
 ---
 

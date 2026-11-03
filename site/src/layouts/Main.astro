@@ -13,6 +13,7 @@ import {
   pagePath,
 } from '../lib/site';
 import { acUrl, docsUrl } from '../lib/search-index';
+import { versioned } from '../lib/assets';
 
 interface Props {
   /** Page title before the site suffix, e.g. "len - builtins". Omit for the bare suffix. */
@@ -58,11 +59,12 @@ const metaDescription = description.length > 200 ? `${description.slice(0, 197)}
     <meta name="pydocs:search-ac" content={acUrl} />
     <meta name="pydocs:search-docs" content={docsUrl} />
     <link rel="search" type="application/opensearchdescription+xml" title={SITE_NAME} href="/opensearch.xml" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="stylesheet" href="/css/font-awesome.min.css" />
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/clojuredocs-app.css" />
-    <link rel="stylesheet" href="/css/pydocs.css" />
+    <link rel="icon" href={versioned('/favicon.ico')} sizes="any" />
+    <link rel="apple-touch-icon" href={versioned('/apple-touch-icon.png')} />
+    <link rel="stylesheet" href={versioned('/css/font-awesome.min.css')} />
+    <link rel="stylesheet" href={versioned('/css/bootstrap.min.css')} />
+    <link rel="stylesheet" href={versioned('/css/clojuredocs-app.css')} />
+    <link rel="stylesheet" href={versioned('/css/pydocs.css')} />
   </head>
   <body class={bodyClass}>
     <div class="mobile-nav-menu">
