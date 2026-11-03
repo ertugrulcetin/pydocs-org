@@ -459,7 +459,7 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
 - [ ] Home: Example of the Day (from the bake) + Recently Updated (baked, then live)
 
 ### Phase 5: Build pipeline, bake, export, backup
-- [~] `deploy.yml`: on push + nightly cron. First version added 2026-11-03: on push to `master`, it runs the extractor tests, builds on Linux, checks the file count and deploys with `wrangler deploy` (skipped until the `CLOUDFLARE_API_TOKEN` secret exists). Still to add: nightly cron → (reuse committed data) → R2 snapshot (rclone/S3, read-only key) → bake → Astro build → file-count check → `wrangler deploy`
+- [~] `deploy.yml`: on push + nightly cron. First version added 2026-11-03: on push to `master`, it runs the extractor tests, builds on Linux, checks the file count and deploys with `wrangler deploy`. First CI deploy 2026-11-03: 11,545 pages live on pydocs.org. Secrets `CLOUDFLARE_API_TOKEN` ("Edit Cloudflare Workers" template, scoped to the account and the pydocs.org zone) and `CLOUDFLARE_ACCOUNT_ID` are set. Still to add: nightly cron → (reuse committed data) → R2 snapshot (rclone/S3, read-only key) → bake → Astro build → file-count check → `wrangler deploy`
 - [ ] Bake: community content into HTML, example counts + see-alsos into the search index, "Still need an example" list, Example of the Day
 - [ ] `rebuild-indexes.ts` nightly
 - [ ] `export.json` (CC0) published on the site + committed to the `pydocs-data` repo (versioned backup)
@@ -502,7 +502,7 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
 | Platform-only modules can't be imported on the Linux runner | Missing docstrings | Fall back to docs text |
 | Empty site at launch | Low value at first | Seeding (Q4) |
 | Dotted URLs on static assets | Broken routing | Spike passed (§4). Pages named `index` use the `_idx` rewrite. |
-| 29 symbol ids differ only in case (`logging/DEBUG` vs `logging/debug`) | On a case-insensitive disk (macOS) one page overwrites the other | URLs stay case-sensitive. The build warns on such disks, `npm run deploy` refuses to run there, and production deploys come from CI on Linux. ⚠️ Check that Cloudflare serves both pages after the first CI deploy. |
+| 29 symbol ids differ only in case (`logging/DEBUG` vs `logging/debug`) | On a case-insensitive disk (macOS) one page overwrites the other | URLs stay case-sensitive. The build warns on such disks, `npm run deploy` refuses to run there, and production deploys come from CI on Linux. Checked live 2026-11-03: `/logging/DEBUG` and `/logging/debug` are served as different pages. |
 | EPL obligations for the ported UI | License compliance | Public repo + EPL notice (§17) |
 
 ---
