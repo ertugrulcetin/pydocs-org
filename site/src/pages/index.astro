@@ -5,6 +5,13 @@ import Main from '../layouts/Main.astro';
 import { homeCategories, homeModules } from '../lib/quickref';
 import { summary, symbolUrl, moduleUrl } from '../lib/data';
 import { githubStars } from '../lib/github';
+import { exampleOfTheDay, recentActivity } from '../lib/community-data';
+import { highlightPython } from '../lib/highlight';
+import { avatarUrl, timeago } from '../lib/community-client';
+
+const eotd = exampleOfTheDay();
+const WHAT = { example: 'an example', seeAlso: 'a see also', note: 'a note' } as const;
+const VERB = { create: 'authored', edit: 'edited', delete: 'deleted' } as const;
 
 const stars = await githubStars();
 
@@ -36,11 +43,46 @@ const short = (doc: string | null) => {
               </section>
             </div>
           </div>
+          {
+            eotd && (
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="example-of-the-day var-example">
+                    <div class="eotd-head">
+                      <span>Example of the day</span>
+                      <a href={`/${eotd.sid}#example-${eotd.ex.id}`}>{eotd.sid}</a>
+                    </div>
+                    <div class="example-body">
+                      <pre class="syntaxify" set:html={highlightPython(eotd.ex.body)} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          }
           <div class="row">
             <div class="col-md-6">
               <section>
                 <div class="sec-head clearfix"><h5>Recently Updated</h5></div>
-                <div id="recently-updated"><p class="null-state">No contributions yet. Be the first!</p></div>
+                <div id="recently-updated">
+                  {
+                    recentActivity.length ? (
+                      recentActivity.map((e) => (
+                        <div class="recently-updated">
+                          <a class="avatar-link" href={`/u/${e.user.login}`}>
+                            <img class="avatar" src={avatarUrl(e.user.id, 48)} alt="" />
+                          </a>
+                          <span class="content">
+                            {e.user.login} {VERB[e.action]} {WHAT[e.type]} for <a href={`/${e.symbol}`}>{e.symbol}</a> {timeago(e.at)} ago.
+                            <div class="clear" />
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <p class="null-state">No contributions yet. Be the first!</p>
+                    )
+                  }
+                </div>
               </section>
             </div>
             <div class="col-md-6">

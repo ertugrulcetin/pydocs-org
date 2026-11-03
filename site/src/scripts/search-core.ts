@@ -2,8 +2,8 @@
 // Port of ClojureDocs' behavior (search.clj: prefix match, then sort by edit
 // distance to the name), run in the browser over a static index (PLAN.md §3).
 
-/** Index row: [module, qualname ("" for a module entry), kind index, summary, flags]. */
-export type AcRow = [string, string, number, string, number?];
+/** Index row: [module, qualname ("" for a module entry), kind index, summary, flags, example count]. */
+export type AcRow = [string, string, number, string, number?, number?];
 /** flags bit: symbol is in the curated quickref, i.e. commonly used. */
 export const POPULAR = 1;
 
@@ -22,6 +22,7 @@ export interface Entry {
   fullName: string;
   href: string;
   popular: boolean;
+  examples: number;
 }
 
 export interface Prepared {
@@ -34,7 +35,7 @@ export interface Prepared {
 }
 
 export function prepare(rows: AcRow[]): Prepared {
-  const entries = rows.map(([module, qualname, k, summary, flags = 0], i): Entry => {
+  const entries = rows.map(([module, qualname, k, summary, flags = 0, examples = 0], i): Entry => {
     const isModule = qualname === '';
     const fullName = isModule ? module : module === 'builtins' ? qualname : `${module}.${qualname}`;
     return {
@@ -46,6 +47,7 @@ export function prepare(rows: AcRow[]): Prepared {
       fullName,
       href: isModule ? `/${module}` : `/${module}/${qualname}`,
       popular: (flags & POPULAR) !== 0,
+      examples,
     };
   });
   const full = entries.map((e) => e.fullName.toLowerCase());

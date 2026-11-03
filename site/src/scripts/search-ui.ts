@@ -10,7 +10,7 @@ const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
 const entryHtml = (e: Entry, i: number, highlighted: boolean): string => {
-  const type = e.kind === 'module' ? 'module' : `${e.kind} / 0 ex`;
+  const type = e.kind === 'module' ? 'module' : `${e.kind} / ${e.examples} ex`;
   const label = e.kind === 'module' ? e.module : `${e.qualname} (${e.module})`;
   return (
     `<li id="ac-${i}"${highlighted ? ' class="highlighted"' : ''} data-href="${esc(e.href)}">` +

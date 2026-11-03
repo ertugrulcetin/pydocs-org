@@ -46,7 +46,7 @@ async function main(el: HTMLElement): Promise<void> {
           `<li class="search-result"><h2><a href="${esc(e.href)}">${esc(name)}</a></h2><h3>${esc(sub)}</h3>` +
           (sigs.length ? `<ul class="arglists">${sigs.map((s) => `<li class="arglist">${esc(s)}</li>`).join('')}</ul>` : '') +
           `<p>${esc(doc.length >= 300 ? `${doc}...` : doc)}</p>` +
-          (e.kind === 'module' ? '' : '<div class="meta-info">0 examples</div>') +
+          (e.kind === 'module' ? '' : `<div class="meta-info">${e.examples} example${e.examples === 1 ? '' : 's'}</div>`) +
           '</li>'
         );
       })

@@ -9,6 +9,8 @@ import SymbolList from '../../components/SymbolList.astro';
 import type { PySymbol } from '../../lib/data';
 import { fullName, membersByParent, summary, symbols, symbolUrl } from '../../lib/data';
 import { SITE_URL } from '../../lib/site';
+import { docFor } from '../../lib/community-data';
+import { symbolById } from '../../lib/data';
 
 export function getStaticPaths() {
   return symbols.map((symbol) => ({
@@ -23,8 +25,10 @@ interface Props {
 const { symbol: s } = Astro.props;
 const members = membersByParent.get(s.id) ?? [];
 const doc = s.doc ?? '';
-// Phase 4 fills these from the baked community content.
-const counts = { examples: 0, seeAlsos: 0, notes: 0 };
+// Baked community content (Phase 5); the widgets refresh it live after load.
+const baked = docFor(s.id);
+const counts = { examples: baked?.examples.length ?? 0, seeAlsos: baked?.seeAlsos.length ?? 0, notes: baked?.notes.length ?? 0 };
+const seeAlsoDocs = Object.fromEntries((baked?.seeAlsos ?? []).map((sa) => [sa.to, summary(symbolById.get(sa.to)?.doc ?? null, 100)]));
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'SoftwareSourceCode',
@@ -106,8 +110,8 @@ const jsonLd = {
                 )
               }
               {members.length > 0 && <SymbolList heading={`Members of ${s.qualname}`} symbols={members} stripPrefix={`${s.qualname}.`} />}
-              <div id="community" data-sid={s.id} data-initial="null" data-see-also-docs="{}">
-                <Community sid={s.id} initial={null} />
+              <div id="community" data-sid={s.id} data-initial={JSON.stringify(baked)} data-see-also-docs={JSON.stringify(seeAlsoDocs)}>
+                <Community sid={s.id} initial={baked} seeAlsoDocs={seeAlsoDocs} />
               </div>
             </div>
           </div>

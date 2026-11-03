@@ -6,6 +6,9 @@ name: deploy
 on:
   push:
     branches: [master]
+  # Nightly re-bake of community content into the static pages (PLAN.md Phase 5).
+  schedule:
+    - cron: '17 3 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -51,6 +54,12 @@ jobs:
           cache-dependency-path: site/package-lock.json
       - run: npm ci
       - run: npm run typecheck:worker
+      - name: Snapshot community content (R2)
+        if: env.HAS_CF_TOKEN == 'true'
+        run: node scripts/snapshot.mjs
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Build
         run: npm run build
       - name: Unit tests
@@ -68,6 +77,10 @@ jobs:
           echo "html pages: $pages, files: $files"
           # Workers static assets: 20,000 files per version on the free plan (PLAN.md §10).
           test "$files" -le 18000
+          # 25 MiB per asset; split the export before it gets close (PLAN.md §10).
+          export_bytes=$(stat -c %s dist/export.json)
+          echo "export.json: $export_bytes bytes"
+          test "$export_bytes" -le 20971520
       - name: Deploy
         if: env.HAS_CF_TOKEN == 'true' && github.ref == 'refs/heads/master'
         run: node scripts/assert-case-sensitive.mjs && npx wrangler deploy

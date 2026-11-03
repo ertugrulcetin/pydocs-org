@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 import { modules, summary, symbols } from './data';
 import { KINDS, POPULAR } from '../scripts/search-core';
 import { quickref, HOME_MODULES } from '../content/quickref';
+import { exampleCount } from './community-data';
 import type { AcRow } from '../scripts/search-core';
 
 const kindIndex = (k: string) => {
@@ -23,7 +24,7 @@ const popular = new Set([
 // Modules first, then symbols, in data order. docs.json uses the same order.
 const rows: AcRow[] = [
   ...modules.map((m): AcRow => [m.name, '', 0, summary(m.synopsis ?? m.doc, 100), popular.has(m.name) ? POPULAR : 0]),
-  ...symbols.map((s): AcRow => [s.module, s.qualname, kindIndex(s.kind), summary(s.doc, 100), popular.has(s.id) ? POPULAR : 0]),
+  ...symbols.map((s): AcRow => [s.module, s.qualname, kindIndex(s.kind), summary(s.doc, 100), popular.has(s.id) ? POPULAR : 0, exampleCount(s.id)]),
 ];
 
 const docRows: [string[], string][] = [
