@@ -26,6 +26,17 @@ export function currentUser(): CookieUser | null {
 export const loginUrl = () => `/auth/login?return=${encodeURIComponent(location.pathname + location.search + location.hash)}`;
 export const avatarUrl = (id: number, size = 64) => `https://avatars.githubusercontent.com/u/${id}?s=${size}`;
 
+/** Public content: data.pydocs.org in production (path A), the Worker elsewhere (path B). */
+export const dataUrl = (key: string) => (location.hostname === 'pydocs.org' ? `https://data.pydocs.org/${key}` : `/api/r/${key}`);
+
+/** Fetches a public JSON object; null if it does not exist. */
+export async function fetchData<T>(key: string): Promise<T | null> {
+  const res = await fetch(dataUrl(key));
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return (await res.json()) as T;
+}
+
 const storeKey = (sid: string) => `pd:doc:${sid}`;
 
 /**

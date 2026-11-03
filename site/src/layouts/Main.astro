@@ -24,11 +24,13 @@ interface Props {
   jsonLd?: Record<string, unknown>;
   /** Home page: navbar shows version + GitHub stars instead of the search box. */
   home?: boolean;
+  /** Client-rendered shells (/ex/*, /u/*): not indexed, no canonical. */
+  noindex?: boolean;
   /** GitHub stars for the home navbar. */
   stars?: number | undefined;
 }
 
-const { title, description = DEFAULT_DESCRIPTION, bodyClass, jsonLd, home = false, stars } = Astro.props;
+const { title, description = DEFAULT_DESCRIPTION, bodyClass, jsonLd, home = false, noindex = false, stars } = Astro.props;
 const fullTitle = title ? `${title} | ${TITLE_SUFFIX}` : TITLE_SUFFIX;
 const path = pagePath(Astro.url.pathname);
 const canonical = new URL(path, Astro.site).href;
@@ -52,7 +54,7 @@ const metaDescription = description.length > 200 ? `${description.slice(0, 197)}
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE_NAME} />
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <meta name="pydocs:search-ac" content={acUrl} />
     <meta name="pydocs:search-docs" content={docsUrl} />
     <link rel="search" type="application/opensearchdescription+xml" title={SITE_NAME} href="/opensearch.xml" />

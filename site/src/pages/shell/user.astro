@@ -1,0 +1,17 @@
+---
+// Shell for /u/{login} (rewritten here by public/_redirects); filled in the browser.
+import Main from '../../layouts/Main.astro';
+---
+
+<Main title="User" bodyClass="user-page" noindex>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <div class="row" id="user-page"><p>Loading…</p></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    import '../../scripts/user-page.ts';
+  </script>
+</Main>

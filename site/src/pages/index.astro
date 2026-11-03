@@ -40,7 +40,7 @@ const short = (doc: string | null) => {
             <div class="col-md-6">
               <section>
                 <div class="sec-head clearfix"><h5>Recently Updated</h5></div>
-                <p class="null-state">No contributions yet. Be the first!</p>
+                <div id="recently-updated"><p class="null-state">No contributions yet. Be the first!</p></div>
               </section>
             </div>
             <div class="col-md-6">
@@ -117,4 +117,7 @@ const short = (doc: string | null) => {
       </div>
     </div>
   </div>
+  <script>
+    import '../scripts/recent-activity.ts';
+  </script>
 </Main>

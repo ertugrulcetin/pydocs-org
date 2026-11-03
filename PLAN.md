@@ -481,9 +481,9 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
 - [x] Syntax highlighting: a small Python tokenizer (`src/lib/highlight.ts`) that emits ClojureDocs' `tok-*` classes (comment, string, keyword, builtin, def, bracket depth), used at build time and in the browser. It replaces Prism (§3), which had no bracket-depth tokens.
 - [x] Live refresh: fetch the symbol JSON after load and re-render if `updatedAt` changed. Production reads `data.pydocs.org` (path A), other hosts use `/api/s/` (path B). A doc you just wrote, kept in sessionStorage, wins over a CDN copy up to 60 s old. Nav counts update live.
 - [x] Browser test (22 steps, fake API with the Worker's rules): add/edit/delete, errors, keys, preview, see-alsos, notes, XSS, phone width.
-- [ ] `/ex/{id}` history page; `/u/{login}` user page
-- [ ] Home: Example of the Day (from the bake) + Recently Updated (baked, then live)
-- [ ] Check the real flow on pydocs.org with a logged-in user (add, edit and delete an example)
+- [x] `/ex/{id}` history page and `/u/{login}` user page (2026-11-03): client-rendered shells (`/shell/example`, `/shell/user`, noindex) behind `_redirects` 200 rewrites, ClojureDocs markup. The user page also counts see-alsos and notes. Read path B for local dev is one allow-listed endpoint, `GET /api/r/{key}` (symbols/, history/, users/, logins/, activity/recent), instead of `/api/ex`, `/api/u` and `/api/activity`.
+- [~] Home: Example of the Day (from the bake) + Recently Updated (baked, then live). Recently Updated is live from `activity/recent.json` (2026-11-03); the baked copy and Example of the Day come with Phase 5.
+- [x] Real flow checked on pydocs.org (2026-11-03): you added an example on `builtins/str.split`. The symbol doc, history, activity, your contributions and the private audit record were all written.
 
 ### Phase 5: Build pipeline, bake, export, backup
 - [~] `deploy.yml`: on push + nightly cron. First version added 2026-11-03: on push to `master`, it runs the extractor tests, builds on Linux, checks the file count and deploys with `wrangler deploy`. First CI deploy 2026-11-03: 11,545 pages live on pydocs.org. Secrets `CLOUDFLARE_API_TOKEN` ("Edit Cloudflare Workers" template, scoped to the account and the pydocs.org zone) and `CLOUDFLARE_ACCOUNT_ID` are set. Still to add: nightly cron → (reuse committed data) → R2 snapshot (rclone/S3, read-only key) → bake → Astro build → file-count check → `wrangler deploy`

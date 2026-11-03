@@ -151,3 +151,17 @@ test('concurrent write to the same symbol is retried, nothing lost', async () =>
   const r = await call('POST', EX, { user: BOB, body: { body: 'second' } });
   assert.deepEqual([r.body.examples.length, r.body.notes.length], [2, 1]);
 });
+
+test('read path B (/api/r): allow-listed public keys only', async () => {
+  await env.content.put('users/100.json', JSON.stringify({ id: 100, login: 'alice', joinedAt: 0, lastSeenAt: 0, contributions: [] }));
+  const get = async (key: string) => {
+    const res = await worker.fetch(new Request(`https://pydocs.org/api/r/${key}`), env as never, makeCtx() as never);
+    return res.status;
+  };
+  assert.equal(await get('users/100.json'), 200);
+  assert.equal(await get('users/999.json'), 404);
+  assert.equal(await get('activity/recent.json'), 404);
+  for (const bad of ['bans/100.json', 'users/../bans/1.json', 'audit/2026-11-03/x.json', 'users/100', 'symbols/a/b/c/d.json']) {
+    assert.equal(await get(bad), 404, bad);
+  }
+});
