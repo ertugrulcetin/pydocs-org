@@ -1,0 +1,58 @@
+# Regenerates the reference data (data/py-3.15) on Linux, the canonical
+# platform, and opens a PR with the changes (PLAN.md Phase 5). Run it by hand,
+# e.g. for a new Python 3.15.x release after updating extractor/.
+name: extract
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: extractor
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          enable-cache: true
+      - name: Cache docs archive
+        uses: actions/cache@v6
+        with:
+          path: extractor/.cache
+          key: docs-3.15.2-${{ hashFiles('extractor/pydocs_extract/config.py') }}
+      - run: uv sync --locked
+      - name: Extract
+        run: uv run pydocs-extract | tail -25
+      - name: Tests on the fresh data
+        run: uv run pytest -q
+      - name: Open a PR if the data changed
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # generatedAt always changes; only open a PR for real changes.
+          if git diff --quiet -- data ':(exclude)data/py-3.15/meta.json'; then
+            echo "No data changes."
+            exit 0
+          fi
+          branch="extract/${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add data
+          git commit -m "Regenerate data/py-3.15 on Linux (run ${GITHUB_RUN_ID})"
+          git push origin "$branch"
+          {
+            echo "Regenerated \`data/py-3.15\` with \`extractor/\` on \`ubuntu-latest\` (the canonical platform, PLAN.md Phase 1)."
+            echo
+            echo '```'
+            git diff --stat HEAD~1 -- data | tail -5
+            echo '```'
+          } > /tmp/body.md
+          gh pr create --title "Regenerate reference data on Linux" --body-file /tmp/body.md --base master --head "$branch"
