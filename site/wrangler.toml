@@ -1,0 +1,28 @@
+# One Worker serves the static site (./dist) and the small API. See PLAN.md §2.
+name = "pydocs"
+main = "worker/index.ts"
+compatibility_date = "2026-11-01"
+workers_dev = true
+preview_urls = true
+
+# Attached on the first `wrangler deploy` (zone pydocs.org is on this account).
+routes = [{ pattern = "pydocs.org", custom_domain = true }]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "404-page"
+html_handling = "auto-trailing-slash"
+# Only these paths run the Worker; every page view is a free static asset.
+run_worker_first = ["/api/*", "/auth/*"]
+
+[[r2_buckets]]
+binding = "CONTENT"            # public-safe community content (also on data.pydocs.org)
+bucket_name = "pydocs-content"
+
+[[r2_buckets]]
+binding = "PRIVATE"            # bans, rate limits, audit log; never exposed
+bucket_name = "pydocs-private"
+
+[observability]
+enabled = true

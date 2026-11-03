@@ -125,7 +125,7 @@ Naming rules:
 - **Symbol id** = `{module}/{qualname}` (e.g. `os.path/join`). It is used in URLs, R2 keys, and see-alsos.
 - **File layout (spike result, 2026-11-03):** emit one `{path}.html` file per page, e.g. `os.path.html`, `os.path/join.html`, `builtins/str.split.html`. Workers static assets serve them at clean URLs with no trailing slash: `/os.path`, `/os.path/join`, `/builtins/str.split`. `/x/` and `/x.html` redirect (307) to `/x`. Don't use `…/index.html` folders: they force trailing-slash URLs.
 - **Pages whose last segment is `index`** (e.g. `operator/index`): `operator/index.html` would be read as the folder index and break `/operator`. Emit them as `_idx/{module}.{qualname}.html` and add a `_redirects` 200 rewrite (`/operator/index  /_idx/operator.index  200`). Tested: clean URL, 200. `_redirects` allows 2,000 static rules, and only a few symbols need this.
-- Reserved top-level names (no stdlib module may use them): `library`, `quickref`, `search`, `ex`, `u`, `api`, `auth`, `concepts`, `_data`, `_idx`, `_shells`. The build fails on a clash.
+- Reserved top-level names (no stdlib module may use them): `library`, `quickref`, `search`, `ex`, `u`, `api`, `auth`, `concepts`, `shell`, `_data`, `_idx`. The build fails on a clash. (Shell pages for `/u/*` and `/ex/*` live under `/shell/`, because Astro doesn't route `_`-prefixed folders.)
 
 ---
 
@@ -406,8 +406,8 @@ pydocs-org/
 - [ ] Add Worker secrets and GitHub Actions secrets
 - [x] Spike (2026-11-03, throwaway Worker on workers.dev, since deleted): dotted paths, trailing slashes, `_idx` rewrite for `index` pages (see §4). `run_worker_first = ["/api/*", "/auth/*"]` sends only those to the Worker. `_redirects` 200 rewrites for `/u/*` and `/ex/*` work, `not_found_handling = "404-page"` works, and `env.ASSETS.fetch('/_data/symbols.txt')` works from the Worker. `_headers` doesn't apply to Worker responses, so the Worker sets its own headers.
 - [x] Spike: R2 conditional put from a deployed Worker against real R2 (2026-11-03). `etagMatches` with the current ETag stores the write and a stale ETag returns `null`. Create-if-absent works with `etagDoesNotMatch: "*"` or `If-None-Match: *`. See §7.4.
-- [ ] ⚠️ Spike: Astro build time and output size for 12k pages on a GitHub runner
-- [ ] Get ClojureDocs' compiled `app.css` (from the live site or by compiling `css.clj`), `bootstrap.min.css` (3.x), and `font-awesome.min.css` (4.x). Add an EPL notice.
+- [x] Spike: Astro build time and output size for 12k pages (2026-11-03, local Apple Silicon, synthetic pages with dotted names): 11,842 pages in 2.6 s (4.2 s total), 47 MB, 11,860 files. `build.format: 'file'` writes `os.path.html` / `os.path/join.html` as planned. Timing on a GitHub runner will come from the first CI deploy.
+- [x] Get ClojureDocs' compiled `app.css`, `bootstrap.min.css`, and `font-awesome.min.css` (2026-11-03). They use **Bootstrap 3.2.0** and **Font Awesome 4.1.0**; both files are byte-identical to the official releases. In `site/public/css` + `site/public/fonts`. EPL notice: `THIRD_PARTY_NOTICES.md` + `licenses/EPL-1.0.txt`.
 
 ### Phase 1: Reference data extractor
 - [ ] `uv` project pinned to Python 3.15; download `objects.inv` and the docs HTML archive for the pinned release
@@ -420,7 +420,7 @@ pydocs-org/
 - [ ] Write `data/py-3.15/*` + stats report (counts, missing docs, fallbacks); snapshot tests on ~30 well-known symbols
 
 ### Phase 2: Static site with the same UI (no login yet)
-- [ ] Astro + Preact + TS skeleton; import the reference data
+- [~] Astro + Preact + TS skeleton; import the reference data. Skeleton done 2026-11-03 (Astro 7.4, Preact 11, TypeScript 7, Wrangler 4.156, Node 26 LTS). The `index-pages` integration moves `…/index.html` pages to `/_idx/` and writes the `_redirects` rewrites (§4). Next: import the reference data.
 - [ ] `Main` layout: head/meta, desktop and mobile navbars, mobile slide-out menu, footer, staging banner, light/dark
 - [ ] Port the CSS. Keep ClojureDocs' class names: `var-header`, `arglists`, `docstring`, `var-example`, `example-meta`, `sidenav`, `library-nav`, `ns-tree`, `dl-horizontal`, `quickref-*`, …
 - [ ] Symbol page: header, badges, signatures, docstring + PSF line, sticky sidenav with counts, widget placeholders, recent pages (localStorage)

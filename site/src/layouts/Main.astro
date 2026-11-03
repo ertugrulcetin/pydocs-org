@@ -1,0 +1,28 @@
+---
+// Page shell. Phase 2 ports ClojureDocs' $main here (navbars, mobile menu,
+// footer, staging banner). Stylesheets load in the same order as ClojureDocs.
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = 'Community-powered documentation and examples for Python.' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/clojuredocs-app.css" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
