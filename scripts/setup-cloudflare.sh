@@ -9,7 +9,7 @@
 #
 # Optional environment variables (copied into Worker secrets):
 #   GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET  prod GitHub OAuth app
-#   ADMIN_GITHUB_IDS                        comma-separated numeric GitHub ids
+#   ADMIN_GITHUB_IDS                        comma-separated numeric GitHub ids (default: 8271291 = ertugrulcetin)
 set -euo pipefail
 
 WORKER="pydocs"
@@ -18,6 +18,7 @@ DATA_DOMAIN="data.${DOMAIN}"
 BUCKETS=("pydocs-content" "pydocs-private")
 PUBLIC_BUCKET="pydocs-content"
 HERE="$(cd "$(dirname "$0")" && pwd)"
+ADMIN_GITHUB_IDS="${ADMIN_GITHUB_IDS:-8271291}"  # ertugrulcetin (PLAN.md Q8)
 
 wrangler() { npx --yes wrangler@4 "$@"; }
 say() { printf '\n==> %s\n' "$*"; }

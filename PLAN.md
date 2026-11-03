@@ -123,7 +123,9 @@ So we use **one Cloudflare Worker with static assets**: the static site and a sm
 Naming rules:
 - The Python inventory lists builtins with no module prefix (`len`, `str.split`). We map them to module **`builtins`**, the counterpart of `clojure.core`.
 - **Symbol id** = `{module}/{qualname}` (e.g. `os.path/join`). It is used in URLs, R2 keys, and see-alsos.
-- ⚠️ Spike: confirm Workers static assets serve dotted paths (`/os.path`, `/builtins/str.split`) correctly. It may treat `.path` or `.split` as a file extension. Fallback: emit `…/index.html` folders and canonicalize trailing slashes.
+- **File layout (spike result, 2026-11-03):** emit one `{path}.html` file per page, e.g. `os.path.html`, `os.path/join.html`, `builtins/str.split.html`. Workers static assets serve them at clean URLs with no trailing slash: `/os.path`, `/os.path/join`, `/builtins/str.split`. `/x/` and `/x.html` redirect (307) to `/x`. Don't use `…/index.html` folders: they force trailing-slash URLs.
+- **Pages whose last segment is `index`** (e.g. `operator/index`): `operator/index.html` would be read as the folder index and break `/operator`. Emit them as `_idx/{module}.{qualname}.html` and add a `_redirects` 200 rewrite (`/operator/index  /_idx/operator.index  200`). Tested: clean URL, 200. `_redirects` allows 2,000 static rules, and only a few symbols need this.
+- Reserved top-level names (no stdlib module may use them): `library`, `quickref`, `search`, `ex`, `u`, `api`, `auth`, `concepts`, `_data`, `_idx`, `_shells`. The build fails on a clash.
 
 ---
 
@@ -286,7 +288,7 @@ R2 has no transactions or queries. So:
 1. Verify the session cookie (HMAC), check that the `Origin` header matches the site, and require `Content-Type: application/json`.
 2. **Check the symbol id against the build manifest** (`env.ASSETS.fetch('/_data/symbols.txt')`). This blocks R2 key injection such as `../`.
 3. Check the ban list and the rate limit.
-4. Read `symbols/{id}.json` and keep its ETag. Apply the change. `put` with `onlyIf: { etagMatches }`. On conflict, retry up to 5 times, then return 409. ⚠️ Spike: how to do create-if-absent for the first write.
+4. Read `symbols/{id}.json` and keep its ETag. Apply the change. `put` with `onlyIf: { etagMatches }`. On conflict, retry up to 5 times, then return 409. For the first write (no object yet), use `onlyIf: { etagDoesNotMatch: "*" }` (create-if-absent). `etagMatches` on a missing key always fails. Tested on real R2, 2026-11-03.
 5. Best-effort side writes: `history/`, `users/`, `logins/`, `activity/recent.json`, `audit/`.
 6. Return the updated symbol doc. The widget re-renders from it.
 
@@ -402,8 +404,8 @@ pydocs-org/
 - [ ] Worker custom domain `pydocs.org`: set in `wrangler.toml`, applied by the first deploy
 - [ ] Cache Rule: hostname `data.pydocs.org` → eligible for cache, respect origin headers. Created in the dashboard because Wrangler's login can't write zone settings. The Worker writes objects with `Cache-Control: public, max-age=60`, so live refresh is at most a minute behind.
 - [ ] Add Worker secrets and GitHub Actions secrets
-- [ ] ⚠️ Spike: dotted paths on Workers static assets (`/os.path`, `/builtins/str.split`), trailing slashes, `run_worker_first` limiting the Worker to `/api/*` and `/auth/*`, `_redirects` 200 rewrites for `/u/*` and `/ex/*`
-- [ ] ⚠️ Spike: R2 conditional put (`etagMatches`, create-if-absent) from the Worker under `wrangler dev`
+- [x] Spike (2026-11-03, throwaway Worker on workers.dev, since deleted): dotted paths, trailing slashes, `_idx` rewrite for `index` pages (see §4). `run_worker_first = ["/api/*", "/auth/*"]` sends only those to the Worker. `_redirects` 200 rewrites for `/u/*` and `/ex/*` work, `not_found_handling = "404-page"` works, and `env.ASSETS.fetch('/_data/symbols.txt')` works from the Worker. `_headers` doesn't apply to Worker responses, so the Worker sets its own headers.
+- [x] Spike: R2 conditional put from a deployed Worker against real R2 (2026-11-03). `etagMatches` with the current ETag stores the write and a stale ETag returns `null`. Create-if-absent works with `etagDoesNotMatch: "*"` or `If-None-Match: *`. See §7.4.
 - [ ] ⚠️ Spike: Astro build time and output size for 12k pages on a GitHub runner
 - [ ] Get ClojureDocs' compiled `app.css` (from the live site or by compiling `css.clj`), `bootstrap.min.css` (3.x), and `font-awesome.min.css` (4.x). Add an EPL notice.
 
@@ -492,7 +494,7 @@ pydocs-org/
 | Docs HTML structure changes between Python releases | Extractor breaks | Pin the version; snapshot tests; regenerate through a PR |
 | Platform-only modules can't be imported on the Linux runner | Missing docstrings | Fall back to docs text |
 | Empty site at launch | Low value at first | Seeding (Q4) |
-| Dotted URLs on static assets | Broken routing | Phase 0 spike |
+| Dotted URLs on static assets | Broken routing | Spike passed (§4). Pages named `index` use the `_idx` rewrite. |
 | EPL obligations for the ported UI | License compliance | Public repo + EPL notice (§17) |
 
 ---
@@ -528,7 +530,7 @@ Each question has my default in **bold**. Q1–Q4 changed the architecture and a
 5. Main doc block: the **docstring** (like ClojureDocs) plus an "Official docs ↗" link, or the richer docs.python.org text? → **Docstring + link.**
 6. Branding: keep ClojureDocs' palette exactly and swap only the name, as a text wordmark with no Python logo? → **Yes.**
 7. Public repo? → **Yes.** Needed for EPL compliance, free Actions, and open data.
-8. Admins: → **your GitHub account.** Please tell me your username.
+8. ✅ Admins: → **`ertugrulcetin` (GitHub id 8271291)**, so `ADMIN_GITHUB_IDS=8271291`. (decided 2026-11-03)
 9. Contribution license: → **CC0.**
 10. Analytics: → **Cloudflare Web Analytics.**
 11. When a symbol disappears in a newer Python release → **keep its community data in R2 and drop the page.**
