@@ -30,7 +30,9 @@ pre {
     grid-template-columns: minmax(0, 1fr);
   }
 }
-@media (max-width: 767px) {
+/* Up to the md breakpoint: below 992px the column has no offset, so the
+   wrapper's -25px margins pass the gutter (by 10px on phones, 1px at 768px). */
+@media (max-width: 991px) {
   .intro-page .quick-lookup-wrapper {
     margin-left: -15px;
     margin-right: -15px;
