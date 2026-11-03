@@ -75,3 +75,8 @@ pre {
   margin-right: 0;
   overflow-wrap: anywhere;
 }
+
+/* Style guide code blocks: ClojureDocs gives them a background but no padding. */
+.examples-styleguide-content pre.syntaxify {
+  padding: var(--space-sm);
+}

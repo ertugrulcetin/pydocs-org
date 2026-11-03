@@ -59,7 +59,7 @@ const DATA_DIR = resolve(process.cwd(), '../data/py-3.15');
 const readJson = <T>(...parts: string[]): T => JSON.parse(readFileSync(join(DATA_DIR, ...parts), 'utf8')) as T;
 
 /** Top-level URL segments the site uses itself; no module may take them (PLAN.md §4). */
-const RESERVED = new Set(['library', 'quickref', 'search', 'search-index', 'manifest', 'ex', 'u', 'api', 'auth', 'concepts', 'shell', 'css', 'fonts', 'img']);
+const RESERVED = new Set(['library', 'quickref', 'search', 'search-index', 'manifest', 'ex', 'u', 'api', 'auth', 'concepts', 'shell', 'css', 'fonts', 'img', 'contribute', 'examples-styleguide', 'export.json']);
 
 export const meta: Meta = readJson<Meta>('meta.json');
 export const chapters: Chapter[] = readJson<Chapter[]>('chapters.json');

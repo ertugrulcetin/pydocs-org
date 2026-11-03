@@ -443,7 +443,9 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
   - Tests: `npm test` (node:test, also checks real-index rankings such as `Counter` → `collections.Counter` and `Path` → `pathlib.Path`). A browser check (15 steps) covers keys, navigation, the home box, paging and phone width.
   - Fixed ClojureDocs' open dropdown making phones scroll sideways.
 - [ ] Prism with token colors mapped to ClojureDocs' `--syntax-*` variables
-- [~] `/examples-styleguide`, `/contribute`, 404, 500. 404 and 500 done 2026-11-03; styleguide and contribute pages still to write.
+- [x] `/examples-styleguide`, `/contribute`, 404, 500 (2026-11-03).
+  - The style guide is original Python text following §9. Every example output in it was checked on Python 3.15.2.
+  - The contribute page lists "Still need an example:": quickref symbols with no example yet, from the bake. Shown as inline links: ClojureDocs nests `<li>` inside a `<div>` inside an `<li>`, which closes the outer list item, so its markup can't be copied as is.
 - [x] SEO: titles ("{name} - {module} | PyDocs - Community-Powered Python Documentation and Examples"), meta, OG/Twitter, canonical, JSON-LD, `sitemap.xml`, `robots.txt`, `opensearch.xml` (2026-11-03; the sitemap has 11,547 URLs)
 - [ ] Playwright screenshot diff of home, symbol, module, quickref, and search against the matching ClojureDocs pages at **three widths: 375 px (phone), 768 px (tablet), 1280 px (desktop)** (acceptance check for "exact same UI"). Also open the mobile menu at 375 px. Fail if any page scrolls sideways at 375 px. Checked by hand 2026-11-03 for every page type. ClojureDocs' own home page is 10 px too wide on phones (negative margins on the search wrapper), so `pydocs.css` fixes that, plus wrapping for long names like `XML_ERROR_ATTRIBUTE_EXTERNAL_ENTITY_REF`.
 
@@ -499,7 +501,7 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
   - Symbol pages ship their examples, see-alsos and notes in the HTML, with real Nav counts; the widgets still refresh live. Notes are baked as plain text and turned into markdown in the browser, which avoids a server-side DOM for DOMPurify.
   - The search index carries example counts.
   - The home page has Example of the Day (a new pick each day) and baked Recently Updated.
-- [ ] "Still need an example" list on `/contribute` (with the contribute page, Phase 2)
+- [x] "Still need an example" list on `/contribute` (2026-11-03)
 - [ ] `rebuild-indexes` nightly job: rebuild `users/*` contributions from `symbols/*`. Needs R2 write access from CI (not yet checked).
 - [~] `export.json` (CC0) is published on the site (2026-11-03) with a 20 MiB guard in CI. Still to do: a versioned backup in a `pydocs-data` repo, which needs that repo and a token.
 - [ ] `extract.yml`: manual workflow to regenerate reference data for a new Python release, opened as a PR

@@ -1,0 +1,67 @@
+---
+// Contribute page = ClojureDocs' /contribute (pages/contribute.clj). The
+// "Still need an example" list comes from the baked content (Phase 5):
+// commonly used (quickref) symbols with no example yet.
+import Main from '../layouts/Main.astro';
+import { quickref } from '../content/quickref';
+import { exampleCount } from '../lib/community-data';
+import { REPO_URL } from '../lib/site';
+
+const seen = new Set<string>();
+const wanted = quickref
+  .flatMap((s) => s.categories.flatMap((c) => c.groups.flatMap((g) => g.ids)))
+  .filter((id) => !seen.has(id) && seen.add(id) && exampleCount(id) === 0)
+  .slice(0, 60);
+const display = (id: string) => (id.startsWith('builtins/') ? id.slice('builtins/'.length) : id.replace('/', '.'));
+---
+
+<Main title="Contribute" description="Help make PyDocs a great community resource for Python." bodyClass="contribute-page">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <div class="row">
+          <div class="col-md-10 col-md-offset-1">
+            <section>
+              <h1>Contribute to PyDocs</h1>
+              <p>We need your help to make PyDocs a great community resource. Here are a few ways you can pitch in.</p>
+              <ul>
+                <li>
+                  <h4><i class="fa fa-comment-o"></i>Give Feedback</h4>
+                  <p>Please <a href={`${REPO_URL}/issues`}>open an issue</a> if you have an idea for making PyDocs better.</p>
+                </li>
+                <li>
+                  <h4><i class="fa fa-indent"></i>Add an Example</h4>
+                  <p>Sharing what you know with other Python developers is easy:</p>
+                  <p>
+                    First, read the <a href="/examples-styleguide">examples style guide</a>. Then log in with GitHub and add an example to
+                    your favorite function, or pick one from the list below.
+                  </p>
+                  <p>Besides examples, you can link related functions with "see also" references, and add notes.</p>
+                  {
+                    wanted.length > 0 && (
+                      <div class="wanted">
+                        <span class="wanted-label">Still need an example: </span>
+                        {/* Inline links, not <li>: an <li> inside this <div> would close the outer list item. */}
+                        {wanted.map((id) => (
+                          <>
+                            <a href={`/${id}`}>{display(id)}</a>{' '}
+                          </>
+                        ))}
+                      </div>
+                    )
+                  }
+                </li>
+                <li>
+                  <h4><i class="fa fa-code"></i>Improve the Site</h4>
+                  <p>
+                    PyDocs is open source. Bug reports and pull requests are welcome on <a href={REPO_URL}>GitHub</a>.
+                  </p>
+                </li>
+              </ul>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Main>

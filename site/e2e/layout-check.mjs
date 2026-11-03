@@ -21,6 +21,8 @@ const PAGES = [
   '/collections/Counter',
   '/xml.parsers.expat.errors',
   '/logging/DEBUG',
+  '/contribute',
+  '/examples-styleguide',
   '/nope-404',
 ];
 

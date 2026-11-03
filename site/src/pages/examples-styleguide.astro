@@ -1,0 +1,129 @@
+---
+// Examples style guide (PLAN.md §9): ClojureDocs' guide adapted to Python.
+import Main from '../layouts/Main.astro';
+import { highlightPython } from '../lib/highlight';
+
+const code = (src: string) => highlightPython(src.trim());
+---
+
+<Main title="Examples Style Guide" description="How to write good Python examples for PyDocs." bodyClass="examples-styleguide-page">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <div class="row">
+          <div class="col-md-10 col-md-offset-1 examples-styleguide-content">
+            <section class="markdown">
+              <h1>PyDocs Example Guidelines</h1>
+              <p>
+                Examples sit right under the docs for each function, class, and constant. Their job is to show how something is used, quickly
+                and clearly. These guidelines help keep them that way.
+              </p>
+
+              <h2>General guidelines</h2>
+              <p>Examples should be short, self-contained snippets that show one thing in the simplest way that works.</p>
+              <ul>
+                <li>Decide what your example is about before you write it, and leave out everything else.</li>
+                <li>Assume the reader knows programming but is new to Python.</li>
+                <li>Short, complete, and correct beats clever.</li>
+                <li>Standard library only: no third-party packages.</li>
+                <li>It must run on the Python version these docs describe.</li>
+              </ul>
+
+              <h3>Include every import</h3>
+              <p>A reader should be able to paste your example into a fresh interpreter and run it.</p>
+              <p>Bad:</p>
+              <pre class="syntaxify" set:html={code(`
+Counter("mississippi").most_common(2)
+# => [('i', 4), ('s', 4)]
+`)} />
+              <p>Good:</p>
+              <pre class="syntaxify" set:html={code(`
+from collections import Counter
+
+Counter("mississippi").most_common(2)
+# => [('i', 4), ('s', 4)]
+`)} />
+
+              <h3>Show results</h3>
+              <p>
+                Write the value of an expression in a <code># =&gt;</code> comment, and printed output in a <code># prints:</code> comment.
+                The <code>&gt;&gt;&gt;</code> interpreter style is fine too. Keeping to these forms means examples can be checked
+                automatically later.
+              </p>
+              <pre class="syntaxify" set:html={code(`
+import os.path
+
+os.path.splitext("archive.tar.gz")
+# => ('archive.tar', '.gz')
+
+print(os.path.join("docs", "index.html"))
+# prints: docs/index.html
+`)} />
+              <pre class="syntaxify" set:html={code(`
+>>> "a,b,,c".split(",")
+['a', 'b', '', 'c']
+`)} />
+
+              <h3>Broad or deep, not both</h3>
+              <p>An example can show the range of inputs something accepts, like this one for <code>round</code>:</p>
+              <pre class="syntaxify" set:html={code(`
+round(2.675, 2)  # => 2.67 (floats are binary; 2.675 is stored as 2.67499...)
+round(0.5)       # => 0
+round(1.5)       # => 2   (ties round to the even number)
+round(1234, -2)  # => 1200
+`)} />
+              <p>Or it can go deep on one use, like this one for <code>functools.lru_cache</code>:</p>
+              <pre class="syntaxify" set:html={code(`
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def fib(n):
+    return n if n < 2 else fib(n - 1) + fib(n - 2)
+
+fib(80)
+# => 23416728348467685
+
+# Each value was computed once and then served from the cache.
+fib.cache_info()
+# => CacheInfo(hits=78, misses=81, maxsize=None, currsize=81)
+`)} />
+              <p>Please also point out any gotchas, about your example or about the function in general.</p>
+
+              <h2>Comments</h2>
+              <p>
+                Use comments to explain what the next lines do, or to point out something a newcomer might miss. Don't repeat what the code
+                already says.
+              </p>
+              <p>Bad:</p>
+              <pre class="syntaxify" set:html={code(`
+# call sorted on words
+sorted(words, key=len)
+`)} />
+              <p>Good:</p>
+              <pre class="syntaxify" set:html={code(`
+words = ["banana", "fig", "apple"]
+
+# Sort by length; sorted() is stable, so equal lengths keep their order.
+sorted(words, key=len)
+# => ['fig', 'apple', 'banana']
+`)} />
+
+              <h2>Formatting</h2>
+              <ul>
+                <li>Follow <a href="https://peps.python.org/pep-0008/">PEP 8</a>. Indent with 4 spaces (the editor's Tab key inserts them).</li>
+                <li>Keep lines under 80 characters. The editor shows a guide.</li>
+                <li>Leave a blank line between separate ideas.</li>
+              </ul>
+
+              <h2>License</h2>
+              <p>
+                Examples, see-alsos, and notes on PyDocs are dedicated to the public domain under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons CC0 license</a>, so anyone can reuse them.
+              </p>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Main>
