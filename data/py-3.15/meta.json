@@ -1,7 +1,7 @@
 {
  "python": "3.15.2",
  "docsTag": "v3.15.2",
- "generatedAt": "2026-11-03T10:42:37Z",
+ "generatedAt": "2026-11-03T13:32:37Z",
  "counts": {
   "symbols": 11223,
   "modules": 320,
@@ -32,5 +32,5 @@
    "sha256": "4ca707e693ec0bfcf92ecf119f4deadea7669b41cc0c535b23cdc798363cb5db"
   }
  },
- "introspectedOn": "darwin"
+ "introspectedOn": "linux"
 }
