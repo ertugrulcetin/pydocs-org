@@ -526,8 +526,9 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
   - `e2e/layout-check.mjs`.
   - The real GitHub login was checked by hand on pydocs.org.
 - [x] Load check: largest symbol doc stays under the 10 ms CPU limit (2026-11-03).
-  - Per-symbol limits (100 examples, 100 see-alsos, 50 notes, with the 10,000-char example cap) bound a symbol doc at about 1 MB.
-  - A write to that worst case costs 3.6–4.2 ms CPU in Node (`tests/cpu.test.ts`, part of `npm test`). That is after dropping a needless deep copy per write, which had cost about 35%.
+  - Per-symbol limits (50 examples, 100 see-alsos, 50 notes, with the 10,000-char example cap) bound a symbol doc at about 500 KB. ClojureDocs' busiest pages have about 25 examples.
+  - A write to that worst case costs 1.9 ms CPU in Node on a laptop (`tests/cpu.test.ts`), about 2.7× a bare JSON parse and stringify of the doc. That is after dropping a needless deep copy per write, which had cost about 35%.
+  - CI checks the ratio (at most 6×) rather than milliseconds: the first version assumed 1 MB docs, and GitHub's shared runners measured them at 10.9 ms, about 3× slower than the laptop. That led to the lower example cap.
 
 ### Phase 7: Launch
 - [~] Seed examples from the docs' `>>>` snippets (`scripts/seed-doctests.mjs`, dry run by default). Ready 2026-11-03, not yet written to R2:

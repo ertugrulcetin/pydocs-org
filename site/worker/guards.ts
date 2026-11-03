@@ -10,9 +10,9 @@ import { SESSION_COOKIE } from './auth.ts';
 export const LIMITS = {
   exampleChars: 10_000,
   noteChars: 5_000,
-  // Per symbol: bounds a symbol doc at ~1 MB, so a write stays far below the
-  // 10 ms CPU limit (2.6 ms measured at 600 KB, tests/cpu.test.ts).
-  examplesPerSymbol: 100,
+  // Per symbol: bounds a symbol doc at ~500 KB, so a write stays far below the
+  // 10 ms CPU limit (tests/cpu.test.ts). ClojureDocs' busiest pages have ~25.
+  examplesPerSymbol: 50,
   seeAlsosPerSymbol: 100,
   notesPerSymbol: 50,
   writesPerHour: 20,
