@@ -14,6 +14,7 @@ import {
 } from '../lib/site';
 import { acUrl, docsUrl } from '../lib/search-index';
 import { versioned } from '../lib/assets';
+import { PYODIDE_PATH } from '../lib/pyodide';
 
 interface Props {
   /** Page title before the site suffix, e.g. "len - builtins". Omit for the bare suffix. */
@@ -58,6 +59,7 @@ const metaDescription = description.length > 200 ? `${description.slice(0, 197)}
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <meta name="pydocs:search-ac" content={acUrl} />
     <meta name="pydocs:search-docs" content={docsUrl} />
+    <meta name="pydocs:pyodide" content={PYODIDE_PATH} />
     <link rel="search" type="application/opensearchdescription+xml" title={SITE_NAME} href="/opensearch.xml" />
     <link rel="icon" href={versioned('/favicon.ico')} sizes="any" />
     <link rel="apple-touch-icon" href={versioned('/apple-touch-icon.png')} />

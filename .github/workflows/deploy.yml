@@ -72,10 +72,11 @@ jobs:
         run: npm run build
       - name: Unit tests
         run: npm test
-      - name: Browser checks (layout, search, community widgets)
+      - name: Browser checks (layout, search, community widgets, example runner)
         run: |
           npx playwright install --with-deps chromium
-          npx astro preview --port 4321 > /tmp/preview.log 2>&1 &
+          # Serves dist/ with the real _headers (CSP) and _redirects, like Workers static assets.
+          node e2e/serve.mjs 4321 > /tmp/serve.log 2>&1 &
           curl -s --retry 30 --retry-connrefused --retry-delay 1 -o /dev/null http://localhost:4321/
           npm run check:layout
           npm run test:e2e

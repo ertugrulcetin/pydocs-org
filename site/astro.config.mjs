@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import preact from '@astrojs/preact';
 import indexPages from './integrations/index-pages.mjs';
 import caseCheck from './integrations/case-check.mjs';
+import pyodide from './integrations/pyodide.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -12,7 +13,7 @@ export default defineConfig({
   // Workers static assets at clean URLs with no trailing slash. See PLAN.md §4.
   build: { format: 'file' },
   trailingSlash: 'never',
-  integrations: [preact(), indexPages(), caseCheck()],
+  integrations: [preact(), indexPages(), caseCheck(), pyodide()],
   // Never inline scripts: shared files are cached across 11.5k pages, and the
   // CSP (PLAN.md §11) allows scripts from self only.
   vite: { build: { assetsInlineLimit: 0 } },

@@ -18,6 +18,7 @@ import {
 } from '../lib/community-client';
 import type { Author, CookieUser, Example, Note, SeeAlso, SymbolDoc } from '../lib/community-client';
 import { REPO_URL } from '../lib/site';
+import { pythonLoaded, runPython } from '../lib/runner';
 
 /** "report" opens a prefilled GitHub issue (PLAN.md §5, Phase 6): no backend needed. */
 const reportUrl = (what: string, sid: string, id: string) => {
@@ -80,6 +81,55 @@ function ErrorMessage({ error }: { error: string | null }) {
   );
 }
 
+type RunState =
+  | { status: 'idle' }
+  | { status: 'running'; first: boolean }
+  | { status: 'done'; output: string; error?: string; version?: string };
+
+/** Runs code with Pyodide in the sandboxed runner (src/lib/runner.ts). */
+function useRunner() {
+  const [state, setState] = useState<RunState>({ status: 'idle' });
+  const run = async (code: string) => {
+    setState({ status: 'running', first: !pythonLoaded() });
+    const r = await runPython(code, () => setState({ status: 'running', first: false }));
+    setState({ status: 'done', output: r.output ?? '', error: r.error, version: r.version });
+  };
+  return { state, run, close: () => setState({ status: 'idle' }) };
+}
+
+const MAX_OUTPUT = 20_000;
+
+function RunOutput({ state, onClose }: { state: RunState; onClose?: () => void }) {
+  if (state.status === 'idle') return null;
+  const head =
+    state.status === 'running'
+      ? state.first
+        ? 'Loading Python in your browser (about 13 MB, first time only)…'
+        : 'Running…'
+      : state.error
+        ? 'Could not run this example'
+        : `Output · Python ${state.version} in your browser`;
+  const text = state.status === 'done' ? (state.error ?? state.output) : '';
+  return (
+    <div class="example-output" aria-live="polite">
+      <div class="example-output-head clearfix">
+        <span>{head}</span>
+        {state.status === 'running' && <img class="loading" src="/img/loading.gif" alt="" />}
+        {onClose && (
+          <a href="#" class="pull-right" onClick={prevent(onClose)}>
+            close
+          </a>
+        )}
+      </div>
+      {state.status === 'done' && (
+        <pre class={state.error ? 'example-output-error' : undefined}>
+          {text.length > MAX_OUTPUT ? `${text.slice(0, MAX_OUTPUT)}\n… (output cut at ${MAX_OUTPUT.toLocaleString('en')} characters)` : text || '(no output)'}
+        </pre>
+      )}
+    </div>
+  );
+}
+
 /** "Editor | Preview" tabs with an auto-growing textarea (ClojureDocs' $tabbed-clojure-editor). */
 function TabbedEditor(props: {
   value: string;
@@ -89,8 +139,11 @@ function TabbedEditor(props: {
   placeholder: string;
   preview: (text: string) => JSX.Element;
   guide?: boolean;
+  /** Adds a "Run" tab that runs the code with Pyodide (examples only). */
+  runnable?: boolean;
 }) {
-  const [tab, setTab] = useState<'editor' | 'preview'>('editor');
+  const [tab, setTab] = useState<'editor' | 'preview' | 'run'>('editor');
+  const runner = useRunner();
   const rows = Math.max(props.value.split('\n').length + 3, 10);
   const onKeyDown = (e: KeyboardEvent) => {
     const ta = e.currentTarget as HTMLTextAreaElement;
@@ -118,6 +171,19 @@ function TabbedEditor(props: {
             <i class="fa fa-eye"></i> Preview
           </a>
         </li>
+        {props.runnable && (
+          <li class={tab === 'run' ? 'active' : undefined}>
+            <a
+              href="#"
+              onClick={prevent(() => {
+                setTab('run');
+                if (props.value.trim()) void runner.run(props.value);
+              })}
+            >
+              <i class="fa fa-play"></i> Run
+            </a>
+          </li>
+        )}
       </ul>
       <div class={tab === 'preview' ? 'hidden' : undefined}>
         <div class={`example-editor${props.disabled ? ' disabled' : ''}`}>
@@ -136,9 +202,12 @@ function TabbedEditor(props: {
           {props.guide && <pre class="columns-guide">{'#' + '-'.repeat(32) + ' 80 columns ' + '-'.repeat(34) + '>'}</pre>}
         </div>
       </div>
-      <div class={`live-preview${tab === 'editor' ? ' hidden' : ''}`}>
+      <div class={`live-preview${tab === 'preview' ? '' : ' hidden'}`}>
         {props.value ? props.preview(props.value) : <div class="null-state">Live Preview</div>}
       </div>
+      {props.runnable && tab === 'run' && (
+        <div class="live-preview">{props.value.trim() ? <RunOutput state={runner.state} /> : <div class="null-state">Nothing to run</div>}</div>
+      )}
     </div>
   );
 }
@@ -160,6 +229,7 @@ function EditorForm(props: {
   instructions: JSX.Element;
   preview: (text: string) => JSX.Element;
   guide?: boolean;
+  runnable?: boolean;
   onCancel: () => void;
   onSubmit: (text: string) => Promise<void>;
 }) {
@@ -180,7 +250,7 @@ function EditorForm(props: {
   };
   return (
     <div>
-      <TabbedEditor value={text} onInput={setText} onSubmit={submit} disabled={loading} placeholder={props.placeholder} preview={props.preview} guide={props.guide} />
+      <TabbedEditor value={text} onInput={setText} onSubmit={submit} disabled={loading} placeholder={props.placeholder} preview={props.preview} guide={props.guide} runnable={props.runnable} />
       {props.instructions}
       <ErrorMessage error={error} />
       <div class="add-example-controls form-group clearfix">
@@ -233,6 +303,7 @@ function ExampleItem({ ex, user, save, highlighted, sid }: { ex: Example; user: 
   const authors = [ex.author, ...ex.editors].filter((a, i, all) => all.findIndex((b) => b.id === a.id) === i);
   const shown = authors.slice(0, 7);
   const canDelete = user !== null && user.id === ex.author.id;
+  const runner = useRunner();
   return (
     <div class={`var-example${highlighted ? ' highlighted' : ''}`}>
       <a id={`example-${ex.id}`}></a>
@@ -248,6 +319,14 @@ function ExampleItem({ ex, user, save, highlighted, sid }: { ex: Example; user: 
             <a href={`#example-${ex.id}`}>link</a>
             {' / '}
             <a href={`/ex/${ex.id}`}>history</a>
+            {!editing && (
+              <span>
+                {' / '}
+                <a href="#" class="run-example" title="Run this example in your browser" onClick={prevent(() => void runner.run(ex.body))}>
+                  run
+                </a>
+              </span>
+            )}
             {user && (
               <span>
                 {' / '}
@@ -277,6 +356,7 @@ function ExampleItem({ ex, user, save, highlighted, sid }: { ex: Example; user: 
             instructions={<ExampleInstructions />}
             preview={CodePreview}
             guide
+            runnable
             onCancel={() => setEditing(false)}
             onSubmit={async (text) => {
               await save('PATCH', `/examples/${ex.id}`, { body: text });
@@ -288,6 +368,7 @@ function ExampleItem({ ex, user, save, highlighted, sid }: { ex: Example; user: 
         <div class="example-body">
           {CodePreview(ex.body)}
           {ex.source === 'python-docs' && <div class="example-source">from the Python docs</div>}
+          <RunOutput state={runner.state} onClose={runner.close} />
         </div>
       )}
     </div>
@@ -328,6 +409,7 @@ function Examples({ doc, user, save, hash }: { doc: SymbolDoc; user: CookieUser 
                 instructions={<ExampleInstructions />}
                 preview={CodePreview}
                 guide
+                runnable
                 onCancel={() => setAdding(false)}
                 onSubmit={async (text) => {
                   await save('POST', '/examples', { body: text });
@@ -599,8 +681,11 @@ export default function Community({ sid, initial, seeAlsoDocs = {} }: Props) {
     addEventListener('hashchange', onHash);
     loadLiveDoc(sid)
       .then((live) => {
-        if (live.updatedAt !== doc.updatedAt) setDoc(live);
-        updateCounts(live);
+        // Only newer data replaces the baked doc: every write stamps updatedAt, and a
+        // missing live doc (404, updatedAt 0) must not wipe content the page shipped with.
+        const next = live.updatedAt > doc.updatedAt ? live : doc;
+        if (next !== doc) setDoc(next);
+        updateCounts(next);
         if (location.hash.startsWith('#example-')) requestAnimationFrame(() => document.getElementById(location.hash.slice(1))?.scrollIntoView());
       })
       .catch((e) => console.warn('live refresh failed', e));

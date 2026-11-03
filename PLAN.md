@@ -546,9 +546,26 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
 - [ ] Announce (r/Python, Python Discourse, HN, Mastodon)
 
 ### Phase 8: Later / nice-to-have
-- [ ] "Run" button with Pyodide (lazy-loaded, ~10 MB on first click)
+- [x] "Run" button with Pyodide (lazy-loaded, ~10 MB on first click). Done 2026-11-03.
+  - A **run** link on every example shows its output below the code; the example editor has a **Run** tab to try a draft before submitting.
+  - Output is REPL-style: the value of each top-level expression is shown, doctest prompts (`>>>`/`...`) are handled, and tracebacks are shown without the runner's own frames.
+  - Self-hosted Pyodide 314.0.7 (Python 3.14.2, about 13 MB, versioned under `/pyodide/<version>/`, cached for a year). The output names the Python version, since the docs describe 3.15.
+  - **Security:** code runs in `<iframe sandbox="allow-scripts">` with an opaque origin, in a classic `blob:` Web Worker (Chromium refuses *module* workers from `blob:` URLs in opaque origins). It gets no cookies and can't call the API as the visitor; the test checks that `js.document` is missing and the origin is `null`.
+  - `/runner` has its own CSP (`'wasm-unsafe-eval'`, `worker-src blob:`, `frame-ancestors 'self'`) in place of the site-wide one, using `_headers` detach (`! Content-Security-Policy`). `/pyodide/*` sends `Access-Control-Allow-Origin: *`.
+  - A 90-second limit while Python loads, then 10 seconds per run; a runaway loop is stopped by removing the iframe.
+  - Tests: `e2e/runner.mjs` (7 checks). CI now serves the browser tests with `e2e/serve.mjs`, which applies the real `_headers` and `_redirects`, so every page is tested under the production CSP.
 - [ ] CI job that runs every example in Pyodide and checks `# =>` results
-- [ ] Concept pages
+- [ ] Concept pages at `/concepts/{slug}`, like ClojureDocs' [Destructuring](https://clojuredocs.org/concepts/destructuring) and [Functional Programming](https://clojuredocs.org/concepts/functional-programming). These are hand-written guides for language features that have no symbol page: short explanations, runnable examples (checked on the pinned Python), and links to related symbols. Candidates:
+  - Unpacking (Python's destructuring)
+  - Comprehensions and generator expressions
+  - Decorators (`functools.wraps`, `lru_cache`, `property`)
+  - Context managers (`with`, `contextlib`)
+  - Iterators and generators
+  - Pattern matching (`match`/`case`)
+  - String formatting (f-strings, format specs)
+  - async/await (`asyncio`)
+  
+  Linked from the home page and sidebar. Deferred by you, 2026-11-03.
 - [ ] Multi-version support (needs a different page strategy because of the 20k-file limit)
 - [ ] Selected third-party packages
 - [ ] `/dev/styleguide`

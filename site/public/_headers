@@ -17,3 +17,17 @@
 # Versioned by content hash (?v=...), so cache for a long time.
 /search-index/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Example runner (PLAN.md Phase 8): embedded as <iframe sandbox="allow-scripts">
+# by our own pages, so it may be framed by them; it runs Pyodide (WebAssembly)
+# in a blob: (classic) worker. Replaces the site-wide CSP and X-Frame-Options.
+/runner
+  ! Content-Security-Policy
+  ! X-Frame-Options
+  Content-Security-Policy: default-src 'none'; script-src 'self' blob: 'wasm-unsafe-eval'; worker-src blob:; connect-src 'self'; frame-ancestors 'self'; base-uri 'none'; form-action 'none'
+
+# Pyodide runtime: fetched from the sandboxed (opaque-origin) runner, so it
+# needs CORS; versioned by directory, so cache it for a year.
+/pyodide/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=31536000, immutable

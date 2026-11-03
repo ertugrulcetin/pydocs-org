@@ -9,7 +9,7 @@ const ALICE = { id: 100, login: 'alice' };
 const BOB = { id: 200, login: 'bob' };
 let doc = {
   symbol: SID,
-  updatedAt: 1,
+  updatedAt: Date.now(), // live data is newer than the baked copy, as in production
   seeAlsos: [],
   notes: [],
   examples: [
@@ -61,7 +61,10 @@ await ctx.route('**/api/s/**', async (route) => {
 const page = await ctx.newPage();
 page.on('pageerror', (e) => errors.push(e.message));
 // The intentional 422 in step 3 is logged by the browser as a failed resource; that is expected.
-page.on('console', (msg) => msg.type() === 'error' && !msg.text().includes('status of 422') && errors.push(msg.text()));
+// The XSS step feeds DOMPurify an onerror payload on purpose: Chromium reports the
+// blocked inline handler while DOMPurify parses it in an inert document. Nothing runs
+// (checked: window.pwned stays unset even with no CSP), so that report is expected.
+page.on('console', (msg) => msg.type() === 'error' && !msg.text().includes('status of 422') && !msg.text().includes('inline event handler') && errors.push(msg.text()));
 
 // 1. logged out: live doc renders, counts update, login prompt links to /auth/login
 await page.goto(`${B}/${SID}`);
@@ -69,9 +72,11 @@ await page.waitForSelector('.var-example .syntaxify');
 check('live example rendered with highlighting', (await page.innerHTML('.var-example .syntaxify')).includes('tok-string'));
 check('heading count', (await page.textContent('.var-examples h5')) === '1 Example');
 check('sidenav count updated', (await page.textContent('.desktop-side-nav [data-count="examples"]')) === '1');
+// The page ships with baked examples, so wait for hydration to set the return URL.
+await page.waitForFunction(() => document.querySelector('.var-examples .login-required-message a')?.getAttribute('href')?.includes('return='));
 check('login prompt', (await page.getAttribute('.var-examples .login-required-message a', 'href'))?.startsWith('/auth/login?return=%2Fbuiltins%2Fstr.split'));
 const loggedOutLinks = (await page.$$eval('.var-example .links a', (as) => as.map((a) => a.textContent))).join(' / ');
-check('logged out: link / history / report, no edit or delete', loggedOutLinks === 'link / history / report', loggedOutLinks);
+check('logged out: link / history / run / report, no edit or delete', loggedOutLinks === 'link / history / run / report', loggedOutLinks);
 check('report link prefills a GitHub issue', (await page.getAttribute('.var-example .links a[href*="issues/new"]', 'href'))?.includes('labels=report'));
 
 // 2. log in as bob (UI cookie only; the fake API does not check sessions)

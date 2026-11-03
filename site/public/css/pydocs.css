@@ -128,3 +128,43 @@ pre {
   margin-top: var(--space-2xs);
   font-size: var(--font-size-sm);
 }
+
+/* Example runner output (Phase 8), below the example code. */
+.example-output {
+  margin-top: var(--space-2xs);
+  border-left: 3px solid var(--color-brand);
+  padding-left: var(--space-xs);
+}
+.example-output-head {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+.example-output-head .loading {
+  margin-left: var(--space-2xs);
+  vertical-align: middle;
+}
+.example-output pre {
+  margin: var(--space-2xs) 0 0;
+  max-height: 400px;
+  overflow: auto;
+  white-space: pre-wrap;
+  font-size: var(--font-size-sm);
+}
+.example-output pre.example-output-error {
+  color: var(--color-error, #c00);
+}
+
+/* Small action links (link / history / run / edit / delete / report):
+   Bootstrap 3 draws the focus ring inside the text (outline-offset: -2px),
+   hiding it after a click. Show a ring only for keyboard focus, outside. */
+.example-meta .links a:focus,
+.note-meta a:focus,
+.see-also .meta a:focus {
+  outline: none;
+}
+.example-meta .links a:focus-visible,
+.note-meta a:focus-visible,
+.see-also .meta a:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
