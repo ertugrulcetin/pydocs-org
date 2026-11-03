@@ -39,6 +39,7 @@ So we use **one Cloudflare Worker with static assets**: the static site and a sm
 **Goals**
 - Feature and UX parity with ClojureDocs (see [§5 parity matrix](#5-feature-parity-matrix)), adapted to Python.
 - Pixel-close UI. We mirror ClojureDocs' DOM structure and CSS class names and reuse its compiled CSS, so the look matches by construction.
+- **Responsive, like ClojureDocs.** Every page works on phones, tablets, and desktops. We keep the same Bootstrap 3 breakpoints (<768, 768–991, 992–1199, ≥1200 px). Below 768 px, as on ClojureDocs, the left sidenav is hidden, the search box goes full width, definition lists stack, and the footer centers. All of this comes with the reused CSS when we keep the same markup. The hamburger button opens the slide-out menu with site links and a per-page "Nav" section (Examples / See Also / Notes with counts). Viewport: `width=device-width, initial-scale=1`. We drop ClojureDocs' `maximum-scale=1.0`, which blocks pinch zoom (accessibility).
 - $0 running cost. No servers. Static pages keep working even if a free-tier quota runs out.
 - Open data. All community content is CC0, exported nightly, and backed up.
 
@@ -422,6 +423,7 @@ pydocs-org/
 ### Phase 2: Static site with the same UI (no login yet)
 - [~] Astro + Preact + TS skeleton; import the reference data. Skeleton done 2026-11-03 (Astro 7.4, Preact 11, TypeScript 7, Wrangler 4.156, Node 26 LTS). The `index-pages` integration moves `…/index.html` pages to `/_idx/` and writes the `_redirects` rewrites (§4). Next: import the reference data.
 - [ ] `Main` layout: head/meta, desktop and mobile navbars, mobile slide-out menu, footer, staging banner, light/dark
+- [ ] Mobile: port ClojureDocs' markup (`mobile-nav-bar`, `btn mobile-menu`, `mobile-nav-menu`, `mobile-push-wrapper`) and its menu-toggle script as a tiny vanilla script, so it works before any island loads. The per-page "Nav" section links to Examples / See Also / Notes with count badges. Check tap targets and that code blocks scroll sideways inside their box, never the whole page.
 - [ ] Port the CSS. Keep ClojureDocs' class names: `var-header`, `arglists`, `docstring`, `var-example`, `example-meta`, `sidenav`, `library-nav`, `ns-tree`, `dl-horizontal`, `quickref-*`, …
 - [ ] Symbol page: header, badges, signatures, docstring + PSF line, sticky sidenav with counts, widget placeholders, recent pages (localStorage)
 - [ ] Module page with sidebar tree (by chapter) and symbols grouped by letter with one-line doc
@@ -432,7 +434,7 @@ pydocs-org/
 - [ ] Prism with token colors mapped to ClojureDocs' `--syntax-*` variables
 - [ ] `/examples-styleguide`, `/contribute`, 404, 500
 - [ ] SEO: titles ("{name} - {module} | PyDocs - Community-Powered Python Documentation and Examples"), meta, OG/Twitter, canonical, JSON-LD, `sitemap.xml`, `robots.txt`, `opensearch.xml`
-- [ ] Playwright screenshot diff of home, symbol, module, quickref, and search against the matching ClojureDocs pages (acceptance check for "exact same UI")
+- [ ] Playwright screenshot diff of home, symbol, module, quickref, and search against the matching ClojureDocs pages at **three widths: 375 px (phone), 768 px (tablet), 1280 px (desktop)** (acceptance check for "exact same UI"). Also open the mobile menu at 375 px. Fail if any page scrolls sideways at 375 px.
 
 ### Phase 3: GitHub auth
 - [ ] `worker/auth.ts`: `/auth/login`, `/auth/callback`, `/auth/logout`: state cookie, code exchange, `/user`, account-age check, upsert `users/` and `logins/`
@@ -463,7 +465,7 @@ pydocs-org/
 - [ ] "report" link → prefilled GitHub issue
 - [ ] Rate limiting (private bucket counters; use the Workers rate-limit binding instead if it's on the free plan ⚠️)
 - [ ] `_headers` with CSP etc.
-- [ ] Tests: Worker unit tests (permissions, validation, conflicts, injection), e2e flows (login → add/edit/delete example, see-also, note), XSS cases
+- [ ] Tests: Worker unit tests (permissions, validation, conflicts, injection), e2e flows (login → add/edit/delete example, see-also, note) at desktop and 375 px phone width, XSS cases
 - [ ] Load check: largest symbol doc stays under the 10 ms CPU limit
 
 ### Phase 7: Launch
