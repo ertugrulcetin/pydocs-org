@@ -396,7 +396,7 @@ pydocs-org/
 ### Phase 0: Decisions, accounts, spikes
 - [x] Answer architecture questions Q1–Q4 (2026-11-01)
 - [ ] Answer the remaining questions Q5–Q11 in §16 (defaults apply if unanswered)
-- [~] Create the GitHub repo (public recommended) and add a `LICENSE` (see §17). Repo `ertugrulcetin/pydocs-org` is public (2026-11-03, branch `master`). Still to do: `LICENSE` (§17).
+- [x] Create the GitHub repo (public recommended) and add a `LICENSE` (see §17). Repo `ertugrulcetin/pydocs-org` is public (2026-11-03, branch `master`). `LICENSE` is EPL-2.0 (2026-11-03).
 - [x] Cloudflare: add a payment method, enable R2, create buckets `pydocs-content` and `pydocs-private`. Payment method and R2 were already active; buckets created 2026-11-03 by `scripts/setup-cloudflare.sh` (safe to re-run).
 - [x] Worker `pydocs`: the first `wrangler deploy` creates it, so there is no separate project step. Its custom domain is set in `wrangler.toml` (`routes` with `custom_domain = true`). First deployed 2026-11-03 with a placeholder page: https://pydocs.org and https://pydocs.ertu-ctn.workers.dev.
 - [ ] GitHub OAuth Apps: **prod** (callback `https://<domain>/auth/callback`) and **dev** (`http://localhost:8787/auth/callback`). One callback host per app. Login won't work on preview deploys.
@@ -513,6 +513,7 @@ pydocs-org/
 | 2026-11-01 | Seed examples from the official docs' `>>>` snippets (0BSD), labeled "from python-docs" (Q4) | Decided |
 | 2026-11-01 | Reuse ClojureDocs' compiled CSS and class names for UI parity | Proposed |
 | 2026-11-01 | Contributions are CC0 (same as ClojureDocs) | Proposed |
+| 2026-11-03 | Repo license: EPL-2.0 for the whole repo | Decided (by you) |
 | 2026-11-01 | Keep ClojureDocs' wiki-style editing (anyone logged in can edit any example) | Proposed |
 | 2026-11-01 | Build in GitHub Actions; deploy from there with wrangler | Proposed |
 | 2026-11-03 | One Worker with static assets replaces Pages + Pages Functions (Cloudflare now says "Start new projects with Workers"; same free limits) | Decided |
@@ -544,6 +545,7 @@ Each question has my default in **bold**. Q1–Q4 changed the architecture and a
 
 - **Python docs text:** © Python Software Foundation, PSF License Version 2. Code in the docs is also under Zero-Clause BSD. Every symbol page shows the attribution line, like ClojureDocs' "© Rich Hickey" line.
 - **ClojureDocs** (`nubank/clojuredocs`): Eclipse Public License 1.0. Our ported CSS and markup are derived works. Simplest compliance: publish the repo and license it under EPL-1.0 (EPL-2.0 is allowed as a later version), or keep the ported files under EPL in a clearly marked folder and the rest under MIT. *(Not legal advice.)*
+- **Decided (2026-11-03): the whole repo is EPL-2.0** (`LICENSE`). The ported markup ends up spread across many components, so one license is simpler than a split. The copied `clojuredocs-app.css` keeps its EPL-1.0 notice (`licenses/EPL-1.0.txt`). Third-party files are listed in `THIRD_PARTY_NOTICES.md`.
 - **Bootstrap 3:** MIT. **Font Awesome 4.7:** font under SIL OFL 1.1, CSS under MIT.
 - **Community contributions:** CC0. The notice sits under every editor, as on ClojureDocs.
 - **Name/brand:** "PyDocs" text wordmark. No ClojureDocs or Python logos. "Python" is used only in descriptive text, per PSF trademark policy.

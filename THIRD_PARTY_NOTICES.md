@@ -1,6 +1,6 @@
 # Third-party notices
 
-PyDocs includes or derives from the following works. See PLAN.md §17.
+PyDocs is licensed under the Eclipse Public License 2.0 (see `LICENSE`). It includes or derives from the following works, each under its own license. See PLAN.md §17.
 
 | What | Where in this repo | Source | License |
 |---|---|---|---|
