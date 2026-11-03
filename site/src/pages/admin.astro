@@ -1,0 +1,43 @@
+---
+// Admin tools (PLAN.md Phase 6). A static shell; the Worker checks admin rights
+// on every call, so the page itself holds nothing sensitive.
+import Main from '../layouts/Main.astro';
+---
+
+<Main title="Admin" bodyClass="admin-page" noindex>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <h1>Admin</h1>
+        <div id="admin-gate"><p>Checking access…</p></div>
+        <div id="admin-tools" hidden>
+          <div id="admin-flash" hidden></div>
+          <section>
+            <h5>Recent activity</h5>
+            <div id="admin-activity"><p>Loading…</p></div>
+          </section>
+          <section>
+            <h5>Bans</h5>
+            <p class="text-muted">Banned users can still read and log in, but can't add, edit or delete anything.</p>
+            <form id="ban-form" class="form-inline">
+              <input id="ban-login" class="form-control" placeholder="GitHub login" required />
+              <input id="ban-reason" class="form-control" placeholder="Reason (optional)" />
+              <button class="btn btn-danger" type="submit">Ban</button>
+            </form>
+            <div id="admin-bans"><p>Loading…</p></div>
+          </section>
+          <section>
+            <h5>Audit log</h5>
+            <p class="text-muted">Every change, with the text before it, so deleted content can be restored by hand.</p>
+            <input id="audit-day" class="form-control" type="date" aria-label="Day" />
+            <div id="admin-audit"><p>Loading…</p></div>
+            <button id="audit-more" class="btn btn-default btn-sm" type="button" hidden>Load more</button>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    import '../scripts/admin-page.ts';
+  </script>
+</Main>

@@ -95,3 +95,16 @@ pre {
     overflow-y: auto;
   }
 }
+
+/* Admin page: spacing for the inline ban form and the day picker. */
+.admin-page #ban-form .form-control,
+.admin-page #audit-day {
+  margin: 0 var(--space-2xs) var(--space-xs) 0;
+  max-width: 100%;
+}
+
+/* The hidden attribute must win over Bootstrap's display rules (.btn,
+   .nav > li, ...); the page scripts hide and show elements with it. */
+[hidden] {
+  display: none !important;
+}

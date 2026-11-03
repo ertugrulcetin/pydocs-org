@@ -507,7 +507,12 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
 - [x] `extract.yml`: manual workflow to regenerate reference data for a new Python release, opened as a PR (2026-11-03). It runs the extractor and its tests on ubuntu-latest and opens a PR when anything besides `generatedAt` changed. The first run made Linux the canonical platform (PR #1).
 
 ### Phase 6: Moderation, hardening, tests
-- [ ] Admin page (`/admin`, shell + Worker auth): recent activity with delete, ban/unban, audit viewer
+- [x] Admin page (`/admin`, shell + Worker auth): recent activity with delete, ban/unban, audit viewer (2026-11-03).
+  - API: `GET /api/admin/me|bans|audit?day=&cursor=` and `POST /api/admin/ban|unban {login, reason}`.
+  - Every call checks ADMIN_GITHUB_IDS; ban and unban go through the write guards (origin, JSON) and are audited. Admins can't be banned.
+  - Audit pages are 40 records, well under the free plan's per-request limits.
+  - A banned user can still read and log in but can't write. Deleting uses the normal DELETE endpoints, which already allow admins.
+  - 4 tests, plus a browser check with a mocked API.
 - [x] "report" link on every example, see-also and note → prefilled GitHub issue with label `report` (2026-11-03)
 - [ ] Rate limiting (private bucket counters; use the Workers rate-limit binding instead if it's on the free plan ⚠️)
 - [x] `_headers` with CSP etc. Enforced 2026-11-03 after a report-only run on the live site. Its one violation was Cloudflare Web Analytics' injected beacon, now allowed (`static.cloudflareinsights.com`, `cloudflareinsights.com`). The Worker's HTML error pages send their own strict CSP. The CSP was first added report-only on 2026-11-03: `default-src 'self'`, scripts and styles from self only, images also from avatars.githubusercontent.com, connections also to data.pydocs.org, `frame-ancestors 'none'`. It gets enforced once the live site shows no violations. Possible because every script is an external file (no inline scripts).

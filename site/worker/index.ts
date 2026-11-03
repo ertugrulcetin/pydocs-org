@@ -4,6 +4,7 @@
 import type { AppEnv } from './env.ts';
 import { callback, login, logout, SESSION_COOKIE } from './auth.ts';
 import { handleSymbolApi } from './community.ts';
+import { handleAdmin } from './admin.ts';
 import type { WaitUntil } from './community.ts';
 import { HttpError } from './guards.ts';
 import { json, parseCookies } from './http.ts';
@@ -27,6 +28,8 @@ async function route(req: Request, env: AppEnv, ctx: WaitUntil): Promise<Respons
     const s = await verifySession(parseCookies(req)[SESSION_COOKIE], env.SESSION_SECRET);
     return s ? json({ id: s.uid, login: s.login }) : json({ error: 'Not logged in' }, 401);
   }
+
+  if (pathname.startsWith('/api/admin/')) return handleAdmin(req, env, pathname.slice('/api/admin/'.length));
 
   // Read path [B] for public content (local dev, previews): same keys as data.pydocs.org.
   if (get && pathname.startsWith('/api/r/')) {

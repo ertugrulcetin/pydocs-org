@@ -30,6 +30,13 @@ export class FakeR2 {
   async delete(key: string) {
     this.objects.delete(key);
   }
+  async list({ prefix = '', limit = 1000, cursor }: { prefix?: string; limit?: number; cursor?: string } = {}) {
+    const all = this.keys(prefix);
+    const start = cursor ? Number(cursor) : 0;
+    const page = all.slice(start, start + limit);
+    const truncated = start + limit < all.length;
+    return { objects: page.map((key) => ({ key })), truncated, cursor: truncated ? String(start + limit) : undefined };
+  }
   read(key: string) {
     const o = this.objects.get(key);
     return o ? JSON.parse(o.body) : undefined;
