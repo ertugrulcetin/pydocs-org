@@ -117,3 +117,14 @@ pre {
   color: var(--text-faint);
   margin-top: var(--space-2xs);
 }
+
+/* "Changed in 3.x" under the docstring: a small, muted toggle. */
+.var-page .changed-in summary {
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+.var-page .changed-in ul {
+  margin-top: var(--space-2xs);
+  font-size: var(--font-size-sm);
+}

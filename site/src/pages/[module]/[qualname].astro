@@ -98,7 +98,7 @@ const jsonLd = {
                 s.changed.length > 0 && (
                   <section>
                     <details class="changed-in">
-                      <summary>Changed in {s.changed.map((c) => c.version).join(', ')}</summary>
+                      <summary>Changed in {[...new Set(s.changed.map((c) => c.version))].join(', ')}</summary>
                       <ul>
                         {s.changed.map((c) => (
                           <li>
