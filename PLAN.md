@@ -420,7 +420,7 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
 - [x] Chapters from `library/index.html`
 - [x] Doctest `>>>` snippet extraction per symbol, for seeding (Q4): 1,037 symbols have at least one; 737 from their own `<dl>` block, 300 from module prose only. A prose snippet attaches to every symbol it unambiguously calls (up to 6), with a `targets` count; 190 ambiguous ones are kept under `unattached`.
 - [x] Write `data/py-3.15/*` + stats report (`stats.json`); 34 snapshot tests on well-known symbols. Output is 644 files and 7.9 MB, with one compact JSON record per line so diffs read well.
-- Notes: 695 classes and exceptions have no signature because the docs declare them without parameters (e.g. `class TypeError`); they render with no signature, like ClojureDocs vars without arglists. The committed data was introspected on macOS (`meta.json` `introspectedOn`). Linux becomes the canonical platform once `extract.yml` (Phase 5) regenerates it in CI.
+- Notes: 695 classes and exceptions have no signature because the docs declare them without parameters (e.g. `class TypeError`); they render with no signature, like ClojureDocs vars without arglists. The committed data is introspected on Linux, the canonical platform, since PR #1 (2026-11-03, `extract.yml`). Only platform-specific symbols differ between OSes: Linux-only APIs such as `select.epoll` get real docstrings, and macOS-only ones such as `os.chflags` use the docs text.
 
 ### Phase 2: Static site with the same UI (no login yet)
 - [~] Astro + Preact + TS skeleton; import the reference data. Skeleton done 2026-11-03 (Astro 7.4, Preact 11, TypeScript 7, Wrangler 4.156, Node 26 LTS). The `index-pages` integration moves `…/index.html` pages to `/_idx/` and writes the `_redirects` rewrites (§4). Next: import the reference data.
@@ -504,7 +504,7 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
 - [x] "Still need an example" list on `/contribute` (2026-11-03)
 - [ ] `rebuild-indexes` nightly job: rebuild `users/*` contributions from `symbols/*`. Needs R2 write access from CI (not yet checked).
 - [~] `export.json` (CC0) is published on the site (2026-11-03) with a 20 MiB guard in CI. Still to do: a versioned backup in a `pydocs-data` repo, which needs that repo and a token.
-- [ ] `extract.yml`: manual workflow to regenerate reference data for a new Python release, opened as a PR
+- [x] `extract.yml`: manual workflow to regenerate reference data for a new Python release, opened as a PR (2026-11-03). It runs the extractor and its tests on ubuntu-latest and opens a PR when anything besides `generatedAt` changed. The first run made Linux the canonical platform (PR #1).
 
 ### Phase 6: Moderation, hardening, tests
 - [ ] Admin page (`/admin`, shell + Worker auth): recent activity with delete, ban/unban, audit viewer
