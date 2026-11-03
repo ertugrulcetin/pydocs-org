@@ -447,7 +447,7 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
   - The style guide is original Python text following §9. Every example output in it was checked on Python 3.15.2.
   - The contribute page lists "Still need an example:": quickref symbols with no example yet, from the bake. Shown as inline links: ClojureDocs nests `<li>` inside a `<div>` inside an `<li>`, which closes the outer list item, so its markup can't be copied as is.
 - [x] SEO: titles ("{name} - {module} | PyDocs - Community-Powered Python Documentation and Examples"), meta, OG/Twitter, canonical, JSON-LD, `sitemap.xml`, `robots.txt`, `opensearch.xml` (2026-11-03; the sitemap has 11,547 URLs)
-- [ ] Playwright screenshot diff of home, symbol, module, quickref, and search against the matching ClojureDocs pages at **three widths: 375 px (phone), 768 px (tablet), 1280 px (desktop)** (acceptance check for "exact same UI"). Also open the mobile menu at 375 px. Fail if any page scrolls sideways at 375 px. Checked by hand 2026-11-03 for every page type. ClojureDocs' own home page is 10 px too wide on phones (negative margins on the search wrapper), so `pydocs.css` fixes that, plus wrapping for long names like `XML_ERROR_ATTRIBUTE_EXTERNAL_ENTITY_REF`.
+- [~] Playwright screenshot diff of home, symbol, module, quickref, and search against the matching ClojureDocs pages. Done by hand with screenshots on 2026-11-03 rather than in CI: diffing against a live third-party site would make CI flaky. CI instead runs `e2e/layout-check.mjs` (15 pages × 4 widths). Original item: at **three widths: 375 px (phone), 768 px (tablet), 1280 px (desktop)** (acceptance check for "exact same UI"). Also open the mobile menu at 375 px. Fail if any page scrolls sideways at 375 px. Checked by hand 2026-11-03 for every page type. ClojureDocs' own home page is 10 px too wide on phones (negative margins on the search wrapper), so `pydocs.css` fixes that, plus wrapping for long names like `XML_ERROR_ATTRIBUTE_EXTERNAL_ENTITY_REF`.
 
 ### Phase 3: GitHub auth
 Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first real login wrote `users/8271291.json` and `logins/ertugrulcetin.json`.
@@ -519,7 +519,12 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
 - [x] "report" link on every example, see-also and note → prefilled GitHub issue with label `report` (2026-11-03)
 - [ ] Rate limiting (private bucket counters; use the Workers rate-limit binding instead if it's on the free plan ⚠️)
 - [x] `_headers` with CSP etc. Enforced 2026-11-03 after a report-only run on the live site. Its one violation was Cloudflare Web Analytics' injected beacon, now allowed (`static.cloudflareinsights.com`, `cloudflareinsights.com`). The Worker's HTML error pages send their own strict CSP. The CSP was first added report-only on 2026-11-03: `default-src 'self'`, scripts and styles from self only, images also from avatars.githubusercontent.com, connections also to data.pydocs.org, `frame-ancestors 'none'`. It gets enforced once the live site shows no violations. Possible because every script is an external file (no inline scripts).
-- [ ] Tests: Worker unit tests (permissions, validation, conflicts, injection), e2e flows (login → add/edit/delete example, see-also, note) at desktop and 375 px phone width, XSS cases
+- [x] Tests: Worker unit tests (permissions, validation, conflicts, injection), e2e flows (login → add/edit/delete example, see-also, note) at desktop and 375 px phone width, XSS cases (2026-11-03). All of these run in CI before every deploy:
+  - `npm test`: 39 unit tests, covering search, the highlighter, the Worker, admin, the repair job and the CPU budget.
+  - `e2e/search.mjs`: 15 checks.
+  - `e2e/community.mjs`: 23 checks against a fake API with the Worker's rules, covering add, edit and delete, errors, see-alsos, notes and XSS, at desktop and phone width.
+  - `e2e/layout-check.mjs`.
+  - The real GitHub login was checked by hand on pydocs.org.
 - [x] Load check: largest symbol doc stays under the 10 ms CPU limit (2026-11-03).
   - Per-symbol limits (100 examples, 100 see-alsos, 50 notes, with the 10,000-char example cap) bound a symbol doc at about 1 MB.
   - A write to that worst case costs 3.6–4.2 ms CPU in Node (`tests/cpu.test.ts`, part of `npm test`). That is after dropping a needless deep copy per write, which had cost about 35%.

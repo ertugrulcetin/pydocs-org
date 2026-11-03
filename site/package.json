@@ -15,7 +15,8 @@
     "astro": "astro",
     "test": "node --test tests/",
     "check:layout": "node e2e/layout-check.mjs",
-    "typecheck:site": "tsc --noEmit -p ."
+    "typecheck:site": "tsc --noEmit -p .",
+    "test:e2e": "node e2e/search.mjs && node e2e/community.mjs"
   },
   "dependencies": {
     "@astrojs/preact": "^6.1.1",

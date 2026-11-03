@@ -72,12 +72,13 @@ jobs:
         run: npm run build
       - name: Unit tests
         run: npm test
-      - name: Layout check (no sideways scroll, nothing sticking out of boxes)
+      - name: Browser checks (layout, search, community widgets)
         run: |
           npx playwright install --with-deps chromium
           npx astro preview --port 4321 > /tmp/preview.log 2>&1 &
           curl -s --retry 30 --retry-connrefused --retry-delay 1 -o /dev/null http://localhost:4321/
           npm run check:layout
+          npm run test:e2e
       - name: Check page and file counts
         run: |
           pages=$(find dist -name '*.html' | wc -l)
