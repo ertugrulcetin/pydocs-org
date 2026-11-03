@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 import { modules, summary, symbols } from './data';
 import { KINDS, POPULAR } from '../scripts/search-core';
 import { quickref, HOME_MODULES } from '../content/quickref';
-import { exampleCount } from './community-data';
+import { docFor, exampleCount } from './community-data';
 import type { AcRow } from '../scripts/search-core';
 
 const kindIndex = (k: string) => {
@@ -27,9 +27,11 @@ const rows: AcRow[] = [
   ...symbols.map((s): AcRow => [s.module, s.qualname, kindIndex(s.kind), summary(s.doc, 100), popular.has(s.id) ? POPULAR : 0, exampleCount(s.id)]),
 ];
 
-const docRows: [string[], string][] = [
-  ...modules.map((m): [string[], string] => [[], (m.doc ?? m.synopsis ?? '').slice(0, 300)]),
-  ...symbols.map((s): [string[], string] => [s.signatures, (s.doc ?? '').slice(0, 300)]),
+/** docs.json row: [signatures, doc (first 300 chars), see-also symbol ids]. */
+type DocRow = [string[], string, string[]];
+const docRows: DocRow[] = [
+  ...modules.map((m): DocRow => [[], (m.doc ?? m.synopsis ?? '').slice(0, 300), []]),
+  ...symbols.map((s): DocRow => [s.signatures, (s.doc ?? '').slice(0, 300), (docFor(s.id)?.seeAlsos ?? []).map((sa) => sa.to)]),
 ];
 
 export const acJson = JSON.stringify(rows);

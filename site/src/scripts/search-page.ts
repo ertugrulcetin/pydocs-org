@@ -24,7 +24,7 @@ async function main(el: HTMLElement): Promise<void> {
 
   const [prepared, docs] = await Promise.all([
     loadIndex(),
-    fetch(docsUrl).then((r) => r.json() as Promise<[string[], string][]>),
+    fetch(docsUrl).then((r) => r.json() as Promise<[string[], string, string[]?][]>),
   ]);
   const all = search(prepared, q, 1000);
   const start = (page - 1) * PER_PAGE;
@@ -39,14 +39,25 @@ async function main(el: HTMLElement): Promise<void> {
     `<p>${range} <span class="search-controls pull-right">${prev} | ${next}</span></p></div>` +
     `<ul class="search-results">${shown
       .map((e) => {
-        const [sigs, doc] = docs[e.i] ?? [[], ''];
+        const [sigs, doc, seeAlsos = []] = docs[e.i] ?? [[], '', []];
         const name = e.kind === 'module' ? e.module : e.qualname;
         const sub = e.kind === 'module' ? 'module' : e.module;
         return (
           `<li class="search-result"><h2><a href="${esc(e.href)}">${esc(name)}</a></h2><h3>${esc(sub)}</h3>` +
           (sigs.length ? `<ul class="arglists">${sigs.map((s) => `<li class="arglist">${esc(s)}</li>`).join('')}</ul>` : '') +
           `<p>${esc(doc.length >= 300 ? `${doc}...` : doc)}</p>` +
-          (e.kind === 'module' ? '' : `<div class="meta-info">${e.examples} example${e.examples === 1 ? '' : 's'}</div>`) +
+          (e.kind === 'module'
+            ? ''
+            : `<div class="meta-info">${e.examples} example${e.examples === 1 ? '' : 's'}` +
+              (seeAlsos.length
+                ? `<span class="see-alsos"> &middot; See also: ${seeAlsos
+                    .map((sid) => {
+                      const i = sid.indexOf('/');
+                      return `<span class="see-also"><a href="/${esc(sid)}"><span class="ns">${esc(sid.slice(0, i))}/</span>${esc(sid.slice(i + 1))}</a></span>`;
+                    })
+                    .join(', ')}</span>`
+                : '') +
+              '</div>') +
           '</li>'
         );
       })
