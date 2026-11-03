@@ -68,17 +68,27 @@ export async function callback(req: Request, env: AppEnv, fetchFn: typeof fetch 
       redirect_uri: callbackUrl(req),
     }),
   });
-  const token = tokenRes.ok ? ((await tokenRes.json()) as { access_token?: string }).access_token : undefined;
-  if (!token) return fail('GitHub did not accept the login. Please try again.', 502);
+  const tokenBody = (await tokenRes.json().catch(() => ({}))) as { access_token?: string; error?: string };
+  const token = tokenRes.ok ? tokenBody.access_token : undefined;
+  if (!token) {
+    // GitHub's error code is safe to show and log (e.g. bad_verification_code, incorrect_client_credentials).
+    const why = tokenBody.error ?? `HTTP ${tokenRes.status}`;
+    console.error('oauth: token exchange failed:', why);
+    return fail(`GitHub did not accept the login (${why}). Please try again.`, 502);
+  }
 
   const userRes = await fetchFn('https://api.github.com/user', {
     headers: { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'pydocs' },
   });
-  if (!userRes.ok) return fail('Could not read your GitHub profile. Please try again.', 502);
+  if (!userRes.ok) {
+    console.error('oauth: GET /user failed:', userRes.status);
+    return fail(`Could not read your GitHub profile (HTTP ${userRes.status}). Please try again.`, 502);
+  }
   const gh = (await userRes.json()) as GitHubUser;
   if (typeof gh.id !== 'number' || typeof gh.login !== 'string') return fail('Unexpected GitHub profile.', 502);
 
   await upsertUser(env.CONTENT, gh.id, gh.login, now);
+  console.log('oauth: login ok', gh.id, gh.login);
 
   const session = await signSession(
     { uid: gh.id, login: gh.login, ghc: Date.parse(gh.created_at) || now, iat: now, exp: now + SESSION_TTL_MS },
