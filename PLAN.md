@@ -398,7 +398,7 @@ pydocs-org/
 - [ ] Answer the remaining questions Q5–Q11 in §16 (defaults apply if unanswered)
 - [x] Create the GitHub repo (public recommended) and add a `LICENSE` (see §17). Repo `ertugrulcetin/pydocs-org` is public (2026-11-03, branch `master`). `LICENSE` is EPL-2.0 (2026-11-03).
 - [x] Cloudflare: add a payment method, enable R2, create buckets `pydocs-content` and `pydocs-private`. Payment method and R2 were already active; buckets created 2026-11-03 by `scripts/setup-cloudflare.sh` (safe to re-run).
-- [x] Worker `pydocs`: the first `wrangler deploy` creates it, so there is no separate project step. Its custom domain is set in `wrangler.toml` (`routes` with `custom_domain = true`). First deployed 2026-11-03 with a placeholder page: https://pydocs.org and https://pydocs.ertu-ctn.workers.dev.
+- [x] Worker `pydocs`: the first `wrangler deploy` creates it, so there is no separate project step. Its custom domain is set in `wrangler.toml` (`routes` with `custom_domain = true`). First deployed 2026-11-03 with a placeholder page: https://pydocs.org and its workers.dev URL.
 - [ ] GitHub OAuth Apps: **prod** (callback `https://<domain>/auth/callback`) and **dev** (`http://localhost:8787/auth/callback`). One callback host per app. Login won't work on preview deploys.
 - [x] Buy `pydocs.org` through Cloudflare Registrar (2026-11-03). The zone is on Cloudflare DNS.
 - [x] R2 custom domain `data.pydocs.org` → `pydocs-content`, with CORS for `pydocs.org` and local dev (2026-11-03, `scripts/setup-cloudflare.sh`)

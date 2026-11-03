@@ -23,3 +23,6 @@ extractor/.cache/
 
 # rollback manifests written by scripts/seed-doctests.mjs --write
 scripts/seed-manifest-*.json
+
+# JetBrains IDE settings (local only)
+.idea/
