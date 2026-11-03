@@ -1,0 +1,8 @@
+/* PyDocs additions on top of the reused ClojureDocs CSS. Keep this small:
+   parity comes from reusing clojuredocs-app.css unchanged. */
+
+/* Long code lines scroll inside their box, never the whole page (PLAN.md §1). */
+pre {
+  overflow-x: auto;
+  max-width: 100%;
+}

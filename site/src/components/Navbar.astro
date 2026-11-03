@@ -1,0 +1,58 @@
+---
+// Port of ClojureDocs' $navbar (pages/common.clj). It is rendered twice per page,
+// inside .mobile-nav-bar and .desktop-nav-bar; the CSS shows one per screen width.
+import { SITE_NAME, REPO_URL, loginHref } from '../lib/site';
+
+interface Props {
+  /** Current path, for the "Log In" return link. */
+  path: string;
+  /** GitHub stars count; shown on the home page only (PLAN.md §5 #2). */
+  stars?: number | undefined;
+}
+const { path, stars } = Astro.props;
+---
+
+<header class="navbar">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <a class="navbar-brand" href="/">{SITE_NAME}</a>
+        <button class="btn btn-default navbar-btn pull-right mobile-menu" type="button" aria-label="Menu">
+          <i class="fa fa-bars"></i>
+        </button>
+        <ul class="navbar-nav nav navbar-right desktop-navbar-nav">
+          {
+            stars !== undefined && (
+              <li>
+                <a class="gh-stars" href={REPO_URL} rel="noopener" target="_blank">
+                  <i class="fa fa-star" />
+                  {stars}
+                </a>
+              </li>
+            )
+          }
+          <li><a href="/library">Standard Library</a></li>
+          <li><a href="/quickref">Quick Ref</a></li>
+          <li data-user-area>
+            <a href={loginHref(path)}><i class="fa fa-github-square"></i>Log In</a>
+          </li>
+        </ul>
+        <div class="nav-search-widget navbar-right navbar-form">
+          <form action="/search" autocomplete="off" class="search" method="get" role="search">
+            <input
+              autocomplete="off"
+              class="placeholder form-control"
+              name="q"
+              placeholder="Looking for? (ctrl-s)"
+              type="text"
+              aria-label="Search"
+            />
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1"><div class="ac-results-widget"></div></div>
+    </div>
+  </div>
+</header>

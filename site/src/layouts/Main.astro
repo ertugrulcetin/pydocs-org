@@ -1,12 +1,35 @@
 ---
-// Page shell. Phase 2 ports ClojureDocs' $main here (navbars, mobile menu,
-// footer, staging banner). Stylesheets load in the same order as ClojureDocs.
+// Port of ClojureDocs' $main (pages/common.clj): head, mobile slide-out menu,
+// mobile + desktop navbars, sticky wrapper, footer. Same DOM structure and
+// class names, so the reused CSS (incl. its phone/tablet rules) applies as-is.
+import Navbar from '../components/Navbar.astro';
+import {
+  SITE_NAME,
+  TITLE_SUFFIX,
+  DEFAULT_DESCRIPTION,
+  PYTHON_VERSION,
+  REPO_URL,
+  loginHref,
+  pagePath,
+} from '../lib/site';
+
 interface Props {
-  title: string;
+  /** Page title before the site suffix, e.g. "len - builtins". Omit for the bare suffix. */
+  title?: string;
   description?: string;
+  /** body class, e.g. "var-page", "intro-page", "ns-page" (ClojureDocs names). */
+  bodyClass?: string;
+  /** schema.org JSON-LD object for this page. */
+  jsonLd?: Record<string, unknown>;
+  /** GitHub stars for the home navbar. */
+  stars?: number;
 }
-const { title, description = 'Community-powered documentation and examples for Python.' } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+
+const { title, description = DEFAULT_DESCRIPTION, bodyClass, jsonLd, stars } = Astro.props;
+const fullTitle = title ? `${title} | ${TITLE_SUFFIX}` : TITLE_SUFFIX;
+const path = pagePath(Astro.url.pathname);
+const canonical = new URL(path, Astro.site).href;
+const metaDescription = description.length > 200 ? `${description.slice(0, 197)}…` : description;
 ---
 
 <!doctype html>
@@ -14,15 +37,59 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={metaDescription} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title ?? SITE_NAME} />
+    <meta name="twitter:description" content={metaDescription} />
+    <meta property="og:title" content={title ?? SITE_NAME} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
     <link rel="canonical" href={canonical} />
+    <link rel="search" type="application/opensearchdescription+xml" title={SITE_NAME} href="/opensearch.xml" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/css/font-awesome.min.css" />
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/css/clojuredocs-app.css" />
+    <link rel="stylesheet" href="/css/pydocs.css" />
   </head>
-  <body>
-    <slot />
+  <body class={bodyClass}>
+    <div class="mobile-nav-menu">
+      <section>
+        <h4><i class="fa fa-rocket"></i>{SITE_NAME}</h4>
+        <ul class="navbar-nav mobile-navbar-nav nav">
+          <li><a href="/library">Standard Library<span class="clojure-version">({PYTHON_VERSION})</span></a></li>
+          <li><a href="/quickref">Quick Reference</a></li>
+          <li data-user-area><a href={loginHref(path)}><i class="fa fa-github-square"></i>Log In</a></li>
+        </ul>
+      </section>
+      <slot name="mobile-nav" />
+    </div>
+    <div class="mobile-nav-bar"><Navbar path={path} stars={stars} /></div>
+    <div class="sticky-wrapper mobile-push-wrapper">
+      <div class="staging-banner" hidden>Staging: this is not the live site, pydocs.org.</div>
+      <div class="desktop-nav-bar"><Navbar path={path} stars={stars} /></div>
+      <slot />
+      <div class="sticky-push"></div>
+    </div>
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="divider">
+              Python docs © Python Software Foundation · Examples CC0 · <a href={REPO_URL}>Source on GitHub</a>
+              · Not affiliated with the PSF
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script>
+      import '../scripts/mobile-nav.ts';
+    </script>
   </body>
 </html>
