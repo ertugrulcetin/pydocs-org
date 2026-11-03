@@ -443,8 +443,8 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
   - Tests: `npm test` (node:test, also checks real-index rankings such as `Counter` → `collections.Counter` and `Path` → `pathlib.Path`). A browser check (15 steps) covers keys, navigation, the home box, paging and phone width.
   - Fixed ClojureDocs' open dropdown making phones scroll sideways.
 - [ ] Prism with token colors mapped to ClojureDocs' `--syntax-*` variables
-- [ ] `/examples-styleguide`, `/contribute`, 404, 500
-- [ ] SEO: titles ("{name} - {module} | PyDocs - Community-Powered Python Documentation and Examples"), meta, OG/Twitter, canonical, JSON-LD, `sitemap.xml`, `robots.txt`, `opensearch.xml`
+- [~] `/examples-styleguide`, `/contribute`, 404, 500. 404 and 500 done 2026-11-03; styleguide and contribute pages still to write.
+- [x] SEO: titles ("{name} - {module} | PyDocs - Community-Powered Python Documentation and Examples"), meta, OG/Twitter, canonical, JSON-LD, `sitemap.xml`, `robots.txt`, `opensearch.xml` (2026-11-03; the sitemap has 11,547 URLs)
 - [ ] Playwright screenshot diff of home, symbol, module, quickref, and search against the matching ClojureDocs pages at **three widths: 375 px (phone), 768 px (tablet), 1280 px (desktop)** (acceptance check for "exact same UI"). Also open the mobile menu at 375 px. Fail if any page scrolls sideways at 375 px. Checked by hand 2026-11-03 for every page type. ClojureDocs' own home page is 10 px too wide on phones (negative margins on the search wrapper), so `pydocs.css` fixes that, plus wrapping for long names like `XML_ERROR_ATTRIBUTE_EXTERNAL_ENTITY_REF`.
 
 ### Phase 3: GitHub auth

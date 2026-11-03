@@ -50,6 +50,7 @@ export interface Chapter {
 export interface Meta {
   python: string;
   docsTag: string;
+  generatedAt: string;
   docsBaseUrl: string;
   sourceBaseUrl: string;
 }

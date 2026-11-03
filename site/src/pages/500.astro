@@ -1,0 +1,16 @@
+---
+// Served by the Worker when an /api or /auth request fails unexpectedly.
+import Main from '../layouts/Main.astro';
+---
+
+<Main title="Something Went Wrong">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <h1>Something went wrong</h1>
+        <p>Sorry, we couldn't finish that request. Please try again in a minute.</p>
+        <p><a href="/">Go to the home page</a></p>
+      </div>
+    </div>
+  </div>
+</Main>
