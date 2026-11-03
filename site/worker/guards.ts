@@ -10,6 +10,11 @@ import { SESSION_COOKIE } from './auth.ts';
 export const LIMITS = {
   exampleChars: 10_000,
   noteChars: 5_000,
+  // Per symbol: bounds a symbol doc at ~1 MB, so a write stays far below the
+  // 10 ms CPU limit (2.6 ms measured at 600 KB, tests/cpu.test.ts).
+  examplesPerSymbol: 100,
+  seeAlsosPerSymbol: 100,
+  notesPerSymbol: 50,
   writesPerHour: 20,
   writesPerDay: 100,
   minAccountAgeMs: 7 * 24 * 60 * 60 * 1000,

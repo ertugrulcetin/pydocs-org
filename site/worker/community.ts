@@ -86,7 +86,8 @@ export async function handleSymbolApi(
 
   let change: Change | undefined;
   const doc = await updateJson<SymbolDoc>(env.CONTENT, symbolKey(sid), (current) => {
-    const d: SymbolDoc = structuredClone(current ?? emptyDoc(sid));
+    // `current` was just parsed from R2 for this attempt, so it can be changed in place.
+    const d: SymbolDoc = current ?? emptyDoc(sid);
     change = apply(d, collection, method, id, body, author, admin, now);
     if (!change) return undefined;
     d.updatedAt = now;
@@ -130,6 +131,9 @@ function apply(
 
   if (collection === 'examples') {
     if (method === 'POST') {
+      if (d.examples.length >= LIMITS.examplesPerSymbol) {
+        throw new HttpError(422, `This symbol already has ${LIMITS.examplesPerSymbol} examples. Please improve an existing one instead.`);
+      }
       const ex: Example = { id: itemId('ex', now), body: text(body.body), author, editors: [], createdAt: now, updatedAt: now, source: null };
       d.examples.push(ex);
       return { action: 'create', collection, id: ex.id, before: null, after: ex };
@@ -157,6 +161,7 @@ function apply(
     if (method === 'POST') {
       const to = text(body.to).trim();
       if (d.seeAlsos.some((s) => s.to === to)) throw new HttpError(422, 'Sorry, that see also already exists.');
+      if (d.seeAlsos.length >= LIMITS.seeAlsosPerSymbol) throw new HttpError(422, `This symbol already has ${LIMITS.seeAlsosPerSymbol} see-alsos.`);
       const sa: SeeAlso = { id: itemId('sa', now), to, author, createdAt: now };
       d.seeAlsos.push(sa);
       return { action: 'create', collection, id: sa.id, before: null, after: sa };
@@ -171,6 +176,7 @@ function apply(
 
   // notes
   if (method === 'POST') {
+    if (d.notes.length >= LIMITS.notesPerSymbol) throw new HttpError(422, `This symbol already has ${LIMITS.notesPerSymbol} notes.`);
     const n: Note = { id: itemId('nt', now), body: text(body.body), author, createdAt: now, updatedAt: now };
     d.notes.push(n);
     return { action: 'create', collection, id: n.id, before: null, after: n };

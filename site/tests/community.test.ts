@@ -165,3 +165,12 @@ test('read path B (/api/r): allow-listed public keys only', async () => {
     assert.equal(await get(bad), 404, bad);
   }
 });
+
+test('per-symbol limits keep docs small (100 examples)', async () => {
+  const author = { id: 9, login: 'x' };
+  const doc = { symbol: 'builtins/str.split', seeAlsos: [], notes: [], updatedAt: 1,
+    examples: Array.from({ length: 100 }, (_, i) => ({ id: `ex_01JBX${String(i).padStart(21, '0')}`, body: 'x', author, editors: [], createdAt: 1, updatedAt: 1, source: null })) };
+  await env.content.put('symbols/builtins/str.split.json', JSON.stringify(doc));
+  const r = await call('POST', EX, { user: ALICE, body: { body: 'one more' } });
+  assert.deepEqual([r.status, r.body.message], [422, 'This symbol already has 100 examples. Please improve an existing one instead.']);
+});

@@ -517,7 +517,9 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
 - [ ] Rate limiting (private bucket counters; use the Workers rate-limit binding instead if it's on the free plan ⚠️)
 - [x] `_headers` with CSP etc. Enforced 2026-11-03 after a report-only run on the live site. Its one violation was Cloudflare Web Analytics' injected beacon, now allowed (`static.cloudflareinsights.com`, `cloudflareinsights.com`). The Worker's HTML error pages send their own strict CSP. The CSP was first added report-only on 2026-11-03: `default-src 'self'`, scripts and styles from self only, images also from avatars.githubusercontent.com, connections also to data.pydocs.org, `frame-ancestors 'none'`. It gets enforced once the live site shows no violations. Possible because every script is an external file (no inline scripts).
 - [ ] Tests: Worker unit tests (permissions, validation, conflicts, injection), e2e flows (login → add/edit/delete example, see-also, note) at desktop and 375 px phone width, XSS cases
-- [ ] Load check: largest symbol doc stays under the 10 ms CPU limit
+- [x] Load check: largest symbol doc stays under the 10 ms CPU limit (2026-11-03).
+  - Per-symbol limits (100 examples, 100 see-alsos, 50 notes, with the 10,000-char example cap) bound a symbol doc at about 1 MB.
+  - A write to that worst case costs 3.6–4.2 ms CPU in Node (`tests/cpu.test.ts`, part of `npm test`). That is after dropping a needless deep copy per write, which had cost about 35%.
 
 ### Phase 7: Launch
 - [~] Seed examples from the docs' `>>>` snippets (`scripts/seed-doctests.mjs`, dry run by default). Ready 2026-11-03, not yet written to R2:
