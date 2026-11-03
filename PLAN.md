@@ -17,7 +17,7 @@ When something changes, update this file in the same commit.
 
 - **Static site** (Astro). One pre-rendered page per stdlib object (11,557 objects in 320 modules for Python 3.15). Same layout, CSS class names, and flows as ClojureDocs.
 - **Reference docs** are generated at build time from the official Python 3.15 docs plus `inspect` introspection.
-- **Community content** (examples, see-alsos, notes) is stored as JSON in **R2**. It is written through a few small **Cloudflare Pages Functions** and **baked into the static pages nightly** so search engines can crawl it. Pages also fetch the live JSON after load, so new contributions show up at once.
+- **Community content** (examples, see-alsos, notes) is stored as JSON in **R2**. It is written through one small **Cloudflare Worker** and **baked into the static pages nightly** so search engines can crawl it. Pages also fetch the live JSON after load, so new contributions show up at once.
 - **GitHub login** via OAuth with a stateless, signed session cookie.
 - Everything fits in the Cloudflare free tier plus the GitHub Actions free tier.
 
@@ -28,7 +28,9 @@ A browser-only app cannot do two things we need:
 1. **GitHub login.** Exchanging the OAuth `code` for a token needs the app's *client secret*. GitHub's token endpoint also blocks browser (CORS) calls.
 2. **Writing to R2.** Write credentials can never ship to the browser.
 
-So we use **Cloudflare Pages Functions**: small serverless handlers deployed with the same Pages project, free up to 100k requests/day. There is no server to run or pay for. Only `/api/*` and `/auth/*` run Functions (set in `_routes.json`). Every page view is a static file and costs nothing.
+So we use **one Cloudflare Worker with static assets**: the static site and a small serverless handler, deployed together. The handler is free up to 100k requests/day. There is no server to run or pay for. Only `/api/*` and `/auth/*` run the Worker (`run_worker_first` in `wrangler.toml`). Every page view is a static file and costs nothing.
+
+**Why Workers and not Pages** (changed 2026-11-03). Cloudflare's Pages docs now say "Start new projects with Workers", and `wrangler pages project create` sends new projects to Workers. Workers static assets has the same free limits we rely on: 20,000 files per version, 25 MiB per file, and free, unlimited requests for static files.
 
 ---
 
@@ -53,8 +55,8 @@ So we use **Cloudflare Pages Functions**: small serverless handlers deployed wit
 ```
  BUILD  (GitHub Actions: on push to main + nightly cron)
  ┌───────────────────────┐   ┌─────────────────────────┐   ┌──────────────────────┐
- │ extractor/ (Python)   │──▶│ data/py-3.15/*.json     │──▶│ site/ (Astro build)  │──▶ wrangler pages deploy
- │ docs HTML + inspect   │   │ (committed to git)      │   │ ~12k static pages    │    (direct upload)
+ │ extractor/ (Python)   │──▶│ data/py-3.15/*.json     │──▶│ site/ (Astro build)  │──▶ wrangler deploy
+ │ docs HTML + inspect   │   │ (committed to git)      │   │ ~12k static pages    │    (Worker + assets)
  └───────────────────────┘   └─────────────────────────┘   │ + search index       │
                              ┌─────────────────────────┐   │ + baked community    │
                              │ R2 snapshot (S3 API,    │──▶│   content            │
@@ -62,18 +64,18 @@ So we use **Cloudflare Pages Functions**: small serverless handlers deployed wit
                              └─────────────────────────┘
 
  RUNTIME
- Browser ──GET page──────────────▶ Cloudflare Pages static assets (free, unlimited)
+ Browser ──GET page──────────────▶ Workers static assets (free, unlimited)
     │
     ├──GET live JSON──▶ [A] R2 public bucket on data.<domain> (CDN cached)    ← if we own a domain
-    │                   [B] GET /api/s/... → Pages Function → R2              ← pages.dev only
+    │                   [B] GET /api/s/... → Worker → R2                      ← workers.dev only
     │
-    └──POST/PATCH/DELETE /api/*, GET /auth/* ──▶ Pages Functions ──▶ R2 (pydocs-content, pydocs-private)
+    └──POST/PATCH/DELETE /api/*, GET /auth/* ──▶ Worker ──▶ R2 (pydocs-content, pydocs-private)
                                                       └──▶ GitHub OAuth + /user (at login only)
 ```
 
-**Read path.** The HTML already contains the community content as of the last bake. A small script then fetches the symbol's live JSON and re-renders the widgets if anything changed. **Decided: path [A]** (we own a domain), so reads use no Function quota. Path [B] (one Function request per symbol page view) stays only as a fallback, e.g. for local dev.
+**Read path.** The HTML already contains the community content as of the last bake. A small script then fetches the symbol's live JSON and re-renders the widgets if anything changed. **Decided: path [A]** (we own a domain), so reads use no Worker quota. Path [B] (one Worker request per symbol page view) stays only as a fallback, e.g. for local dev.
 
-**Write path.** Pages Function → verify session → validate → read-modify-write the symbol's JSON with an R2 conditional put (ETag) → best-effort index updates → return the new doc. Details in [§7.4](#74-write-algorithm--consistency).
+**Write path.** Worker → verify session → validate → read-modify-write the symbol's JSON with an R2 conditional put (ETag) → best-effort index updates → return the new doc. Details in [§7.4](#74-write-algorithm--consistency).
 
 **Graceful degradation.** If the Workers daily quota runs out, pages still load with the baked content. Only live refresh and writes fail until the quota resets.
 
@@ -89,12 +91,12 @@ So we use **Cloudflare Pages Functions**: small serverless handlers deployed wit
 | Python syntax highlight | **Prism** (build time and client) | Tiny. One highlighter for baked and live content. Token colors mapped to ClojureDocs' `--syntax-*` variables. |
 | Markdown (notes) | **marked** + **DOMPurify** (strict allowlist) | ClojureDocs uses marked. Sanitizing is required for user HTML. |
 | Search | Prebuilt JSON index + small custom ranker (or MiniSearch) | Fully static. Lazy-loaded when the search box gets focus. |
-| Backend | **Cloudflare Pages Functions** (TypeScript) | Free. Same deploy as the site. Native R2 binding. |
+| Backend | **One Cloudflare Worker** (TypeScript, small router), with the site as its static assets | Free. One deploy for site and API. Native R2 binding. |
 | Storage | **Cloudflare R2**: `pydocs-content` (public-safe), `pydocs-private` (bans, rate limits, audit log) | Your choice. A good fit: per-symbol JSON can be served straight from the CDN. |
-| Validation | **zod** schemas in `shared/`, used by both islands and Functions | One set of rules and error messages. |
+| Validation | **zod** schemas in `shared/`, used by both islands and the Worker | One set of rules and error messages. |
 | Reference data extractor | **Python 3.15** + **uv**, `selectolax`/`beautifulsoup4`, `inspect` | Must run on the documented Python version. |
-| CI/CD | **GitHub Actions** → `wrangler pages deploy` | Free. The Python build step is easy. Avoids Cloudflare build limits. |
-| Tests | pytest (extractor), Vitest + `@cloudflare/vitest-pool-workers` (Functions), Playwright (e2e and screenshot diff vs ClojureDocs) | |
+| CI/CD | **GitHub Actions** → `wrangler deploy` | Free. The Python build step is easy. Avoids Cloudflare build limits. |
+| Tests | pytest (extractor), Vitest + `@cloudflare/vitest-pool-workers` (Worker), Playwright (e2e and screenshot diff vs ClojureDocs) | |
 | Analytics | Cloudflare Web Analytics | Free and cookieless. Replaces ClojureDocs' Matomo. |
 
 ---
@@ -114,14 +116,14 @@ So we use **Cloudflare Pages Functions**: small serverless handlers deployed wit
 | `/u/{login}` | User page (`/u/:login`) | shell + client (`_redirects` 200 rewrite) |
 | `/examples-styleguide`, `/contribute` | Same | static |
 | `/concepts/{slug}` | Concept pages | static (Phase 8) |
-| `/auth/login`, `/auth/callback`, `/auth/logout` | `/gh-callback`, `/logout` | Function |
-| `/api/*` | `/api/*` | Function |
+| `/auth/login`, `/auth/callback`, `/auth/logout` | `/gh-callback`, `/logout` | Worker |
+| `/api/*` | `/api/*` | Worker |
 | `/export.json`, `/sitemap.xml`, `/robots.txt`, `/opensearch.xml` | Same idea | static |
 
 Naming rules:
 - The Python inventory lists builtins with no module prefix (`len`, `str.split`). We map them to module **`builtins`**, the counterpart of `clojure.core`.
 - **Symbol id** = `{module}/{qualname}` (e.g. `os.path/join`). It is used in URLs, R2 keys, and see-alsos.
-- ⚠️ Spike: confirm Cloudflare Pages serves dotted paths (`/os.path`, `/builtins/str.split`) correctly. It may treat `.path` or `.split` as a file extension. Fallback: emit `…/index.html` folders and canonicalize trailing slashes.
+- ⚠️ Spike: confirm Workers static assets serve dotted paths (`/os.path`, `/builtins/str.split`) correctly. It may treat `.path` or `.split` as a file extension. Fallback: emit `…/index.html` folders and canonicalize trailing slashes.
 
 ---
 
@@ -292,7 +294,7 @@ R2 has no transactions or queries. So:
 
 ---
 
-## 8. API (Pages Functions)
+## 8. API (Worker)
 
 | Method & path | Body | Notes |
 |---|---|---|
@@ -331,11 +333,10 @@ We port `examples-styleguide.md` and keep its spirit: short, unique, self-contai
 
 | Resource | Free limit | Our use | Guardrail |
 |---|---|---|---|
-| Pages static requests | Unlimited | All page views | — |
-| Pages files per deploy | 20,000 | ≈ 12.5k | Build fails above 18k |
-| Pages file size | 25 MiB | `export.json` grows over time | Split the export when it passes 20 MiB |
-| Pages builds | 500/month | ~0. We build in GitHub Actions and deploy with direct upload. ⚠️ Confirm direct uploads don't count as builds. | — |
-| Workers/Functions requests | 100k/day (whole account) | Writes, auth, and reads with path [B] | `_routes.json` limits Functions to `/api/*` and `/auth/*`. Use path [A] when possible. |
+| Static asset requests | Unlimited | All page views | — |
+| Asset files per Worker version | 20,000 | ≈ 12.5k | Build fails above 18k |
+| Asset file size | 25 MiB | `export.json` grows over time | Split the export when it passes 20 MiB |
+| Worker requests | 100k/day (whole account) | Writes, auth, and reads with path [B] | `run_worker_first` limits the Worker to `/api/*` and `/auth/*`. Use path [A] when possible. Over the limit, those routes return 429. |
 | Workers CPU | 10 ms per request | JSON parse/serialize + HMAC | Keep symbol docs small. Load-test the largest doc. |
 | R2 storage | 10 GB-month | Text only: MBs | — |
 | R2 Class A (writes, lists) | 1M/month | ~5 per contribution + nightly lists | — |
@@ -353,7 +354,7 @@ We port `examples-styleguide.md` and keep its spirit: short, unique, self-contai
 - **Open redirect.** `return` must be a relative path on our own site.
 - **Key injection.** Symbol ids must exist in the build manifest. Item ids must match the ULID format.
 - **Headers** (`_headers`): CSP (scripts from self only; images from self and `avatars.githubusercontent.com`), `X-Content-Type-Options`, `Referrer-Policy`, `frame-ancestors 'none'`.
-- **Secrets** (Pages env): `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `SESSION_SECRET`, `ADMIN_GITHUB_IDS`. GitHub Actions secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, R2 S3 read-only key pair.
+- **Secrets** (Worker secrets, `wrangler secret put`): `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `SESSION_SECRET`, `ADMIN_GITHUB_IDS`. GitHub Actions secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, R2 S3 read-only key pair.
 - **Abuse.** Rate limits, minimum account age, bans, soft deletes, audit log, nightly backups, admin UI, report link.
 
 ---
@@ -369,11 +370,11 @@ pydocs-org/
 │   └── tests/
 ├── data/py-3.15/                 # generated reference data (committed)
 ├── shared/                       # TS types, zod schemas, error messages, symbol-id helpers
-├── site/                         # Astro project = Cloudflare Pages project root
+├── site/                         # Astro project (static output) + the Worker; one `wrangler deploy`
 │   ├── astro.config.mjs
-│   ├── wrangler.toml             # R2 bindings: CONTENT, PRIVATE
-│   ├── functions/                # Pages Functions: auth/*, api/*
-│   ├── public/                   # _headers, _redirects, _routes.json, robots.txt, opensearch.xml, img/
+│   ├── wrangler.toml             # assets dir, run_worker_first, R2 bindings CONTENT/PRIVATE, custom domain
+│   ├── worker/                   # Worker code: router, auth/*, api/*
+│   ├── public/                   # _headers, _redirects, robots.txt, opensearch.xml, img/
 │   └── src/
 │       ├── layouts/Main.astro    # = ClojureDocs $main (head, navbars, footer)
 │       ├── components/           # Navbar, MobileNav, LibraryNav, SymbolHeader, Signatures, Docstring, …
@@ -393,14 +394,16 @@ pydocs-org/
 - [x] Answer architecture questions Q1–Q4 (2026-11-01)
 - [ ] Answer the remaining questions Q5–Q11 in §16 (defaults apply if unanswered)
 - [~] Create the GitHub repo (public recommended) and add a `LICENSE` (see §17). Repo `ertugrulcetin/pydocs-org` exists (2026-11-03; private, branch `master`). Still to do: `LICENSE`, make it public (Q7).
-- [~] Cloudflare: add a payment method, enable R2, create buckets `pydocs-content` and `pydocs-private`. Payment method and R2 were already active on the account (checked 2026-11-03).
-- [ ] Cloudflare Pages: create project `pydocs` as **direct upload**. This can't be switched to Git-integrated later.
-- [ ] GitHub OAuth Apps: **prod** (callback `https://<domain>/auth/callback`) and **dev** (`http://localhost:8788/auth/callback`). One callback host per app. Login won't work on preview deploys.
-- [ ] Buy `pydocs.org` (not registered as of 2026-11-03; see Q2), ideally through Cloudflare Registrar so it lands on Cloudflare DNS
-- [ ] Pages custom domain `pydocs.org`; R2 custom domain `data.pydocs.org` with CORS for `pydocs.org` and a Cache Rule
-- [ ] Add secrets to Pages and to GitHub Actions
-- [ ] ⚠️ Spike: dotted paths on Pages (`/os.path`, `/builtins/str.split`), trailing slashes, `_routes.json` limiting Functions to `/api/*` and `/auth/*`, `_redirects` 200 rewrites for `/u/*` and `/ex/*`
-- [ ] ⚠️ Spike: R2 conditional put (`etagMatches`, create-if-absent) from a Function under `wrangler pages dev`
+- [x] Cloudflare: add a payment method, enable R2, create buckets `pydocs-content` and `pydocs-private`. Payment method and R2 were already active; buckets created 2026-11-03 by `scripts/setup-cloudflare.sh` (safe to re-run).
+- [ ] Worker `pydocs`: the first `wrangler deploy` creates it, so there is no separate project step. Its custom domain is set in `wrangler.toml` (`routes` with `custom_domain = true`).
+- [ ] GitHub OAuth Apps: **prod** (callback `https://<domain>/auth/callback`) and **dev** (`http://localhost:8787/auth/callback`). One callback host per app. Login won't work on preview deploys.
+- [x] Buy `pydocs.org` through Cloudflare Registrar (2026-11-03). The zone is on Cloudflare DNS.
+- [x] R2 custom domain `data.pydocs.org` → `pydocs-content`, with CORS for `pydocs.org` and local dev (2026-11-03, `scripts/setup-cloudflare.sh`)
+- [ ] Worker custom domain `pydocs.org`: set in `wrangler.toml`, applied by the first deploy
+- [ ] Cache Rule: hostname `data.pydocs.org` → eligible for cache, respect origin headers. Created in the dashboard because Wrangler's login can't write zone settings. The Worker writes objects with `Cache-Control: public, max-age=60`, so live refresh is at most a minute behind.
+- [ ] Add Worker secrets and GitHub Actions secrets
+- [ ] ⚠️ Spike: dotted paths on Workers static assets (`/os.path`, `/builtins/str.split`), trailing slashes, `run_worker_first` limiting the Worker to `/api/*` and `/auth/*`, `_redirects` 200 rewrites for `/u/*` and `/ex/*`
+- [ ] ⚠️ Spike: R2 conditional put (`etagMatches`, create-if-absent) from the Worker under `wrangler dev`
 - [ ] ⚠️ Spike: Astro build time and output size for 12k pages on a GitHub runner
 - [ ] Get ClojureDocs' compiled `app.css` (from the live site or by compiling `css.clj`), `bootstrap.min.css` (3.x), and `font-awesome.min.css` (4.x). Add an EPL notice.
 
@@ -430,10 +433,10 @@ pydocs-org/
 - [ ] Playwright screenshot diff of home, symbol, module, quickref, and search against the matching ClojureDocs pages (acceptance check for "exact same UI")
 
 ### Phase 3: GitHub auth
-- [ ] `functions/auth/login`, `callback`, `logout`: state cookie, code exchange, `/user`, account-age check, upsert `users/` and `logins/`
+- [ ] `worker/auth.ts`: `/auth/login`, `/auth/callback`, `/auth/logout`: state cookie, code exchange, `/user`, account-age check, upsert `users/` and `logins/`
 - [ ] Session sign/verify (WebCrypto HMAC) in `shared/`; `pd_user` UI cookie
 - [ ] Navbar UserArea: "Log In" ↔ avatar + "Log Out"; return to the current page after login
-- [ ] Local dev: `wrangler pages dev` with local R2 + the dev OAuth app
+- [ ] Local dev: `wrangler dev` with local R2 + the dev OAuth app
 
 ### Phase 4: Community content
 - [ ] `shared/` zod schemas + ClojureDocs error messages
@@ -447,18 +450,18 @@ pydocs-org/
 - [ ] Home: Example of the Day (from the bake) + Recently Updated (baked, then live)
 
 ### Phase 5: Build pipeline, bake, export, backup
-- [ ] `deploy.yml`: on push + nightly cron → (reuse committed data) → R2 snapshot (rclone/S3, read-only key) → bake → Astro build → file-count check → `wrangler pages deploy`
+- [ ] `deploy.yml`: on push + nightly cron → (reuse committed data) → R2 snapshot (rclone/S3, read-only key) → bake → Astro build → file-count check → `wrangler deploy`
 - [ ] Bake: community content into HTML, example counts + see-alsos into the search index, "Still need an example" list, Example of the Day
 - [ ] `rebuild-indexes.ts` nightly
 - [ ] `export.json` (CC0) published on the site + committed to the `pydocs-data` repo (versioned backup)
 - [ ] `extract.yml`: manual workflow to regenerate reference data for a new Python release, opened as a PR
 
 ### Phase 6: Moderation, hardening, tests
-- [ ] Admin page (`/admin`, shell + Function auth): recent activity with delete, ban/unban, audit viewer
+- [ ] Admin page (`/admin`, shell + Worker auth): recent activity with delete, ban/unban, audit viewer
 - [ ] "report" link → prefilled GitHub issue
 - [ ] Rate limiting (private bucket counters; use the Workers rate-limit binding instead if it's on the free plan ⚠️)
 - [ ] `_headers` with CSP etc.
-- [ ] Tests: Function unit tests (permissions, validation, conflicts, injection), e2e flows (login → add/edit/delete example, see-also, note), XSS cases
+- [ ] Tests: Worker unit tests (permissions, validation, conflicts, injection), e2e flows (login → add/edit/delete example, see-also, note), XSS cases
 - [ ] Load check: largest symbol doc stays under the 10 ms CPU limit
 
 ### Phase 7: Launch
@@ -482,14 +485,14 @@ pydocs-org/
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Workers quota (100k req/day) used up | Writes and live refresh fail for the rest of the day | Static pages keep the baked content. Read path [A] keeps reads off Functions. |
-| 20k-file limit on Pages | Blocks adding versions or third-party libs | Guard in the build. Later: fold attributes into parent pages, or render some routes with Functions. |
+| Workers quota (100k req/day) used up | Writes and live refresh fail for the rest of the day | Static pages keep the baked content. Read path [A] keeps reads off the Worker. |
+| 20k-file limit on static assets | Blocks adding versions or third-party libs | Guard in the build. Later: fold attributes into parent pages, or render some routes with the Worker. |
 | Spam on an unmoderated wiki | Bad content | Rate limits, account age, bans, soft delete, audit log, backups, admin UI |
 | R2 has no transactions or queries | Index drift | One doc per symbol, conditional writes, nightly index rebuild |
 | Docs HTML structure changes between Python releases | Extractor breaks | Pin the version; snapshot tests; regenerate through a PR |
 | Platform-only modules can't be imported on the Linux runner | Missing docstrings | Fall back to docs text |
 | Empty site at launch | Low value at first | Seeding (Q4) |
-| Dotted URLs on Pages | Broken routing | Phase 0 spike |
+| Dotted URLs on static assets | Broken routing | Phase 0 spike |
 | EPL obligations for the ported UI | License compliance | Public repo + EPL notice (§17) |
 
 ---
@@ -507,9 +510,10 @@ pydocs-org/
 | 2026-11-01 | Reuse ClojureDocs' compiled CSS and class names for UI parity | Proposed |
 | 2026-11-01 | Contributions are CC0 (same as ClojureDocs) | Proposed |
 | 2026-11-01 | Keep ClojureDocs' wiki-style editing (anyone logged in can edit any example) | Proposed |
-| 2026-11-01 | Build in GitHub Actions; deploy with direct upload | Proposed |
+| 2026-11-01 | Build in GitHub Actions; deploy from there with wrangler | Proposed |
+| 2026-11-03 | One Worker with static assets replaces Pages + Pages Functions (Cloudflare now says "Start new projects with Workers"; same free limits) | Decided |
 | 2026-11-03 | Every symbol that has a doctest gets at least one seeded example; no generated examples for the rest (Q12) | Decided (by you) |
-| 2026-11-03 | Domain `pydocs.org` (still to be bought); Python pinned to 3.15.2; Git branch `master` | Decided |
+| 2026-11-03 | Domain `pydocs.org` (bought through Cloudflare Registrar); Python pinned to 3.15.2; Git branch `master` | Decided |
 
 ---
 
@@ -518,7 +522,7 @@ pydocs-org/
 Each question has my default in **bold**. Q1–Q4 changed the architecture and are answered. The defaults for Q5–Q11 apply unless you say otherwise.
 
 1. ✅ R2 needs a payment method on the account. → **Accepted. Use R2.**
-2. ✅ Domain. → **`pydocs.org` (confirmed 2026-11-03). It goes on Cloudflare DNS; read path [A].** ⚠️ On 2026-11-03 the .org registry said "Domain not found", so the domain still has to be bought. Cloudflare Registrar is the simplest choice: it sells at cost and puts the zone on Cloudflare DNS at once. Until then we use `*.pages.dev` and read path [B].
+2. ✅ Domain. → **`pydocs.org` (confirmed 2026-11-03). It goes on Cloudflare DNS; read path [A].** Bought through Cloudflare Registrar on 2026-11-03.
 3. ✅ Scope. → **Stdlib only, Python 3.15 only.**
 4. ✅ Seed examples from the docs' `>>>` snippets. → **Yes, labeled "from python-docs".**
 5. Main doc block: the **docstring** (like ClojureDocs) plus an "Official docs ↗" link, or the richer docs.python.org text? → **Docstring + link.**

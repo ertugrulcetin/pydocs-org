@@ -1,0 +1,12 @@
+{
+  "rules": [
+    {
+      "allowed": {
+        "origins": ["https://pydocs.org", "http://localhost:4321", "http://localhost:8787"],
+        "methods": ["GET", "HEAD"]
+      },
+      "exposeHeaders": ["ETag", "Last-Modified"],
+      "maxAgeSeconds": 86400
+    }
+  ]
+}
