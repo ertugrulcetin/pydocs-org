@@ -1,0 +1,6 @@
+# Copy to .dev.vars (git-ignored) for local `wrangler dev`. Values for the
+# *dev* GitHub OAuth app (callback http://localhost:8787/auth/callback).
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+SESSION_SECRET=
+ADMIN_GITHUB_IDS=8271291
