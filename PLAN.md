@@ -7,7 +7,7 @@
 **This file is the single source of truth.** Every decision, task, and open question lives here.
 When something changes, update this file in the same commit.
 
-- **Status:** 🚧 Phase 0 started (2026-11-03). Architecture questions Q1–Q4 answered (2026-11-01).
+- **Status:** ✅ Live at https://pydocs.org. Phases 0–7 done (2026-11-03) except: the local `wrangler dev` check, the `pydocs-data` backup repo (deferred), and the announcement. Phase 8 (later) not started.
 - **Last updated:** 2026-11-03
 - **Legend:** `[ ]` todo · `[~]` in progress · `[x]` done · ❓ needs your decision · ⚠️ risk to verify early
 
@@ -344,7 +344,7 @@ We port `examples-styleguide.md` and keep its spirit: short, unique, self-contai
 | R2 storage | 10 GB-month | Text only: MBs | — |
 | R2 Class A (writes, lists) | 1M/month | ~5 per contribution + nightly lists | — |
 | R2 Class B (reads) | 10M/month | Path [A]: only CDN cache misses. Path [B]: 1 per page view. | Cache headers on objects |
-| GitHub Actions | Unlimited for public repos (2,000 min/month private) | ~5 min/day | Make the repo public (❓ Q7) |
+| GitHub Actions | Unlimited for public repos (2,000 min/month private) | ~5 min/day | The repo has been public since 2026-11-03 (Q7) |
 
 ⚠️ **R2 needs a payment method on the account to activate, even for the free tier.** Accepted (Q1). Add the payment method *before* enabling R2: in 2025 some users couldn't add one during R2 activation.
 
@@ -395,16 +395,16 @@ pydocs-org/
 
 ### Phase 0: Decisions, accounts, spikes
 - [x] Answer architecture questions Q1–Q4 (2026-11-01)
-- [ ] Answer the remaining questions Q5–Q11 in §16 (defaults apply if unanswered)
+- [x] Answer the remaining questions Q5–Q11 in §16 (defaults apply if unanswered) All answered with the defaults or by you, 2026-11-03 (see §16).
 - [x] Create the GitHub repo (public recommended) and add a `LICENSE` (see §17). Repo `ertugrulcetin/pydocs-org` is public (2026-11-03, branch `master`). `LICENSE` is EPL-2.0 (2026-11-03).
 - [x] Cloudflare: add a payment method, enable R2, create buckets `pydocs-content` and `pydocs-private`. Payment method and R2 were already active; buckets created 2026-11-03 by `scripts/setup-cloudflare.sh` (safe to re-run).
 - [x] Worker `pydocs`: the first `wrangler deploy` creates it, so there is no separate project step. Its custom domain is set in `wrangler.toml` (`routes` with `custom_domain = true`). First deployed 2026-11-03 with a placeholder page: https://pydocs.org and its workers.dev URL.
-- [ ] GitHub OAuth Apps: **prod** (callback `https://<domain>/auth/callback`) and **dev** (`http://localhost:8787/auth/callback`). One callback host per app. Login won't work on preview deploys.
+- [x] GitHub OAuth Apps: **prod** (callback `https://<domain>/auth/callback`) and **dev** (`http://localhost:8787/auth/callback`). One callback host per app. Login won't work on preview deploys. Both created 2026-11-03; prod verified by a real login on pydocs.org.
 - [x] Buy `pydocs.org` through Cloudflare Registrar (2026-11-03). The zone is on Cloudflare DNS.
 - [x] R2 custom domain `data.pydocs.org` → `pydocs-content`, with CORS for `pydocs.org` and local dev (2026-11-03, `scripts/setup-cloudflare.sh`)
 - [x] Worker custom domain `pydocs.org`: set in `wrangler.toml`, applied by the first deploy (live 2026-11-03)
 - [x] Cache Rule "data.pydocs.org JSON" (2026-11-03, dashboard, because Wrangler's login can't write zone settings): hostname equals `data.pydocs.org` → Eligible for cache. Edge TTL: "Use cache-control header if present, use default Cloudflare caching behavior if not". Browser TTL: Respect origin. The Worker writes objects with `Cache-Control: public, max-age=60`, so live refresh is at most a minute behind. 404s (symbols with no community content yet) are cached by default too, so they don't cost an R2 read on every view. Checked: MISS then HIT, CORS for `https://pydocs.org`, and 404 HIT.
-- [~] Add Worker secrets and GitHub Actions secrets. Set on 2026-11-03: `SESSION_SECRET` (random) and `ADMIN_GITHUB_IDS`. Still to do: `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` (once the OAuth apps exist), and the GitHub Actions secrets.
+- [x] Add Worker secrets and GitHub Actions secrets. Set on 2026-11-03: `SESSION_SECRET` (random) and `ADMIN_GITHUB_IDS`. Still to do: `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` (once the OAuth apps exist), and the GitHub Actions secrets. Done: `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` are set, and so are the Actions secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. The R2 S3 key pair isn't needed: the snapshot uses the REST API.
 - [x] Spike (2026-11-03, throwaway Worker on workers.dev, since deleted): dotted paths, trailing slashes, `_idx` rewrite for `index` pages (see §4). `run_worker_first = ["/api/*", "/auth/*"]` sends only those to the Worker. `_redirects` 200 rewrites for `/u/*` and `/ex/*` work, `not_found_handling = "404-page"` works, and `env.ASSETS.fetch('/_data/symbols.txt')` works from the Worker. `_headers` doesn't apply to Worker responses, so the Worker sets its own headers.
 - [x] Spike: R2 conditional put from a deployed Worker against real R2 (2026-11-03). `etagMatches` with the current ETag stores the write and a stale ETag returns `null`. Create-if-absent works with `etagDoesNotMatch: "*"` or `If-None-Match: *`. See §7.4.
 - [x] Spike: Astro build time and output size for 12k pages (2026-11-03, local Apple Silicon, synthetic pages with dotted names): 11,842 pages in 2.6 s (4.2 s total), 47 MB, 11,860 files. `build.format: 'file'` writes `os.path.html` / `os.path/join.html` as planned. Timing on a GitHub runner will come from the first CI deploy.
@@ -423,10 +423,10 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
 - Notes: 695 classes and exceptions have no signature because the docs declare them without parameters (e.g. `class TypeError`); they render with no signature, like ClojureDocs vars without arglists. The committed data is introspected on Linux, the canonical platform, since PR #1 (2026-11-03, `extract.yml`). Only platform-specific symbols differ between OSes: Linux-only APIs such as `select.epoll` get real docstrings, and macOS-only ones such as `os.chflags` use the docs text.
 
 ### Phase 2: Static site with the same UI (no login yet)
-- [~] Astro + Preact + TS skeleton; import the reference data. Skeleton done 2026-11-03 (Astro 7.4, Preact 11, TypeScript 7, Wrangler 4.156, Node 26 LTS). The `index-pages` integration moves `…/index.html` pages to `/_idx/` and writes the `_redirects` rewrites (§4). Next: import the reference data.
-- [ ] `Main` layout: head/meta, desktop and mobile navbars, mobile slide-out menu, footer, staging banner, light/dark
-- [ ] Mobile: port ClojureDocs' markup (`mobile-nav-bar`, `btn mobile-menu`, `mobile-nav-menu`, `mobile-push-wrapper`) and its menu-toggle script as a tiny vanilla script, so it works before any island loads. The per-page "Nav" section links to Examples / See Also / Notes with count badges. Check tap targets and that code blocks scroll sideways inside their box, never the whole page.
-- [ ] Port the CSS. Keep ClojureDocs' class names: `var-header`, `arglists`, `docstring`, `var-example`, `example-meta`, `sidenav`, `library-nav`, `ns-tree`, `dl-horizontal`, `quickref-*`, …
+- [x] Astro + Preact + TS skeleton; import the reference data. Skeleton done 2026-11-03 (Astro 7.4, Preact 11, TypeScript 7, Wrangler 4.156, Node 26 LTS). The `index-pages` integration moves `…/index.html` pages to `/_idx/` and writes the `_redirects` rewrites (§4). Next: import the reference data. The reference data is imported too (`src/lib/data.ts`).
+- [x] `Main` layout: head/meta, desktop and mobile navbars, mobile slide-out menu, footer, staging banner, light/dark Done 2026-11-03. Light/dark comes from ClojureDocs' `light-dark()` CSS and was checked in dark mode on the live site.
+- [x] Mobile: port ClojureDocs' markup (`mobile-nav-bar`, `btn mobile-menu`, `mobile-nav-menu`, `mobile-push-wrapper`) and its menu-toggle script as a tiny vanilla script, so it works before any island loads. The per-page "Nav" section links to Examples / See Also / Notes with count badges. Check tap targets and that code blocks scroll sideways inside their box, never the whole page. Done 2026-11-03 (`src/scripts/mobile-nav.ts`).
+- [x] Port the CSS. Keep ClojureDocs' class names: `var-header`, `arglists`, `docstring`, `var-example`, `example-meta`, `sidenav`, `library-nav`, `ns-tree`, `dl-horizontal`, `quickref-*`, … Done: ClojureDocs' compiled CSS is reused unchanged, with `pydocs.css` for fixes on top.
 - [x] Symbol page: header, badges, signatures, docstring + PSF line, sticky sidenav with counts, widget placeholders, recent pages (localStorage). All done 2026-11-03. The sidebar column itself is sticky: Bootstrap 3 columns are floats, so a box inside them can't stick. "Recent" shows up to 8 other symbols you viewed. Python adaptations:
   - Class and exception pages list their members (methods and attributes) in the same letter-grouped layout as module pages.
   - `implDetail` means the docs include a CPython implementation-detail note, not that the symbol is CPython-only (e.g. `len`). So it shows as a small note under the docstring, not as a badge.
@@ -442,7 +442,7 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
   - `/search?q=&page=`: 10 per page with prev/next.
   - Tests: `npm test` (node:test, also checks real-index rankings such as `Counter` → `collections.Counter` and `Path` → `pathlib.Path`). A browser check (15 steps) covers keys, navigation, the home box, paging and phone width.
   - Fixed ClojureDocs' open dropdown making phones scroll sideways.
-- [ ] Prism with token colors mapped to ClojureDocs' `--syntax-*` variables
+- [x] Prism with token colors mapped to ClojureDocs' `--syntax-*` variables Replaced by the small custom highlighter (`src/lib/highlight.ts`, see Phase 4).
 - [x] `/examples-styleguide`, `/contribute`, 404, 500 (2026-11-03).
   - The style guide is original Python text following §9. Every example output in it was checked on Python 3.15.2.
   - The contribute page lists "Still need an example:": quickref symbols with no example yet, from the bake. Shown as inline links: ClojureDocs nests `<li>` inside a `<div>` inside an `<li>`, which closes the outer list item, so its markup can't be copied as is.
@@ -484,7 +484,7 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
 - [x] Live refresh: fetch the symbol JSON after load and re-render if `updatedAt` changed. Production reads `data.pydocs.org` (path A), other hosts use `/api/s/` (path B). A doc you just wrote, kept in sessionStorage, wins over a CDN copy up to 60 s old. Nav counts update live.
 - [x] Browser test (22 steps, fake API with the Worker's rules): add/edit/delete, errors, keys, preview, see-alsos, notes, XSS, phone width.
 - [x] `/ex/{id}` history page and `/u/{login}` user page (2026-11-03): client-rendered shells (`/shell/example`, `/shell/user`, noindex) behind `_redirects` 200 rewrites, ClojureDocs markup. The user page also counts see-alsos and notes. Read path B for local dev is one allow-listed endpoint, `GET /api/r/{key}` (symbols/, history/, users/, logins/, activity/recent), instead of `/api/ex`, `/api/u` and `/api/activity`.
-- [~] Home: Example of the Day (from the bake) + Recently Updated (baked, then live). Recently Updated is live from `activity/recent.json` (2026-11-03); the baked copy and Example of the Day come with Phase 5.
+- [x] Home: Example of the Day (from the bake) + Recently Updated (baked, then live). Recently Updated is live from `activity/recent.json` (2026-11-03); the baked copy and Example of the Day come with Phase 5. Both are baked since Phase 5; Recently Updated also refreshes live.
 - [x] Real flow checked on pydocs.org (2026-11-03): you added an example on `builtins/str.split`. The symbol doc, history, activity, your contributions and the private audit record were all written.
 
 ### Phase 5: Build pipeline, bake, export, backup
@@ -517,7 +517,7 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
   - A banned user can still read and log in but can't write. Deleting uses the normal DELETE endpoints, which already allow admins.
   - 4 tests, plus a browser check with a mocked API.
 - [x] "report" link on every example, see-also and note → prefilled GitHub issue with label `report` (2026-11-03)
-- [ ] Rate limiting (private bucket counters; use the Workers rate-limit binding instead if it's on the free plan ⚠️)
+- [x] Rate limiting (private bucket counters; use the Workers rate-limit binding instead if it's on the free plan ⚠️) Done in Phase 4: R2 counters in `pydocs-private`, 20 writes an hour and 100 a day, admins exempt (`worker/guards.ts`). The Workers rate-limit binding isn't needed.
 - [x] `_headers` with CSP etc. Enforced 2026-11-03 after a report-only run on the live site. Its one violation was Cloudflare Web Analytics' injected beacon, now allowed (`static.cloudflareinsights.com`, `cloudflareinsights.com`). The Worker's HTML error pages send their own strict CSP. The CSP was first added report-only on 2026-11-03: `default-src 'self'`, scripts and styles from self only, images also from avatars.githubusercontent.com, connections also to data.pydocs.org, `frame-ancestors 'none'`. It gets enforced once the live site shows no violations. Possible because every script is an external file (no inline scripts).
 - [x] Tests: Worker unit tests (permissions, validation, conflicts, injection), e2e flows (login → add/edit/delete example, see-also, note) at desktop and 375 px phone width, XSS cases (2026-11-03). All of these run in CI before every deploy:
   - `npm test`: 39 unit tests, covering search, the highlighter, the Worker, admin, the repair job and the CPU budget.
@@ -542,7 +542,7 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
   - Original item: Author: system user "python-docs", `source: "python-docs"`, shown with a "from python-docs" label. Idempotent, so it can be re-run.
 - [x] **Every symbol that has a doctest gets at least one seeded example.** Done (2026-11-03) for 980 of 1,037: the other 57 snippets don't use the symbol they were attached to, so they were left out (see the seed item above). Attach each `>>>` snippet to its symbol: snippets inside the symbol's `<dl>` block first, then snippets in module prose when the symbol they call is unambiguous. Symbols with no doctest get no seeded example (Q12). They show the normal "Log in to add an example" prompt and appear in the Contribute page's "Still need an example:" list. Done when a check reports 0 symbols that have a doctest but no example.
 - [x] Cloudflare Web Analytics: already on for the zone (Cloudflare injects the beacon; found via the CSP report-only run, 2026-11-03)
-- [ ] Custom domain live; prod OAuth app verified
+- [x] Custom domain live; prod OAuth app verified Both 2026-11-03.
 - [ ] Announce (r/Python, Python Discourse, HN, Mastodon)
 
 ### Phase 8: Later / nice-to-have
@@ -602,13 +602,13 @@ Each question has my default in **bold**. Q1–Q4 changed the architecture and a
 2. ✅ Domain. → **`pydocs.org` (confirmed 2026-11-03). It goes on Cloudflare DNS; read path [A].** Bought through Cloudflare Registrar on 2026-11-03.
 3. ✅ Scope. → **Stdlib only, Python 3.15 only.**
 4. ✅ Seed examples from the docs' `>>>` snippets. → **Yes, labeled "from python-docs".**
-5. Main doc block: the **docstring** (like ClojureDocs) plus an "Official docs ↗" link, or the richer docs.python.org text? → **Docstring + link.**
-6. Branding: keep ClojureDocs' palette exactly and swap only the name, as a text wordmark with no Python logo? → **Yes.**
+5. ✅ Main doc block → **Docstring + "Official docs ↗" link** (default, as built).
+6. ✅ Branding → **ClojureDocs' palette, "PyDocs" text wordmark.** The favicon is the Python logo (your call, 2026-11-03; see §17).
 7. ✅ Public repo → **Yes.** Needed for EPL compliance, free Actions, and open data. Made public 2026-11-03.
 8. ✅ Admins: → **`ertugrulcetin` (GitHub id 8271291)**, so `ADMIN_GITHUB_IDS=8271291`. (decided 2026-11-03)
-9. Contribution license: → **CC0.**
-10. Analytics: → **Cloudflare Web Analytics.**
-11. When a symbol disappears in a newer Python release → **keep its community data in R2 and drop the page.**
+9. ✅ Contribution license → **CC0** (default; stated under every editor and in `/export.json`).
+10. ✅ Analytics → **Cloudflare Web Analytics** (already on for the zone).
+11. ✅ When a symbol disappears in a newer Python release → **keep its community data in R2 and drop the page** (default; the bake skips docs for symbols without a page, `src/lib/community-data.ts`).
 12. ✅ Examples for symbols with no doctest. → **None. Only symbols that have a doctest get a seeded example. The rest wait for the community.** (decided 2026-11-03)
 
 ---
