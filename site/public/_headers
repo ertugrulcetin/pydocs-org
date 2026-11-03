@@ -1,10 +1,11 @@
 # Applies to static assets only; the Worker sets its own headers.
-# CSP (PLAN.md §11): report-only first; enforced once the live site shows no violations.
+# CSP (PLAN.md §11). Enforced after a report-only run on the live site showed one
+# violation: Cloudflare Web Analytics' injected beacon (allowed below).
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: DENY
-  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://avatars.githubusercontent.com data:; font-src 'self'; connect-src 'self' https://data.pydocs.org; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; style-src 'self'; img-src 'self' https://avatars.githubusercontent.com data:; font-src 'self'; connect-src 'self' https://data.pydocs.org https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
 
 /css/*
   Cache-Control: public, max-age=86400

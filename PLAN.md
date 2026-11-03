@@ -510,14 +510,14 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
 - [ ] Admin page (`/admin`, shell + Worker auth): recent activity with delete, ban/unban, audit viewer
 - [x] "report" link on every example, see-also and note → prefilled GitHub issue with label `report` (2026-11-03)
 - [ ] Rate limiting (private bucket counters; use the Workers rate-limit binding instead if it's on the free plan ⚠️)
-- [~] `_headers` with CSP etc. The CSP was added report-only on 2026-11-03: `default-src 'self'`, scripts and styles from self only, images also from avatars.githubusercontent.com, connections also to data.pydocs.org, `frame-ancestors 'none'`. It gets enforced once the live site shows no violations. Possible because every script is an external file (no inline scripts).
+- [x] `_headers` with CSP etc. Enforced 2026-11-03 after a report-only run on the live site. Its one violation was Cloudflare Web Analytics' injected beacon, now allowed (`static.cloudflareinsights.com`, `cloudflareinsights.com`). The Worker's HTML error pages send their own strict CSP. The CSP was first added report-only on 2026-11-03: `default-src 'self'`, scripts and styles from self only, images also from avatars.githubusercontent.com, connections also to data.pydocs.org, `frame-ancestors 'none'`. It gets enforced once the live site shows no violations. Possible because every script is an external file (no inline scripts).
 - [ ] Tests: Worker unit tests (permissions, validation, conflicts, injection), e2e flows (login → add/edit/delete example, see-also, note) at desktop and 375 px phone width, XSS cases
 - [ ] Load check: largest symbol doc stays under the 10 ms CPU limit
 
 ### Phase 7: Launch
 - [ ] Seed examples from the docs' `>>>` snippets (`scripts/seed-doctests.ts`). Author: system user "python-docs", `source: "python-docs"`, shown with a "from python-docs" label. Idempotent, so it can be re-run.
 - [ ] **Every symbol that has a doctest gets at least one seeded example.** Attach each `>>>` snippet to its symbol: snippets inside the symbol's `<dl>` block first, then snippets in module prose when the symbol they call is unambiguous. Symbols with no doctest get no seeded example (Q12). They show the normal "Log in to add an example" prompt and appear in the Contribute page's "Still need an example:" list. Done when a check reports 0 symbols that have a doctest but no example.
-- [ ] Cloudflare Web Analytics
+- [x] Cloudflare Web Analytics: already on for the zone (Cloudflare injects the beacon; found via the CSP report-only run, 2026-11-03)
 - [ ] Custom domain live; prod OAuth app verified
 - [ ] Announce (r/Python, Python Discourse, HN, Mastodon)
 

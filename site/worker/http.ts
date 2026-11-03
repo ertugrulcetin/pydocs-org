@@ -20,7 +20,14 @@ export const htmlMessage = (title: string, message: string, back: string, status
       `<body><div class="container"><div class="row"><div class="col-md-10 col-md-offset-1">` +
       `<h1>${escapeHtml(title)}</h1><p>${escapeHtml(message)}</p><p><a href="${escapeHtml(back)}">Go back</a></p>` +
       `</div></div></div></body></html>`,
-    { status, headers: { ...SECURITY_HEADERS, 'Content-Type': 'text/html; charset=utf-8' } },
+    {
+      status,
+      headers: {
+        ...SECURITY_HEADERS,
+        'Content-Type': 'text/html; charset=utf-8',
+        'Content-Security-Policy': "default-src 'none'; style-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+      },
+    },
   );
 
 export const redirect = (location: string, cookies: string[] = []): Response => {
