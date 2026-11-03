@@ -486,10 +486,22 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
 - [x] Real flow checked on pydocs.org (2026-11-03): you added an example on `builtins/str.split`. The symbol doc, history, activity, your contributions and the private audit record were all written.
 
 ### Phase 5: Build pipeline, bake, export, backup
-- [~] `deploy.yml`: on push + nightly cron. First version added 2026-11-03: on push to `master`, it runs the extractor tests, builds on Linux, checks the file count and deploys with `wrangler deploy`. First CI deploy 2026-11-03: 11,545 pages live on pydocs.org. Secrets `CLOUDFLARE_API_TOKEN` ("Edit Cloudflare Workers" template, scoped to the account and the pydocs.org zone) and `CLOUDFLARE_ACCOUNT_ID` are set. Still to add: nightly cron → (reuse committed data) → R2 snapshot (rclone/S3, read-only key) → bake → Astro build → file-count check → `wrangler deploy`
-- [ ] Bake: community content into HTML, example counts + see-alsos into the search index, "Still need an example" list, Example of the Day
-- [ ] `rebuild-indexes.ts` nightly
-- [ ] `export.json` (CC0) published on the site + committed to the `pydocs-data` repo (versioned backup)
+- [x] `deploy.yml` (2026-11-03). Runs on push to `master` and nightly at 03:17 UTC. Steps:
+  1. Extractor tests.
+  2. Snapshot of community content.
+  3. Build on Linux.
+  4. Unit tests and the layout check.
+  5. File-count and export-size checks.
+  6. `wrangler deploy`.
+  
+  The snapshot (`site/scripts/snapshot.mjs`) lists `pydocs-content` keys with the R2 REST API, using the existing `CLOUDFLARE_API_TOKEN`, which has R2 read access. It fetches each doc from `data.pydocs.org` (public CDN, no API rate limit) instead of using an S3 key and rclone. Without a token it writes an empty snapshot, so local builds work.
+- [x] Bake (2026-11-03):
+  - Symbol pages ship their examples, see-alsos and notes in the HTML, with real Nav counts; the widgets still refresh live. Notes are baked as plain text and turned into markdown in the browser, which avoids a server-side DOM for DOMPurify.
+  - The search index carries example counts.
+  - The home page has Example of the Day (a new pick each day) and baked Recently Updated.
+- [ ] "Still need an example" list on `/contribute` (with the contribute page, Phase 2)
+- [ ] `rebuild-indexes` nightly job: rebuild `users/*` contributions from `symbols/*`. Needs R2 write access from CI (not yet checked).
+- [~] `export.json` (CC0) is published on the site (2026-11-03) with a 20 MiB guard in CI. Still to do: a versioned backup in a `pydocs-data` repo, which needs that repo and a token.
 - [ ] `extract.yml`: manual workflow to regenerate reference data for a new Python release, opened as a PR
 
 ### Phase 6: Moderation, hardening, tests
