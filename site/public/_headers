@@ -10,3 +10,7 @@
 
 /fonts/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Versioned by content hash (?v=...), so cache for a long time.
+/search-index/*
+  Cache-Control: public, max-age=31536000, immutable

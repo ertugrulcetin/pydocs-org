@@ -45,3 +45,14 @@ pre {
   max-width: 100%;
   overflow-wrap: anywhere;
 }
+
+/* ClojureDocs' open autocomplete uses -20px side margins, wider than the 15px
+   phone gutter, so the page scrolled sideways while searching. */
+@media (max-width: 767px) {
+  body.search-active header.navbar .ac-results-widget {
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0 15px;
+  }
+}

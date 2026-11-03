@@ -1,0 +1,23 @@
+---
+// /search results = ClojureDocs' search page. Static shell; results are
+// computed in the browser from the search index (PLAN.md §4).
+import Main from '../layouts/Main.astro';
+---
+
+<Main title="Search" bodyClass="search-results-page">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <div class="row">
+          <div class="col-sm-12" id="search-results">
+            <div class="search-results-header"><h1>Searching…</h1></div>
+            <noscript><p>Search needs JavaScript. Browse the <a href="/library">standard library</a> instead.</p></noscript>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    import '../scripts/search-page.ts';
+  </script>
+</Main>

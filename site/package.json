@@ -12,7 +12,8 @@
     "deploy": "node scripts/assert-case-sensitive.mjs && astro build && wrangler deploy",
     "cf-typegen": "wrangler types",
     "typecheck:worker": "wrangler types && tsc -p worker",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "node --test tests/"
   },
   "dependencies": {
     "@astrojs/preact": "^6.1.1",

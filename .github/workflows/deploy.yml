@@ -53,6 +53,8 @@ jobs:
       - run: npm run typecheck:worker
       - name: Build
         run: npm run build
+      - name: Unit tests
+        run: npm test
       - name: Check page and file counts
         run: |
           pages=$(find dist -name '*.html' | wc -l)

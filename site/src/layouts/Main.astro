@@ -12,6 +12,7 @@ import {
   loginHref,
   pagePath,
 } from '../lib/site';
+import { acUrl, docsUrl } from '../lib/search-index';
 
 interface Props {
   /** Page title before the site suffix, e.g. "len - builtins". Omit for the bare suffix. */
@@ -52,6 +53,8 @@ const metaDescription = description.length > 200 ? `${description.slice(0, 197)}
     <meta property="og:site_name" content={SITE_NAME} />
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
     <link rel="canonical" href={canonical} />
+    <meta name="pydocs:search-ac" content={acUrl} />
+    <meta name="pydocs:search-docs" content={docsUrl} />
     <link rel="search" type="application/opensearchdescription+xml" title={SITE_NAME} href="/opensearch.xml" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="/css/font-awesome.min.css" />
@@ -92,6 +95,7 @@ const metaDescription = description.length > 200 ? `${description.slice(0, 197)}
     </footer>
     <script>
       import '../scripts/mobile-nav.ts';
+      import '../scripts/search-ui.ts';
     </script>
   </body>
 </html>

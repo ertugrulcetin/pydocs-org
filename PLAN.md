@@ -126,7 +126,7 @@ Naming rules:
 - **Symbol id** = `{module}/{qualname}` (e.g. `os.path/join`). It is used in URLs, R2 keys, and see-alsos.
 - **File layout (spike result, 2026-11-03):** emit one `{path}.html` file per page, e.g. `os.path.html`, `os.path/join.html`, `builtins/str.split.html`. Workers static assets serve them at clean URLs with no trailing slash: `/os.path`, `/os.path/join`, `/builtins/str.split`. `/x/` and `/x.html` redirect (307) to `/x`. Don't use `…/index.html` folders: they force trailing-slash URLs.
 - **Pages whose last segment is `index`** (e.g. `operator/index`): `operator/index.html` would be read as the folder index and break `/operator`. Emit them as `_idx/{module}.{qualname}.html` and add a `_redirects` 200 rewrite (`/operator/index  /_idx/operator.index  200`). Tested: clean URL, 200. `_redirects` allows 2,000 static rules, and only a few symbols need this.
-- Reserved top-level names (no stdlib module may use them): `library`, `quickref`, `search`, `ex`, `u`, `api`, `auth`, `concepts`, `shell`, `_data`, `_idx`. The build fails on a clash. (Shell pages for `/u/*` and `/ex/*` live under `/shell/`, because Astro doesn't route `_`-prefixed folders.)
+- Reserved top-level names (no stdlib module may use them): `library`, `quickref`, `search`, `ex`, `u`, `api`, `auth`, `concepts`, `shell`, `search-index`, `manifest`, `css`, `fonts`, `img`, `_idx`. The build fails on a clash (`site/src/lib/data.ts`). (Shell pages for `/u/*` and `/ex/*` live under `/shell/`, because Astro doesn't route `_`-prefixed folders.)
 
 ---
 
@@ -287,7 +287,7 @@ Admins are listed in the `ADMIN_GITHUB_IDS` environment variable.
 
 R2 has no transactions or queries. So:
 1. Verify the session cookie (HMAC), check that the `Origin` header matches the site, and require `Content-Type: application/json`.
-2. **Check the symbol id against the build manifest** (`env.ASSETS.fetch('/_data/symbols.txt')`). This blocks R2 key injection such as `../`.
+2. **Check the symbol id against the build manifest** (`env.ASSETS.fetch('/manifest/symbols.txt')`). This blocks R2 key injection such as `../`.
 3. Check the ban list and the rate limit.
 4. Read `symbols/{id}.json` and keep its ETag. Apply the change. `put` with `onlyIf: { etagMatches }`. On conflict, retry up to 5 times, then return 409. For the first write (no object yet), use `onlyIf: { etagDoesNotMatch: "*" }` (create-if-absent). `etagMatches` on a missing key always fails. Tested on real R2, 2026-11-03.
 5. Best-effort side writes: `history/`, `users/`, `logins/`, `activity/recent.json`, `audit/`.
@@ -435,7 +435,13 @@ Done 2026-11-03. Run: `cd extractor && uv sync && uv run pydocs-extract` (about 
 - [x] `/library` and `/library/all` (2026-11-03). `/library` groups modules by docs chapter, each with its synopsis. `/library/all` lists every module's top-level symbols (about 480 KB of HTML).
 - [x] Home: static parts (headline, search, builtins by purpose, More modules, contribute teaser) (2026-11-03). The navbar shows the Python version and GitHub stars (fetched at build time), as ClojureDocs does. "Python, by purpose" shows 4 quickref categories (Strings, Lists, Dictionaries, Iteration).
 - [x] Quickref (2026-11-03): `site/src/content/quickref.ts` is typed TS rather than YAML, so a wrong id fails the build. 7 spheres, 22 categories, 500 symbols, original Python grouping. Page with TOC. The TOC isn't sticky yet (goes with the sticky sidenav work).
-- [ ] Search: index generator; autocomplete with every ClojureDocs shortcut; `/search` results page with pagination
+- [x] Search (2026-11-03). Runs entirely in the browser, so it costs no Worker requests.
+  - Index files: `/search-index/ac.json` (1.0 MB raw, loaded on first focus) and `/search-index/docs.json` (1.8 MB, `/search` only). Both are versioned by content hash (`?v=`) and cached for a year.
+  - Ranking: exact name, then prefix, then dotted/underscore-part prefix, then substring. Within each tier, exact case comes first, then quickref ("commonly used") symbols, then ClojureDocs' edit-distance order, then modules and builtins.
+  - Keys and states: ctrl-s, ↑/↓, ctrl-n/ctrl-p, Esc, Enter, "Nothing Found".
+  - `/search?q=&page=`: 10 per page with prev/next.
+  - Tests: `npm test` (node:test, also checks real-index rankings such as `Counter` → `collections.Counter` and `Path` → `pathlib.Path`). A browser check (15 steps) covers keys, navigation, the home box, paging and phone width.
+  - Fixed ClojureDocs' open dropdown making phones scroll sideways.
 - [ ] Prism with token colors mapped to ClojureDocs' `--syntax-*` variables
 - [ ] `/examples-styleguide`, `/contribute`, 404, 500
 - [ ] SEO: titles ("{name} - {module} | PyDocs - Community-Powered Python Documentation and Examples"), meta, OG/Twitter, canonical, JSON-LD, `sitemap.xml`, `robots.txt`, `opensearch.xml`
