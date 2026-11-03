@@ -108,3 +108,12 @@ pre {
 [hidden] {
   display: none !important;
 }
+
+/* Seeded examples (Phase 7): "from the Python docs", styled like the
+   docstring copyright line. */
+.var-example .example-source {
+  text-align: right;
+  font-size: 10px;
+  color: var(--text-faint);
+  margin-top: var(--space-2xs);
+}

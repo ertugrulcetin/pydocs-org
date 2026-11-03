@@ -61,6 +61,13 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Repair user contribution lists (nightly)
+        if: env.HAS_CF_TOKEN == 'true' && github.event_name == 'schedule'
+        continue-on-error: true
+        run: node scripts/rebuild-indexes.mjs --write
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Build
         run: npm run build
       - name: Unit tests

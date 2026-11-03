@@ -502,7 +502,10 @@ Done and live 2026-11-03 (`site/worker/`). Prod OAuth secrets are set; the first
   - The search index carries example counts.
   - The home page has Example of the Day (a new pick each day) and baked Recently Updated.
 - [x] "Still need an example" list on `/contribute` (2026-11-03)
-- [ ] `rebuild-indexes` nightly job: rebuild `users/*` contributions from `symbols/*`. Needs R2 write access from CI (not yet checked).
+- [x] `rebuild-indexes` nightly job (`site/scripts/rebuild-indexes.mjs`, 2026-11-03).
+  - It recomputes each user's contribution list from the symbol docs in the snapshot (the source of truth), and recreates missing user and login docs.
+  - It runs only on the nightly schedule, to avoid racing with daytime writes, and is `continue-on-error`, so a token without R2 write access can't block the deploy. A race it does lose gets fixed the next night.
+  - `activity/recent.json` isn't rebuilt: the symbol docs alone can't recreate edits and deletes.
 - [~] `export.json` (CC0) is published on the site (2026-11-03) with a 20 MiB guard in CI. Still to do: a versioned backup in a `pydocs-data` repo, which needs that repo and a token.
 - [x] `extract.yml`: manual workflow to regenerate reference data for a new Python release, opened as a PR (2026-11-03). It runs the extractor and its tests on ubuntu-latest and opens a PR when anything besides `generatedAt` changed. The first run made Linux the canonical platform (PR #1).
 
